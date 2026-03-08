@@ -1,0 +1,32 @@
+{
+  "component_types": [
+    "config-provider",
+    "rest-extension"
+  ],
+  "description": "This a REST extension providing endpoints to manage secrets stored in an internal Kafka topic.",
+  "documentation_url": "https://github.com/mredjem/kafka-connect-secret-registry/blob/main/README.md",
+  "features": {
+    "confluent_control_center_integration": false
+  },
+  "license": [
+    {
+      "name": "MIT License",
+      "url": "https://opensource.org/license/mit/"
+    }
+  ],
+  "logo": "assets/mredjem.png",
+  "name": "kafka-connect-extension-secret-registry",
+  "owner": {
+    "logo": "assets/mredjem.png",
+    "name": "Medhi REDJEM",
+    "type": "person",
+    "url": "https://github.com/mredjem",
+    "username": "mredjem"
+  },
+  "tags": [
+    "connectors",
+    "secrets"
+  ],
+  "title": "Kafka Connect Secret Registry",
+  "version": "{{VERSION}}"
+}

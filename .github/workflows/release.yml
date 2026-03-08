@@ -1,0 +1,35 @@
+name: Release
+on:
+  push:
+    tags:
+      - '*.*.*'
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Maven
+        uses: s4u/setup-maven-action@v1.19.0
+        with:
+          java-version: 8
+          maven-version: 3.9.0
+
+      - name: Create Archive
+        working-directory: ./connect-extension
+        run: |
+          export VERSION=$(echo "${GITHUB_REF}" | cut -d "/" -f3)
+          sed -i -e "s/{{VERSION}}/${VERSION}/g" confluentArchiveBase/manifest.json
+          mvn clean install
+
+      - name: Compute checksums
+        working-directory: ./connect-extension/target
+        shell: bash
+        run: "for f in *.{jar,zip}; do sha512sum $f > $f.sha512; done"
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1.21.0
+        with:
+          artifacts: "connect-extension/target/*.zip"
+          makeLatest: true
