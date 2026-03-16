@@ -9,7 +9,7 @@
   <version>0.0.0</version>
 
   <properties>
-    <connect-api.version>3.7.2</connect-api.version>
+    <connect-api.version>4.2.0</connect-api.version>
     <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
     <slf4j-api.version>1.7.36</slf4j-api.version>
     <jackson-databind.version>2.21.1</jackson-databind.version>
