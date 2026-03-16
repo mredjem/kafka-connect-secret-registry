@@ -30,7 +30,7 @@ public class SecretRegistryExtension implements ConnectRestExtension {
     SecretRegistryPort secretRegistryPort = KafkaInternalTopicRepository.create(ConfigUtils.addEntry(
       providerConfigs,
       SECRET_REGISTRY_GROUP_ID_CONFIG,
-      registryGroupId + "-rest."
+      registryGroupId + "-rest"
     ));
 
     this.secretRegistryApi = SecretRegistryApi.create(secretRegistryPort);

@@ -23,9 +23,13 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
@@ -55,8 +59,8 @@ class SecretRegistryExtensionIT {
   private static final ImageFromDockerfile CONNECT_WITH_EXTENSION = new ImageFromDockerfile()
     .withFileFromFile("connect-extension.jar", CONNECT_EXTENSION_JAR)
     .withDockerfileFromBuilder(builder -> builder
-      .from("confluentinc/cp-kafka-connect:7.7.0")
-      .copy("connect-extension.jar", "/etc/kafka-connect/jars")
+      .from("confluentinc/cp-kafka-connect-base:7.7.0")
+      .copy("connect-extension.jar", "/usr/share/java")
       .build()
     );
 
@@ -86,7 +90,7 @@ class SecretRegistryExtensionIT {
     .withEnv("CONNECT_VALUE_CONVERTER", "org.apache.kafka.connect.json.JsonConverter")
     .withEnv("CONNECT_REST_ADVERTISED_HOST_NAME", "connect")
     .withEnv("CONNECT_REST_PORT", "8083")
-    .withEnv("CONNECT_PLUGIN_PATH", "/etc/kafka-connect/jars")
+    .withEnv("CONNECT_PLUGIN_PATH", "/usr/share/java")
     .withEnv("CONNECT_REST_EXTENSION_CLASSES", SecretRegistryExtension.class.getName())
     .withEnv("CONNECT_CONFIG_PROVIDERS", "secret")
     .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_CLASS", InternalSecretConfigProvider.class.getName())
@@ -269,9 +273,70 @@ class SecretRegistryExtensionIT {
       .body("$", empty());
   }
 
+  @Test
+  void shouldInjectSecretInConnectorConfiguration() {
+    CreateSecretDto createTestConnectorSecret = CreateSecretDto.of("-1");
+
+    given()
+      .contentType(ContentType.JSON)
+      .pathParam("path", "test-connector")
+      .pathParam("key", "tasks.max")
+      .body(createTestConnectorSecret)
+    .when()
+      .post("/secret/paths/{path}/keys/{key}/versions")
+    .then()
+      .statusCode(201)
+      .contentType(ContentType.JSON);
+
+    CreateConnectorDto createTestConnectorDto = CreateConnectorDto.createDummy();
+
+    given()
+      .contentType(ContentType.JSON)
+      .body(createTestConnectorDto)
+    .when()
+      .post("/connectors")
+    .then()
+      .statusCode(400)
+      .contentType(ContentType.JSON)
+      .body("message", containsString("Invalid value -1 for configuration tasks.max"));
+  }
+
   @AfterAll
   static void tearDown() {
     CONNECT.stop();
     KAFKA.stop();
+  }
+
+  private static class CreateConnectorDto {
+
+    private final String name;
+
+    private final Map<String, String> config;
+
+    private CreateConnectorDto(String name, Map<String, String> config) {
+      this.name = name;
+      this.config = Collections.unmodifiableMap(config);
+    }
+
+    public static CreateConnectorDto createDummy() {
+      Map<String, String> connectorConfig = new HashMap<>();
+
+      connectorConfig.put("connector.class", "org.apache.kafka.connect.mirror.MirrorSourceConnector");
+      connectorConfig.put("tasks.max", "${secret:test-connector:tasks.max}");
+      connectorConfig.put("topics", "_connect-secrets");
+      connectorConfig.put("source.cluster.alias", "source");
+      connectorConfig.put("source.cluster.bootstrap.servers", "kafka:29092");
+      connectorConfig.put("target.cluster.bootstrap.servers", "kafka:29092");
+
+      return new CreateConnectorDto("test-connector", connectorConfig);
+    }
+
+    public String getName() {
+      return this.name;
+    }
+
+    public Map<String, String> getConfig() {
+      return this.config;
+    }
   }
 }
