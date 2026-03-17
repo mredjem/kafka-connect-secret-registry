@@ -44,8 +44,4 @@ public class InternalSecretConfigProvider implements ConfigProvider {
       this.secretRegistryPort.close();
     }
   }
-
-  public SecretRegistryPort secretRegistryPort() {
-    return this.secretRegistryPort;
-  }
 }

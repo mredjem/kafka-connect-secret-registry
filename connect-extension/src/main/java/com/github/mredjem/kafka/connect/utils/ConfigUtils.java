@@ -51,6 +51,16 @@ public final class ConfigUtils {
     return props;
   }
 
+  public static Properties copyProperties(Properties props) {
+    Properties newProps = new Properties();
+
+    for (Map.Entry<Object, Object> entry : props.entrySet()) {
+      newProps.setProperty(entry.getKey().toString(), entry.getValue().toString());
+    }
+
+    return newProps;
+  }
+
   public static Map<String, String> addEntry(Map<String, String> map, String key, String value) {
     Map<String, String> resultMap = new HashMap<>(map);
 
