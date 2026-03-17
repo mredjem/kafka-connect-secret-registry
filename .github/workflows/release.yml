@@ -33,5 +33,5 @@ jobs:
       - name: Create Release
         uses: ncipollo/release-action@v1.21.0
         with:
-          artifacts: "connect-extension/target/*.zip"
+          artifacts: "connect-extension/target/*.{jar,zip}"
           makeLatest: true
