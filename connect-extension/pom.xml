@@ -178,7 +178,7 @@
               <goal>shade</goal>
             </goals>
             <configuration>
-              <finalName>connect-extension-${project.version}-all</finalName>
+              <finalName>${project.artifactId}-${project.version}-all</finalName>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
               </transformers>

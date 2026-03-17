@@ -1,5 +1,6 @@
 package com.github.mredjem.kafka.connect;
 
+import com.github.mredjem.kafka.connect.dtos.CreateConnectorDto;
 import com.github.mredjem.kafka.connect.extensions.SecretRegistryExtension;
 import com.github.mredjem.kafka.connect.extensions.dtos.CreateSecretDto;
 import com.github.mredjem.kafka.connect.providers.InternalSecretConfigProvider;
@@ -23,9 +24,6 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.stream.Stream;
 
 import static io.restassured.RestAssured.given;
@@ -41,12 +39,14 @@ class SecretRegistryExtensionIT {
 
   private static final Network NETWORK = Network.newNetwork();
 
+  private static final String PLUGIN_PATH = "/etc/kafka-connect/jars";
+
   private static final File CONNECT_EXTENSION_JAR;
 
   static {
     try (Stream<Path> paths = Files.walk(Paths.get("target"))) {
       CONNECT_EXTENSION_JAR = paths
-        .filter(path -> path.getFileName().toString().startsWith("connect-extension") && path.getFileName().toString().endsWith(".jar"))
+        .filter(path -> path.getFileName().toString().endsWith("-all.jar"))
         .findFirst()
         .orElseThrow(() -> new IllegalStateException("Unable to find connect extension JAR"))
         .toFile();
@@ -57,10 +57,10 @@ class SecretRegistryExtensionIT {
   }
 
   private static final ImageFromDockerfile CONNECT_WITH_EXTENSION = new ImageFromDockerfile()
-    .withFileFromFile("connect-extension.jar", CONNECT_EXTENSION_JAR)
+    .withFileFromFile("kafka-connect-secret-registry.jar", CONNECT_EXTENSION_JAR)
     .withDockerfileFromBuilder(builder -> builder
       .from("confluentinc/cp-kafka-connect-base:7.7.0")
-      .copy("connect-extension.jar", "/usr/share/java")
+      .copy("kafka-connect-secret-registry.jar", PLUGIN_PATH)
       .build()
     );
 
@@ -90,7 +90,7 @@ class SecretRegistryExtensionIT {
     .withEnv("CONNECT_VALUE_CONVERTER", "org.apache.kafka.connect.json.JsonConverter")
     .withEnv("CONNECT_REST_ADVERTISED_HOST_NAME", "connect")
     .withEnv("CONNECT_REST_PORT", "8083")
-    .withEnv("CONNECT_PLUGIN_PATH", "/usr/share/java")
+    .withEnv("CONNECT_PLUGIN_PATH", PLUGIN_PATH)
     .withEnv("CONNECT_REST_EXTENSION_CLASSES", SecretRegistryExtension.class.getName())
     .withEnv("CONNECT_CONFIG_PROVIDERS", "secret")
     .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_CLASS", InternalSecretConfigProvider.class.getName())
@@ -100,6 +100,7 @@ class SecretRegistryExtensionIT {
     .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_KAFKASTORE_TOPIC_REPLICATION_FACTOR", "1")
     .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_MASTER_ENCRYPTION_KEY", "juby895fmddr5hw58839d3myz27zw206ffxiv68m")
     .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_SECRET_REGISTRY_GROUP_ID", "secret-registry")
+    .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_SUPER_ADMINS", "admin:password")
     .withLogConsumer(outputFrame -> new Slf4jLogConsumer(LoggerFactory.getLogger("connect")))
     .dependsOn(KAFKA);
 
@@ -118,10 +119,35 @@ class SecretRegistryExtensionIT {
   }
 
   @Test
+  void shouldBeRejectedIfUnauthenticated() {
+    given()
+      .when()
+      .get("/secret/paths")
+    .then()
+      .statusCode(500);
+
+    given()
+      .when()
+    .get("/connectors")
+      .then()
+      .statusCode(500);
+  }
+
+  @Test
+  void shouldAllowListingPluginsWhenUnauthenticated() {
+    given()
+      .when()
+    .get("/connector-plugins")
+      .then()
+      .statusCode(200);
+  }
+
+  @Test
   void shouldCreateNewSecrets() {
     CreateSecretDto createPgUserSecret = CreateSecretDto.of("admin");
 
     given()
+      .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ=")
       .contentType(ContentType.JSON)
       .pathParam("path", "dev.users.postgres.jdbc-sink-connector")
       .pathParam("key", "pg.user")
@@ -139,6 +165,7 @@ class SecretRegistryExtensionIT {
     CreateSecretDto createPgPasswordSecret = CreateSecretDto.of("password");
 
     given()
+      .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ=")
       .contentType(ContentType.JSON)
       .pathParam("path", "dev.users.postgres.jdbc-sink-connector")
       .pathParam("key", "pg.password")
@@ -154,7 +181,8 @@ class SecretRegistryExtensionIT {
       .body("secret", is(createPgPasswordSecret.getSecret()));
 
     given()
-      .when()
+      .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ=")
+    .when()
       .get("/secret/paths")
     .then()
       .statusCode(200)
@@ -162,6 +190,7 @@ class SecretRegistryExtensionIT {
       .body("$", hasItem("dev.users.postgres.jdbc-sink-connector"));
 
     given()
+      .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ=")
       .pathParam("path", "dev.users.postgres.jdbc-sink-connector")
     .when()
       .get("/secret/paths/{path}/keys")
@@ -177,6 +206,7 @@ class SecretRegistryExtensionIT {
     CreateSecretDto createOracleUserV1 = CreateSecretDto.of("admin1");
 
     given()
+      .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ=")
       .contentType(ContentType.JSON)
       .pathParam("path", "dev.users.oracle.jdbc-sink-connector")
       .pathParam("key", "oracle.user")
@@ -194,6 +224,7 @@ class SecretRegistryExtensionIT {
     CreateSecretDto createOracleUserV2 = CreateSecretDto.of("admin2");
 
     given()
+      .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ=")
       .contentType(ContentType.JSON)
       .pathParam("path", "dev.users.oracle.jdbc-sink-connector")
       .pathParam("key", "oracle.user")
@@ -209,6 +240,7 @@ class SecretRegistryExtensionIT {
       .body("secret", is(createOracleUserV2.getSecret()));
 
     given()
+      .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ=")
       .pathParam("path", "dev.users.oracle.jdbc-sink-connector")
       .pathParam("key", "oracle.user")
     .when()
@@ -220,6 +252,7 @@ class SecretRegistryExtensionIT {
       .body("$", hasItems(1, 2));
 
     given()
+      .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ=")
       .pathParam("path", "dev.users.oracle.jdbc-sink-connector")
       .pathParam("key", "oracle.user")
       .pathParam("version", "latest")
@@ -239,6 +272,7 @@ class SecretRegistryExtensionIT {
     CreateSecretDto createSqlServerUserSecret = CreateSecretDto.of("admin");
 
     given()
+      .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ=")
       .contentType(ContentType.JSON)
       .pathParam("path", "dev.users.mssql.jdbc-sink-connector")
       .pathParam("key", "mssql.user")
@@ -254,6 +288,7 @@ class SecretRegistryExtensionIT {
       .body("secret", is(createSqlServerUserSecret.getSecret()));
 
     given()
+      .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ=")
       .pathParam("path", "dev.users.mssql.jdbc-sink-connector")
       .pathParam("key", "mssql.user")
       .pathParam("version", "1")
@@ -263,6 +298,7 @@ class SecretRegistryExtensionIT {
       .statusCode(204);
 
     given()
+      .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ=")
       .pathParam("path", "dev.users.mssql.jdbc-sink-connector")
       .pathParam("key", "mssql.user")
     .when()
@@ -278,6 +314,7 @@ class SecretRegistryExtensionIT {
     CreateSecretDto createTestConnectorSecret = CreateSecretDto.of("-1");
 
     given()
+      .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ=")
       .contentType(ContentType.JSON)
       .pathParam("path", "test-connector")
       .pathParam("key", "tasks.max")
@@ -291,6 +328,7 @@ class SecretRegistryExtensionIT {
     CreateConnectorDto createTestConnectorDto = CreateConnectorDto.createDummy();
 
     given()
+      .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ=")
       .contentType(ContentType.JSON)
       .body(createTestConnectorDto)
     .when()
@@ -305,38 +343,5 @@ class SecretRegistryExtensionIT {
   static void tearDown() {
     CONNECT.stop();
     KAFKA.stop();
-  }
-
-  private static class CreateConnectorDto {
-
-    private final String name;
-
-    private final Map<String, String> config;
-
-    private CreateConnectorDto(String name, Map<String, String> config) {
-      this.name = name;
-      this.config = Collections.unmodifiableMap(config);
-    }
-
-    public static CreateConnectorDto createDummy() {
-      Map<String, String> connectorConfig = new HashMap<>();
-
-      connectorConfig.put("connector.class", "org.apache.kafka.connect.mirror.MirrorSourceConnector");
-      connectorConfig.put("tasks.max", "${secret:test-connector:tasks.max}");
-      connectorConfig.put("topics", "_connect-secrets");
-      connectorConfig.put("source.cluster.alias", "source");
-      connectorConfig.put("source.cluster.bootstrap.servers", "kafka:29092");
-      connectorConfig.put("target.cluster.bootstrap.servers", "kafka:29092");
-
-      return new CreateConnectorDto("test-connector", connectorConfig);
-    }
-
-    public String getName() {
-      return this.name;
-    }
-
-    public Map<String, String> getConfig() {
-      return this.config;
-    }
   }
 }
