@@ -53,8 +53,9 @@ module.exports = {
       "@semantic-release/git",
       {
         assets: [
-          "CHANGELOG.md",
-          "connect-extension/pom.xml",
+          'CHANGELOG.md',
+          'connect-extension/pom.xml',
+          'connect-extension/confluentArchiveBase/manifest.json',
         ],
         message: 'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}',
       }
