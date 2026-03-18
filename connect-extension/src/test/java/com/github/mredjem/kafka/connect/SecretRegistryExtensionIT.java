@@ -57,10 +57,10 @@ class SecretRegistryExtensionIT {
   }
 
   private static final ImageFromDockerfile CONNECT_WITH_EXTENSION = new ImageFromDockerfile()
-    .withFileFromFile("kafka-connect-secret-registry.jar", CONNECT_EXTENSION_JAR)
+    .withFileFromFile("mredjem-kafka-connect-secret-registry-extension.jar", CONNECT_EXTENSION_JAR)
     .withDockerfileFromBuilder(builder -> builder
       .from("confluentinc/cp-kafka-connect-base:7.7.0")
-      .copy("kafka-connect-secret-registry.jar", PLUGIN_PATH)
+      .copy("mredjem-kafka-connect-secret-registry-extension.jar", PLUGIN_PATH)
       .build()
     );
 

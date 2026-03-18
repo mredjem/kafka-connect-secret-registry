@@ -10,7 +10,7 @@ const generateShaSignatures = () => {
 const buildConfluentArchive = () => {
   const steps = [
     'cd connect-extension',
-    'cat <<< $(jq \'.version = "${nextRelease.version}"\' confluentArchiveBase/manifest.json) > confluentArchiveBase/manifest.json',
+    'sed -ie \'s/"version": .*/"version": "${nextRelease.version}"/g\' confluentArchiveBase/manifest.json',
     'mvn -q versions:set -DnewVersion=${nextRelease.version}',
     'mvn clean install',
   ]
