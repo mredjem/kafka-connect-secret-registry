@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.github.mredjem</groupId>
-  <artifactId>kafka-connect-secret-registry</artifactId>
+  <artifactId>kafka-connect-secret-registry-extension</artifactId>
   <version>0.0.2</version>
 
   <properties>
@@ -134,6 +134,7 @@
   </dependencies>
 
   <build>
+    <finalName>mredjem-${project.artifactId}-${project.version}</finalName>
     <plugins>
       <!-- Compile to 1.8 -->
       <plugin>
@@ -145,7 +146,6 @@
           <target>${java.version}</target>
         </configuration>
       </plugin>
-
       <!-- Run unit tests -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -165,7 +165,6 @@
           </execution>
         </executions>
       </plugin>
-
       <!-- Build FAT Jar -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -178,7 +177,7 @@
               <goal>shade</goal>
             </goals>
             <configuration>
-              <finalName>${project.artifactId}-${project.version}-all</finalName>
+              <finalName>${project.build.finalName}-all</finalName>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
               </transformers>
@@ -200,7 +199,6 @@
           </execution>
         </executions>
       </plugin>
-
       <!-- Create Confluent archive -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -213,6 +211,8 @@
               <goal>single</goal>
             </goals>
             <configuration>
+              <finalName>${project.build.finalName}</finalName>
+              <appendAssemblyId>false</appendAssemblyId>
               <descriptors>
                 <descriptor>src/assembly/confluent.xml</descriptor>
               </descriptors>
