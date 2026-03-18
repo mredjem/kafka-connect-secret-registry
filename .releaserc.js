@@ -1,7 +1,7 @@
 const buildConfluentArchive = () => {
   const steps = [
     'cd connect-extension',
-    'sed -ie \'s/"version": .*/"version": "${nextRelease.version}"/g\' confluentArchiveBase/manifest.json',
+    'sed -i -e \'s/"version": .*/"version": "${nextRelease.version}"/g\' confluentArchiveBase/manifest.json',
     'mvn -q versions:set -DnewVersion=${nextRelease.version}',
     'mvn clean install -Dmaven.test.skip=true',
   ]
