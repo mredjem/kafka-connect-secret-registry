@@ -5,9 +5,7 @@ import com.github.mredjem.kafka.connect.Secret;
 import com.github.mredjem.kafka.connect.SecretRegistryPort;
 import com.github.mredjem.kafka.connect.Version;
 import com.github.mredjem.kafka.connect.extensions.dtos.CreateSecretDto;
-import com.github.mredjem.kafka.connect.extensions.dtos.ErrorDto;
 import com.github.mredjem.kafka.connect.extensions.dtos.SecretDto;
-import com.github.mredjem.kafka.connect.extensions.exceptions.HttpResponseStatus;
 import com.github.mredjem.kafka.connect.extensions.exceptions.ResourceNotFoundException;
 
 import javax.ws.rs.Consumes;
@@ -22,7 +20,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
-import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -235,38 +232,7 @@ public class SecretRegistryApi {
       return supplier.get();
 
     } catch (final Exception e) {
-      ErrorDto error = toError(uriInfo, e);
-
-      return Response.status(error.getCode())
-        .entity(error)
-        .build();
+      return SecretRegistryApiExceptionHandler.toErrorResponse(uriInfo, e);
     }
-  }
-
-  private static ErrorDto toError(UriInfo uriInfo, Throwable exception) {
-    Response.Status status = status(exception);
-
-    return toError(uriInfo, exception, status);
-  }
-
-  private static ErrorDto toError(UriInfo uriInfo, Throwable exception, Response.Status status) {
-    ErrorDto error = new ErrorDto();
-
-    error.setTimestamp(Instant.now().toEpochMilli());
-    error.setPath(uriInfo.getPath());
-    error.setCode(status.getStatusCode());
-    error.setReason(status.getReasonPhrase());
-    error.setException(exception.getClass().getName());
-    error.setMessage(exception.getMessage());
-
-    return error;
-  }
-
-  private static Response.Status status(Throwable exception) {
-    if (HttpResponseStatus.class.isAssignableFrom(exception.getClass())) {
-      return ((HttpResponseStatus) exception).status();
-    }
-
-    return Response.Status.INTERNAL_SERVER_ERROR;
   }
 }

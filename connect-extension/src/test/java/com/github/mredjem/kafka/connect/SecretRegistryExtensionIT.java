@@ -100,7 +100,7 @@ class SecretRegistryExtensionIT {
     .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_KAFKASTORE_TOPIC_REPLICATION_FACTOR", "1")
     .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_MASTER_ENCRYPTION_KEY", "juby895fmddr5hw58839d3myz27zw206ffxiv68m")
     .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_SECRET_REGISTRY_GROUP_ID", "secret-registry")
-    .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_SUPER_ADMINS", "admin:password")
+    .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_SUPER_ADMINS", "admin:password,centreon:password:read")
     .withLogConsumer(outputFrame -> new Slf4jLogConsumer(LoggerFactory.getLogger("connect")))
     .dependsOn(KAFKA);
 
@@ -124,13 +124,13 @@ class SecretRegistryExtensionIT {
       .when()
       .get("/secret/paths")
     .then()
-      .statusCode(500);
+      .statusCode(401);
 
     given()
       .when()
     .get("/connectors")
       .then()
-      .statusCode(500);
+      .statusCode(401);
   }
 
   @Test
@@ -140,6 +140,32 @@ class SecretRegistryExtensionIT {
     .get("/connector-plugins")
       .then()
       .statusCode(200);
+  }
+
+  @Test
+  void shouldRespectSuperAdminScope() {
+    given()
+      .header("Authorization", "Basic Y2VudHJlb246cGFzc3dvcmQ=")
+    .when()
+      .get("/connectors")
+    .then()
+      .statusCode(200);
+
+    given()
+      .header("Authorization", "Basic Y2VudHJlb246cGFzc3dvcmQ=")
+      .contentType(ContentType.JSON)
+      .body("{}")
+    .when()
+      .post("/connectors")
+    .then()
+      .statusCode(403);
+
+    given()
+      .header("Authorization", "Basic Y2VudHJlb246cGFzc3dvcmQ=")
+    .when()
+      .get("/secret/paths")
+    .then()
+      .statusCode(403);
   }
 
   @Test

@@ -9,7 +9,10 @@ import com.github.mredjem.kafka.connect.internals.KafkaClusterPingRepository;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.core.Response;
 import java.util.Map;
+
+import static com.github.mredjem.kafka.connect.extensions.api.SecretRegistryApiExceptionHandler.toErrorResponse;
 
 public class BearerAuthFilter implements ContainerRequestFilter {
 
@@ -32,13 +35,27 @@ public class BearerAuthFilter implements ContainerRequestFilter {
     String bearerCredentials = FilterUtils.getBearerCredentials(containerRequestContext);
 
     if (bearerCredentials.isEmpty()) {
-      throw new UnauthorizedException("Authorization header is not valid");
+      Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new UnauthorizedException("Authorization header is not valid"));
+
+      containerRequestContext.abortWith(errorResponse);
+
+      return;
     }
 
     AuthenticationCredentials authenticationCredentials = AuthenticationCredentials.of(AuthenticationKind.BEARER, bearerCredentials);
 
     if (!this.authorizationPort.checkAccess(authenticationCredentials)) {
-      throw new ForbiddenException("Access is denied, check your configuration");
+      Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new ForbiddenException("Access is denied, check your configuration"));
+
+      containerRequestContext.abortWith(errorResponse);
+
+      return;
+    }
+
+    if (FilterUtils.isWriteAccess(containerRequestContext)) {
+      Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new ForbiddenException("User is allowed read access only"));
+
+      containerRequestContext.abortWith(errorResponse);
     }
   }
 }
