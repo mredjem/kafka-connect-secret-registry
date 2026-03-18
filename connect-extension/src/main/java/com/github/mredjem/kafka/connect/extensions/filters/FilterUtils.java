@@ -8,11 +8,11 @@ import java.util.Set;
 
 public final class FilterUtils {
 
-  private static final Set<String> ALLOWED_PATHS;
+  private static final Set<String> ALLOWED_PATHS = new HashSet<>();
 
   static {
-    ALLOWED_PATHS = new HashSet<>();
-
+    ALLOWED_PATHS.add("");
+    ALLOWED_PATHS.add("/");
     ALLOWED_PATHS.add("connector-plugins");
     ALLOWED_PATHS.add("connector-plugins/");
     ALLOWED_PATHS.add("/connector-plugins");
@@ -32,6 +32,18 @@ public final class FilterUtils {
     String requestPath = containerRequestContext.getUriInfo().getPath();
 
     return ALLOWED_PATHS.contains(requestPath.toLowerCase());
+  }
+
+  public static boolean isWriteAccess(ContainerRequestContext containerRequestContext) {
+    String requestMethod = containerRequestContext.getMethod();
+
+    if (!HttpMethod.GET.equalsIgnoreCase(requestMethod)) {
+      return true;
+    }
+
+    String requestPath = containerRequestContext.getUriInfo().getPath().toLowerCase();
+
+    return requestPath.startsWith("secret") || requestPath.startsWith("/secret");
   }
 
   public static String getBasicCredentials(ContainerRequestContext containerRequestContext) {
