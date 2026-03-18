@@ -1,12 +1,3 @@
-const generateShaSignatures = () => {
-  const steps = [
-    'cd connect-extension/target',
-    'for f in *.{jar,zip}; do sha512sum $f > $f.sha512; done',
-  ]
-
-  return `(${steps.join(' && ')})`
-}
-
 const buildConfluentArchive = () => {
   const steps = [
     'cd connect-extension',
@@ -15,7 +6,7 @@ const buildConfluentArchive = () => {
     'mvn clean install -Dmaven.test.skip=true',
   ]
 
-  return `(${steps.join(' && ')}) && ${generateShaSignatures()}`
+  return `(${steps.join(' && ')})`
 }
 
 module.exports = {
@@ -45,7 +36,6 @@ module.exports = {
         assets: [
           'connect-extension/target/*.jar',
           'connect-extension/target/*.zip',
-          'connect-extension/target/*.sha512',
         ]
       }
     ],
