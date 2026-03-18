@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.github.mredjem.kafka.connect.ScopedCredentials.READ_SCOPE;
+
 import static com.github.mredjem.kafka.connect.extensions.api.SecretRegistryApiExceptionHandler.toErrorResponse;
 
 public class BasicAuthFilter implements ContainerRequestFilter {
@@ -61,7 +63,7 @@ public class BasicAuthFilter implements ContainerRequestFilter {
       return;
     }
 
-    if (!"read".equalsIgnoreCase(superAdmin.getScope()) || FilterUtils.isWriteAccess(containerRequestContext)) {
+    if (!READ_SCOPE.equalsIgnoreCase(superAdmin.getScope()) || FilterUtils.isWriteAccess(containerRequestContext)) {
       Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new ForbiddenException("Access is denied, check your configuration"));
 
       containerRequestContext.abortWith(errorResponse);
