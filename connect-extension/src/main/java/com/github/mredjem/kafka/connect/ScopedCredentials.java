@@ -2,6 +2,8 @@ package com.github.mredjem.kafka.connect;
 
 public class ScopedCredentials {
 
+  public static final String READ_SCOPE = "read";
+
   private final String credentials;
 
   private final String scope;

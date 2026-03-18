@@ -1,16 +1,20 @@
 name: Release
 on:
   push:
-    tags:
-      - '*.*.*'
+    branches:
+      - main
 jobs:
   release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      issues: write
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Maven
         uses: s4u/setup-maven-action@v1.19.0
@@ -18,20 +22,12 @@ jobs:
           java-version: 8
           maven-version: 3.9.0
 
-      - name: Create Archive
-        working-directory: ./connect-extension
-        run: |
-          export VERSION=$(echo "${GITHUB_REF}" | cut -d "/" -f3)
-          sed -i -e "s/{{VERSION}}/${VERSION}/g" confluentArchiveBase/manifest.json
-          mvn clean install
-
-      - name: Compute checksums
-        working-directory: ./connect-extension/target
-        shell: bash
-        run: "for f in *.{jar,zip}; do sha512sum $f > $f.sha512; done"
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
 
       - name: Create Release
-        uses: ncipollo/release-action@v1.21.0
-        with:
-          artifacts: "connect-extension/target/*.jar,connect-extension/target/*.zip"
-          makeLatest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx --package @semantic-release/changelog --package @semantic-release/exec --package @semantic-release/git semantic-release

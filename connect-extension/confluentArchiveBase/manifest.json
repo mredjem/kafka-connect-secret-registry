@@ -28,5 +28,5 @@
     "secrets"
   ],
   "title": "Kafka Connect Secret Registry",
-  "version": "{{VERSION}}"
+  "version": "0.0.2"
 }
