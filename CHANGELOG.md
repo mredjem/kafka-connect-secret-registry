@@ -1,3 +1,10 @@
+## [0.0.4](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.0.3...0.0.4) (2026-03-19)
+
+
+### Bug Fixes
+
+* prevent manifest duplication because of sed command ([bbd01d4](https://github.com/mredjem/kafka-connect-secret-registry/commit/bbd01d419eef707a72c2065a9a99ff9d472ca4bc))
+
 ## [0.0.3](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.0.2...0.0.3) (2026-03-18)
 
 
