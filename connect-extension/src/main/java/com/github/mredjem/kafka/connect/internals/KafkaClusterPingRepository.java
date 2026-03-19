@@ -1,8 +1,8 @@
 package com.github.mredjem.kafka.connect.internals;
 
-import com.github.mredjem.kafka.connect.AuthorizationPort;
 import com.github.mredjem.kafka.connect.AuthenticationCredentials;
 import com.github.mredjem.kafka.connect.AuthenticationKind;
+import com.github.mredjem.kafka.connect.AuthorizationPort;
 import com.github.mredjem.kafka.connect.internals.callbacks.StaticTokenCallbackHandlerCallback;
 import com.github.mredjem.kafka.connect.utils.ConfigUtils;
 import org.apache.kafka.clients.admin.AdminClient;

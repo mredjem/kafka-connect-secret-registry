@@ -8,7 +8,6 @@ import org.apache.kafka.common.security.oauthbearer.internals.secured.BasicOAuth
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.AppConfigurationEntry;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +28,7 @@ public class StaticTokenCallbackHandlerCallback implements AuthenticateCallbackH
   }
 
   @Override
-  public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+  public void handle(Callback[] callbacks) throws UnsupportedCallbackException {
     for (Callback callback : callbacks) {
       if (callback instanceof OAuthBearerTokenCallback) {
         OAuthBearerToken parsedToken = new BasicOAuthBearerToken(this.token, new HashSet<>(), 0L, "", 0L);

@@ -1,8 +1,8 @@
 package com.github.mredjem.kafka.connect.extensions.filters;
 
-import com.github.mredjem.kafka.connect.AuthorizationPort;
 import com.github.mredjem.kafka.connect.AuthenticationCredentials;
 import com.github.mredjem.kafka.connect.AuthenticationKind;
+import com.github.mredjem.kafka.connect.AuthorizationPort;
 import com.github.mredjem.kafka.connect.extensions.exceptions.ForbiddenException;
 import com.github.mredjem.kafka.connect.extensions.exceptions.UnauthorizedException;
 import com.github.mredjem.kafka.connect.internals.KafkaClusterPingRepository;
