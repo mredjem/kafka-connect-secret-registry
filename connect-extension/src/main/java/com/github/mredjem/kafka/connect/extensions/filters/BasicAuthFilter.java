@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.github.mredjem.kafka.connect.ScopedCredentials.READ_SCOPE;
-
 import static com.github.mredjem.kafka.connect.extensions.api.SecretRegistryApiExceptionHandler.toErrorResponse;
 
 public class BasicAuthFilter implements ContainerRequestFilter {
