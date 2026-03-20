@@ -100,7 +100,7 @@ class SecretRegistryExtensionIT {
     .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_KAFKASTORE_TOPIC_REPLICATION_FACTOR", "1")
     .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_MASTER_ENCRYPTION_KEY", "juby895fmddr5hw58839d3myz27zw206ffxiv68m")
     .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_SECRET_REGISTRY_GROUP_ID", "secret-registry")
-    .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_SUPER_ADMINS", "admin:password,centreon:password:read")
+    .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_SUPER_ADMINS", "admin:password:,centreon:password:read")
     .withLogConsumer(outputFrame -> new Slf4jLogConsumer(LoggerFactory.getLogger("connect")))
     .dependsOn(KAFKA);
 
