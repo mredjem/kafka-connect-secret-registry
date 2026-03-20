@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -115,11 +116,22 @@ public class InMemoryKvStore implements KvStore<KafkaSecretKey, KafkaSecretValue
 
   @Override
   public void close() {
+    this.threadPool.shutdown();
+
     if (this.kvConsumer != null) {
       this.kvConsumer.wakeup();
     }
 
-    this.threadPool.shutdown();
+    try {
+      if (!this.threadPool.isTerminated()) {
+        boolean terminated = this.threadPool.awaitTermination(1L, TimeUnit.SECONDS);
+
+        assert terminated;
+      }
+
+    } catch (final InterruptedException e) {
+      Thread.currentThread().interrupt();
+    }
   }
 
   private static class ResetConsumerRebalanceListener implements ConsumerRebalanceListener {
