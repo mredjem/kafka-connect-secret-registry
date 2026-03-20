@@ -14,7 +14,7 @@ public class ScopedCredentials {
   }
 
   public static ScopedCredentials of(String basicCredentials) {
-    String[] credentialsParts = basicCredentials.split(":");
+    String[] credentialsParts = basicCredentials.split(":", -1);
 
     if (credentialsParts.length == 3) {
       String originalCredentials = credentialsParts[0] + ":" + credentialsParts[1];
@@ -34,6 +34,6 @@ public class ScopedCredentials {
   }
 
   public boolean hasScope() {
-    return !this.scope.isEmpty();
+    return !this.scope.trim().isEmpty();
   }
 }
