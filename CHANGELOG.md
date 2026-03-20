@@ -1,3 +1,10 @@
+## [0.0.6](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.0.5...0.0.6) (2026-03-20)
+
+
+### Bug Fixes
+
+* properly stop consumer thread pool ([52cbe41](https://github.com/mredjem/kafka-connect-secret-registry/commit/52cbe41f530e9586676c4ab76384d7f58d65e74a))
+
 ## [0.0.5](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.0.4...0.0.5) (2026-03-20)
 
 
