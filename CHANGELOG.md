@@ -1,3 +1,10 @@
+## [0.0.5](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.0.4...0.0.5) (2026-03-20)
+
+
+### Bug Fixes
+
+* use jaxrs exceptions instead of custom ones ([3c546eb](https://github.com/mredjem/kafka-connect-secret-registry/commit/3c546eb330a716e4678c8685146047b096af012d))
+
 ## [0.0.4](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.0.3...0.0.4) (2026-03-19)
 
 
