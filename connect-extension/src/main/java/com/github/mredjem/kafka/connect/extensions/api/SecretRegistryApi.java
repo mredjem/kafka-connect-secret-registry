@@ -6,11 +6,11 @@ import com.github.mredjem.kafka.connect.SecretRegistryPort;
 import com.github.mredjem.kafka.connect.Version;
 import com.github.mredjem.kafka.connect.extensions.dtos.CreateSecretDto;
 import com.github.mredjem.kafka.connect.extensions.dtos.SecretDto;
-import com.github.mredjem.kafka.connect.extensions.exceptions.ResourceNotFoundException;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -149,7 +149,7 @@ public class SecretRegistryApi {
     Supplier<Response> supplier = () -> {
       SecretDto secret = this.secretRegistryPort.getSecret(path, key, version)
         .map(SecretDto::toDto)
-        .orElseThrow(() -> new ResourceNotFoundException("secret", path + "/" + key + "/" + version));
+        .orElseThrow(() -> new NotFoundException(String.format("Secret '%s/%s/%s' not found", path, key, version)));
 
       return Response.ok().entity(secret).build();
     };

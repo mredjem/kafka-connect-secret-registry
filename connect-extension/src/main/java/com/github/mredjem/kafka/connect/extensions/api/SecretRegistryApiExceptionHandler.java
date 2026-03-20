@@ -1,8 +1,8 @@
 package com.github.mredjem.kafka.connect.extensions.api;
 
 import com.github.mredjem.kafka.connect.extensions.dtos.ErrorDto;
-import com.github.mredjem.kafka.connect.extensions.exceptions.HttpResponseStatus;
 
+import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.time.Instant;
@@ -40,8 +40,8 @@ public final class SecretRegistryApiExceptionHandler {
   }
 
   private static Response.Status status(Throwable exception) {
-    if (HttpResponseStatus.class.isAssignableFrom(exception.getClass())) {
-      return ((HttpResponseStatus) exception).status();
+    if (ClientErrorException.class.isAssignableFrom(exception.getClass())) {
+      return ((ClientErrorException) exception).getResponse().getStatusInfo().toEnum();
     }
 
     return Response.Status.INTERNAL_SERVER_ERROR;
