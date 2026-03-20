@@ -1,3 +1,10 @@
+## [0.0.7](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.0.6...0.0.7) (2026-03-20)
+
+
+### Bug Fixes
+
+* properly ignore empty super admin scope ([7448116](https://github.com/mredjem/kafka-connect-secret-registry/commit/744811639c66c5b42c97fa1cc2d67f69b6cf034e))
+
 ## [0.0.6](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.0.5...0.0.6) (2026-03-20)
 
 
