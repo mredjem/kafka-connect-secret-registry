@@ -1,8 +1,8 @@
 package com.github.mredjem.kafka.connect.extensions.filters;
 
 import com.github.mredjem.kafka.connect.ScopedCredentials;
-import com.github.mredjem.kafka.connect.extensions.exceptions.ForbiddenException;
 
+import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Response;

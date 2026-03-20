@@ -3,10 +3,10 @@ package com.github.mredjem.kafka.connect.extensions.filters;
 import com.github.mredjem.kafka.connect.AuthenticationCredentials;
 import com.github.mredjem.kafka.connect.AuthenticationKind;
 import com.github.mredjem.kafka.connect.AuthorizationPort;
-import com.github.mredjem.kafka.connect.extensions.exceptions.ForbiddenException;
-import com.github.mredjem.kafka.connect.extensions.exceptions.UnauthorizedException;
 import com.github.mredjem.kafka.connect.internals.KafkaClusterPingRepository;
 
+import javax.ws.rs.ForbiddenException;
+import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Response;
@@ -35,7 +35,7 @@ public class BearerAuthFilter implements ContainerRequestFilter {
     String bearerCredentials = FilterUtils.getBearerCredentials(containerRequestContext);
 
     if (bearerCredentials.isEmpty()) {
-      Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new UnauthorizedException("Authorization header is not valid"));
+      Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new NotAuthorizedException("Authorization header is not valid"));
 
       containerRequestContext.abortWith(errorResponse);
 
