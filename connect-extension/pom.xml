@@ -13,7 +13,7 @@
     <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
     <slf4j-api.version>1.7.36</slf4j-api.version>
     <jackson-databind.version>2.21.1</jackson-databind.version>
-    <logback-classic.version>1.2.3</logback-classic.version>
+    <logback-classic.version>1.5.32</logback-classic.version>
     <junit-jupiter.version>5.10.2</junit-jupiter.version>
     <testcontainers.version>2.0.2</testcontainers.version>
     <assertj-core.version>3.25.3</assertj-core.version>
