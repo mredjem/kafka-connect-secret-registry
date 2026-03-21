@@ -1,3 +1,10 @@
+## [0.0.8](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.0.7...0.0.8) (2026-03-21)
+
+
+### Bug Fixes
+
+* solve bearer filter error when running admin client ([821e50b](https://github.com/mredjem/kafka-connect-secret-registry/commit/821e50b9189f4403ffaba4b9c9f75e8c51b6ae82))
+
 ## [0.0.7](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.0.6...0.0.7) (2026-03-20)
 
 
