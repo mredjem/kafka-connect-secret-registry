@@ -4,6 +4,7 @@ import com.github.mredjem.kafka.connect.AuthenticationCredentials;
 import com.github.mredjem.kafka.connect.AuthenticationKind;
 import com.github.mredjem.kafka.connect.AuthorizationPort;
 import com.github.mredjem.kafka.connect.internals.KafkaClusterPingRepository;
+import com.github.mredjem.kafka.connect.utils.ConfigUtils;
 
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotAuthorizedException;
@@ -19,7 +20,9 @@ public class BearerAuthFilter implements ContainerRequestFilter {
   private final AuthorizationPort authorizationPort;
 
   private BearerAuthFilter(Map<String, String> configs) {
-    this.authorizationPort = KafkaClusterPingRepository.create(configs);
+    Map<String, String> kafkaConfigs = ConfigUtils.getConfigsForPrefix("kafkastore.", configs);
+
+    this.authorizationPort = KafkaClusterPingRepository.create(kafkaConfigs);
   }
 
   public static BearerAuthFilter create(Map<String, String> configs) {
@@ -35,7 +38,7 @@ public class BearerAuthFilter implements ContainerRequestFilter {
     String bearerCredentials = FilterUtils.getBearerCredentials(containerRequestContext);
 
     if (bearerCredentials.isEmpty()) {
-      Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new NotAuthorizedException("Authorization header is not valid"));
+      Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new NotAuthorizedException("Authorization header is not valid", "Bearer"));
 
       containerRequestContext.abortWith(errorResponse);
 
