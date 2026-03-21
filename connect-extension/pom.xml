@@ -11,7 +11,7 @@
   <properties>
     <connect-api.version>3.7.2</connect-api.version>
     <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
-    <slf4j-api.version>1.7.36</slf4j-api.version>
+    <slf4j-api.version>2.0.17</slf4j-api.version>
     <jackson-databind.version>2.21.1</jackson-databind.version>
     <logback-classic.version>1.2.3</logback-classic.version>
     <junit-jupiter.version>5.10.2</junit-jupiter.version>
