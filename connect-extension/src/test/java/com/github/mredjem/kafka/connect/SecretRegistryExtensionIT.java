@@ -113,7 +113,7 @@ class SecretRegistryExtensionIT {
       .waitingFor(Wait.forHealthcheck())
       .waitingFor(Wait.forHttp("/connectors"));
 
-    Thread.sleep(3_000L);
+    Thread.sleep(5_000L);
 
     RestAssured.baseURI = "http://localhost:" + CONNECT.getMappedPort(8083);
   }
