@@ -1,3 +1,10 @@
+## [0.0.9](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.0.8...0.0.9) (2026-03-21)
+
+
+### Bug Fixes
+
+* solve typo in manifest ([c63a7e0](https://github.com/mredjem/kafka-connect-secret-registry/commit/c63a7e0e4746ce34c190c8e0104b2cbf721602f5))
+
 ## [0.0.8](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.0.7...0.0.8) (2026-03-21)
 
 
