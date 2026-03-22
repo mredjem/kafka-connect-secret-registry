@@ -134,6 +134,15 @@ class SecretRegistryExtensionIT {
   }
 
   @Test
+  void shouldAllowGettingStateWhenUnauthenticated() {
+    given()
+      .when()
+      .get("/")
+      .then()
+      .statusCode(200);
+  }
+
+  @Test
   void shouldAllowListingPluginsWhenUnauthenticated() {
     given()
       .when()

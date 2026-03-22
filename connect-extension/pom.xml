@@ -12,12 +12,11 @@
     <connect-api.version>3.7.2</connect-api.version>
     <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
     <slf4j-api.version>1.7.36</slf4j-api.version>
-    <jackson-databind.version>2.21.1</jackson-databind.version>
+    <jackson-databind.version>2.20.0</jackson-databind.version>
     <logback-classic.version>1.2.3</logback-classic.version>
     <junit-jupiter.version>5.10.2</junit-jupiter.version>
     <testcontainers.version>2.0.2</testcontainers.version>
     <assertj-core.version>3.27.7</assertj-core.version>
-    <hamcrest.version>3.0</hamcrest.version>
     <rest-assured.version>5.4.0</rest-assured.version>
     <maven-compiler-plugin.version>3.10.0</maven-compiler-plugin.version>
     <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
@@ -82,11 +81,19 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j-api.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <version>${logback-classic.version}</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!-- End of Logging dependencies -->
 
@@ -116,12 +123,6 @@
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
       <version>${assertj-core.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest</artifactId>
-      <version>${hamcrest.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -188,10 +189,13 @@
                     <exclude>META-INF/*.SF</exclude>
                     <exclude>META-INF/*.DSA</exclude>
                     <exclude>META-INF/*.RSA</exclude>
+                    <exclude>META-INF/MANIFEST.MF</exclude>
                     <exclude>META-INF/LICENSE</exclude>
                     <exclude>META-INF/NOTICE</exclude>
                     <exclude>LICENSE</exclude>
                     <exclude>NOTICE</exclude>
+                    <exclude>module-info.class</exclude>
+                    <exclude>META-INF/versions/**/module-info.class</exclude>
                   </excludes>
                 </filter>
               </filters>
