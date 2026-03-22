@@ -18,6 +18,7 @@ import org.testcontainers.images.builder.ImageFromDockerfile;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.kafka.ConfluentKafkaContainer;
 
+import javax.ws.rs.core.HttpHeaders;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -121,47 +122,51 @@ class SecretRegistryExtensionIT {
   @Test
   void shouldBeRejectedIfUnauthenticated() {
     given()
-      .when()
+      .header(HttpHeaders.ACCEPT, "application/json")
+    .when()
       .get("/secret/paths")
     .then()
       .statusCode(401);
 
     given()
-      .when()
-    .get("/connectors")
-      .then()
+      .header(HttpHeaders.ACCEPT, "application/json")
+    .when()
+      .get("/connectors")
+    .then()
       .statusCode(401);
   }
 
   @Test
   void shouldAllowGettingStateWhenUnauthenticated() {
     given()
-      .when()
+      .header(HttpHeaders.ACCEPT, "application/json")
+    .when()
       .get("/")
-      .then()
+    .then()
       .statusCode(200);
   }
 
   @Test
   void shouldAllowListingPluginsWhenUnauthenticated() {
     given()
-      .when()
-    .get("/connector-plugins")
-      .then()
+      .header(HttpHeaders.ACCEPT, "application/json")
+    .when()
+      .get("/connector-plugins")
+    .then()
       .statusCode(200);
   }
 
   @Test
   void shouldRespectSuperAdminScope() {
     given()
-      .header("Authorization", "Basic Y2VudHJlb246cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, "Basic Y2VudHJlb246cGFzc3dvcmQ=")
     .when()
       .get("/connectors")
     .then()
       .statusCode(200);
 
     given()
-      .header("Authorization", "Basic Y2VudHJlb246cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, "Basic Y2VudHJlb246cGFzc3dvcmQ=")
       .contentType(ContentType.JSON)
       .body("{}")
     .when()
@@ -170,7 +175,7 @@ class SecretRegistryExtensionIT {
       .statusCode(403);
 
     given()
-      .header("Authorization", "Basic Y2VudHJlb246cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, "Basic Y2VudHJlb246cGFzc3dvcmQ=")
     .when()
       .get("/secret/paths")
     .then()
@@ -182,7 +187,7 @@ class SecretRegistryExtensionIT {
     CreateSecretDto createPgUserSecret = CreateSecretDto.of("admin");
 
     given()
-      .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, "Basic YWRtaW46cGFzc3dvcmQ=")
       .contentType(ContentType.JSON)
       .pathParam("path", "dev.users.postgres.jdbc-sink-connector")
       .pathParam("key", "pg.user")
@@ -200,7 +205,7 @@ class SecretRegistryExtensionIT {
     CreateSecretDto createPgPasswordSecret = CreateSecretDto.of("password");
 
     given()
-      .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, "Basic YWRtaW46cGFzc3dvcmQ=")
       .contentType(ContentType.JSON)
       .pathParam("path", "dev.users.postgres.jdbc-sink-connector")
       .pathParam("key", "pg.password")
@@ -216,7 +221,7 @@ class SecretRegistryExtensionIT {
       .body("secret", is(createPgPasswordSecret.getSecret()));
 
     given()
-      .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, "Basic YWRtaW46cGFzc3dvcmQ=")
     .when()
       .get("/secret/paths")
     .then()
@@ -225,7 +230,7 @@ class SecretRegistryExtensionIT {
       .body("$", hasItem("dev.users.postgres.jdbc-sink-connector"));
 
     given()
-      .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, "Basic YWRtaW46cGFzc3dvcmQ=")
       .pathParam("path", "dev.users.postgres.jdbc-sink-connector")
     .when()
       .get("/secret/paths/{path}/keys")
@@ -241,7 +246,7 @@ class SecretRegistryExtensionIT {
     CreateSecretDto createOracleUserV1 = CreateSecretDto.of("admin1");
 
     given()
-      .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, "Basic YWRtaW46cGFzc3dvcmQ=")
       .contentType(ContentType.JSON)
       .pathParam("path", "dev.users.oracle.jdbc-sink-connector")
       .pathParam("key", "oracle.user")
@@ -259,7 +264,7 @@ class SecretRegistryExtensionIT {
     CreateSecretDto createOracleUserV2 = CreateSecretDto.of("admin2");
 
     given()
-      .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, "Basic YWRtaW46cGFzc3dvcmQ=")
       .contentType(ContentType.JSON)
       .pathParam("path", "dev.users.oracle.jdbc-sink-connector")
       .pathParam("key", "oracle.user")
@@ -275,7 +280,7 @@ class SecretRegistryExtensionIT {
       .body("secret", is(createOracleUserV2.getSecret()));
 
     given()
-      .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, "Basic YWRtaW46cGFzc3dvcmQ=")
       .pathParam("path", "dev.users.oracle.jdbc-sink-connector")
       .pathParam("key", "oracle.user")
     .when()
@@ -287,7 +292,7 @@ class SecretRegistryExtensionIT {
       .body("$", hasItems(1, 2));
 
     given()
-      .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, "Basic YWRtaW46cGFzc3dvcmQ=")
       .pathParam("path", "dev.users.oracle.jdbc-sink-connector")
       .pathParam("key", "oracle.user")
       .pathParam("version", "latest")
@@ -307,7 +312,7 @@ class SecretRegistryExtensionIT {
     CreateSecretDto createSqlServerUserSecret = CreateSecretDto.of("admin");
 
     given()
-      .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, "Basic YWRtaW46cGFzc3dvcmQ=")
       .contentType(ContentType.JSON)
       .pathParam("path", "dev.users.mssql.jdbc-sink-connector")
       .pathParam("key", "mssql.user")
@@ -323,7 +328,7 @@ class SecretRegistryExtensionIT {
       .body("secret", is(createSqlServerUserSecret.getSecret()));
 
     given()
-      .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, "Basic YWRtaW46cGFzc3dvcmQ=")
       .pathParam("path", "dev.users.mssql.jdbc-sink-connector")
       .pathParam("key", "mssql.user")
       .pathParam("version", "1")
@@ -333,7 +338,7 @@ class SecretRegistryExtensionIT {
       .statusCode(204);
 
     given()
-      .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, "Basic YWRtaW46cGFzc3dvcmQ=")
       .pathParam("path", "dev.users.mssql.jdbc-sink-connector")
       .pathParam("key", "mssql.user")
     .when()
@@ -349,7 +354,7 @@ class SecretRegistryExtensionIT {
     CreateSecretDto createTestConnectorSecret = CreateSecretDto.of("-1");
 
     given()
-      .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, "Basic YWRtaW46cGFzc3dvcmQ=")
       .contentType(ContentType.JSON)
       .pathParam("path", "test-connector")
       .pathParam("key", "tasks.max")
@@ -363,7 +368,7 @@ class SecretRegistryExtensionIT {
     CreateConnectorDto createTestConnectorDto = CreateConnectorDto.createDummy();
 
     given()
-      .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, "Basic YWRtaW46cGFzc3dvcmQ=")
       .contentType(ContentType.JSON)
       .body(createTestConnectorDto)
     .when()
