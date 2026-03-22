@@ -14,7 +14,7 @@
     <slf4j-api.version>1.7.36</slf4j-api.version>
     <jackson-databind.version>2.20.0</jackson-databind.version>
     <logback-classic.version>1.2.3</logback-classic.version>
-    <junit-jupiter.version>5.10.2</junit-jupiter.version>
+    <junit-jupiter.version>6.0.3</junit-jupiter.version>
     <testcontainers.version>2.0.2</testcontainers.version>
     <assertj-core.version>3.27.7</assertj-core.version>
     <rest-assured.version>5.4.0</rest-assured.version>
