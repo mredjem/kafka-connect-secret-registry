@@ -1,3 +1,10 @@
+## [0.0.10](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.0.9...0.0.10) (2026-03-22)
+
+
+### Bug Fixes
+
+* resolve dependencies conflicts ([9a3cd99](https://github.com/mredjem/kafka-connect-secret-registry/commit/9a3cd998cfd54d2a2683668b8bb03c5688080df2))
+
 ## [0.0.9](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.0.8...0.0.9) (2026-03-21)
 
 

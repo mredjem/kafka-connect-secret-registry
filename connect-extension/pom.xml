@@ -6,7 +6,7 @@
 
   <groupId>com.github.mredjem</groupId>
   <artifactId>kafka-connect-secret-registry-extension</artifactId>
-  <version>0.0.9</version>
+  <version>0.0.10</version>
 
   <properties>
     <connect-api.version>3.7.2</connect-api.version>
