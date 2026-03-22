@@ -6,6 +6,8 @@ Secrets can be registered by issuing REST requests to the additional Kafka Conne
 
 Connectors can reference those secrets in their configuration without exposing credentials to end users.
 
+> This extension works pretty much in the same way as the [Connect Secret Registry for Confluent Platform](https://docs.confluent.io/platform/current/connect/rbac/connect-rbac-secret-registry.html) but does not require the Confluent Metadata Service.
+
 ## Installation
 
 1. Place the JAR file in the plugins directory of each Kafka Connect worker.

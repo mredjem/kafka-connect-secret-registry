@@ -1,25 +1,20 @@
 services:
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.7.0
-    container_name: zookeeper
-    environment:
-      ZOOKEEPER_SERVER_ID: 1
-      ZOOKEEPER_CLIENT_PORT: "2181"
-      KAFKA_HEAP_OPTS: "-Xms512m -Xmx512m"
-
   kafka:
     image: confluentinc/cp-kafka:7.7.0
     container_name: kafka
     environment:
+      CLUSTER_ID: "MnSKKJdLRwq0j3vTIbud0g"
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:9093"
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT"
+      KAFKA_LISTENERS: "PLAINTEXT://kafka:9092,CONTROLLER://kafka:9093"
       KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_DELETE_TOPIC_ENABLE: "true"
       KAFKA_HEAP_OPTS: "-Xms512m -Xmx512m"
-    depends_on:
-      - zookeeper
 
   kafka-connect:
     image: confluentinc/cp-kafka-connect:7.7.0
@@ -38,6 +33,16 @@ services:
       CONNECT_REST_ADVERTISED_HOST_NAME: "kafka-connect"
       CONNECT_REST_PORT: 8083
       CONNECT_PLUGIN_PATH: "/etc/kafka-connect/jars"
+      CONNECT_REST_EXTENSION_CLASSES: com.github.mredjem.kafka.connect.extensions.SecretRegistryExtension
+      CONNECT_CONFIG_PROVIDERS: secret
+      CONNECT_CONFIG_PROVIDERS_SECRET_CLASS: com.github.mredjem.kafka.connect.providers.InternalSecretConfigProvider
+      CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_KAFKASTORE_BOOTSTRAP_SERVERS: "kafka:9092"
+      CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_KAFKASTORE_SECURITY_PROTOCOL: PLAINTEXT
+      CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_KAFKASTORE_TOPIC: _connect-secrets
+      CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_KAFKASTORE_TOPIC_REPLICATION_FACTOR: 1
+      CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_MASTER_ENCRYPTION_KEY: "juby895fmddr5hw58839d3myz27zw206ffxiv68m"
+      CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_SECRET_REGISTRY_GROUP_ID: secret-registry
+      CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_SUPER_ADMINS: "admin:password"
     volumes:
       - ./etc/kafka-connect/jars:/etc/kafka-connect/jars
     ports:
