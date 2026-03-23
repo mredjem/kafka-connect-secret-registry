@@ -2,7 +2,6 @@ package com.github.mredjem.kafka.connect.providers;
 
 import com.github.mredjem.kafka.connect.Secret;
 import com.github.mredjem.kafka.connect.SecretRegistryPort;
-import com.github.mredjem.kafka.connect.exceptions.ExtensionInitializationException;
 import com.github.mredjem.kafka.connect.internals.KafkaInternalTopicRepository;
 import org.apache.kafka.common.config.ConfigData;
 import org.apache.kafka.common.config.provider.ConfigProvider;
@@ -10,7 +9,6 @@ import org.apache.kafka.common.config.provider.ConfigProvider;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class InternalSecretConfigProvider implements ConfigProvider {
@@ -19,14 +17,7 @@ public class InternalSecretConfigProvider implements ConfigProvider {
 
   @Override
   public void configure(Map<String, ?> configs) {
-    try {
-      this.secretRegistryPort = KafkaInternalTopicRepository.create(configs);
-
-      Thread.sleep(TimeUnit.SECONDS.toMillis(3L));
-
-    } catch (final Exception e) {
-      throw new ExtensionInitializationException(e);
-    }
+    this.secretRegistryPort = KafkaInternalTopicRepository.create(configs);
   }
 
   @Override

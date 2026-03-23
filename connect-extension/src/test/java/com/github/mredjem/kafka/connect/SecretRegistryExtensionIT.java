@@ -112,9 +112,10 @@ class SecretRegistryExtensionIT {
     CONNECT.start();
     CONNECT
       .waitingFor(Wait.forHealthcheck())
-      .waitingFor(Wait.forHttp("/connectors"));
+      .waitingFor(Wait.forHttp("/connector-plugins"))
+      .waitingFor(Wait.forLogMessage("server is started and ready to handle requests", 1));
 
-    Thread.sleep(5_000L);
+    Thread.sleep(3_000L);
 
     RestAssured.baseURI = "http://localhost:" + CONNECT.getMappedPort(8083);
   }

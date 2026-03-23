@@ -13,6 +13,7 @@
     <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
     <slf4j-api.version>1.7.36</slf4j-api.version>
     <jackson-databind.version>2.20.0</jackson-databind.version>
+    <awaitility.version>4.3.0</awaitility.version>
     <logback-classic.version>1.2.3</logback-classic.version>
     <junit-jupiter.version>5.10.2</junit-jupiter.version>
     <testcontainers.version>2.0.2</testcontainers.version>
@@ -75,6 +76,14 @@
       <version>${jackson-databind.version}</version>
     </dependency>
     <!-- End of Jackson dependencies -->
+
+    <!-- Utilities dependencies -->
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
+      <version>${awaitility.version}</version>
+    </dependency>
+    <!-- End of Utilities dependencies -->
 
     <!-- Logging dependencies -->
     <dependency>
