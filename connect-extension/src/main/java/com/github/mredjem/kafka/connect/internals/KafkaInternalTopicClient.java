@@ -12,6 +12,7 @@ import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.config.TopicConfig;
+import org.awaitility.Awaitility;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -70,10 +71,16 @@ public class KafkaInternalTopicClient implements Closeable {
 
           adminClient.createTopics(Collections.singletonList(internalTopic)).all().get();
 
-        } catch (final ExecutionException ignored) {}
+        } catch (final ExecutionException e) {
+          if (!e.getMessage().contains(String.format("Topic '%s' already exists", topicName))) {
+            throw new KafkaInternalTopicOperationException("create", e);
+          }
+        }
       }
 
       this.kvStore.startConsumer(topicName);
+
+      Awaitility.await().atMost(30L, TimeUnit.SECONDS).until(this.kvStore::isReady);
     }
   }
 

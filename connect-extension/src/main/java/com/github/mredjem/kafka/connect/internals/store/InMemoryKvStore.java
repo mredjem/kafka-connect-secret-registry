@@ -34,6 +34,8 @@ public class InMemoryKvStore implements KvStore<KafkaSecretKey, KafkaSecretValue
 
   private volatile boolean running = true;
 
+  private boolean ready;
+
   private InMemoryKvStore(Map<String, ?> configs) {
     this.kvConsumer = KafkaClients.consumer(configs);
   }
@@ -75,6 +77,8 @@ public class InMemoryKvStore implements KvStore<KafkaSecretKey, KafkaSecretValue
           }
 
           this.kvConsumer.commitAsync();
+
+          this.evaluateReadiness();
         }
 
       } catch (final WakeupException e) {
@@ -89,6 +93,11 @@ public class InMemoryKvStore implements KvStore<KafkaSecretKey, KafkaSecretValue
         }
       }
     });
+  }
+
+  @Override
+  public synchronized boolean isReady() {
+    return this.ready;
   }
 
   @Override
@@ -132,6 +141,27 @@ public class InMemoryKvStore implements KvStore<KafkaSecretKey, KafkaSecretValue
     } catch (final InterruptedException e) {
       Thread.currentThread().interrupt();
     }
+  }
+
+  private void evaluateReadiness() {
+    if (this.ready) {
+      return;
+    }
+
+    long currentLag = this.computeCurrentLag();
+
+    if (currentLag == 0L) {
+      this.ready = true;
+    }
+  }
+
+  private long computeCurrentLag() {
+    return this.kvConsumer.assignment()
+      .stream()
+      .map(this.kvConsumer::currentLag)
+      .map(lag -> lag.orElse(0L))
+      .mapToLong(Long::longValue)
+      .sum();
   }
 
   private static class ResetConsumerRebalanceListener implements ConsumerRebalanceListener {
