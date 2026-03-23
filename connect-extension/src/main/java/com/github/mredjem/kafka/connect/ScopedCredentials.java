@@ -34,6 +34,10 @@ public class ScopedCredentials {
   }
 
   public boolean hasScope() {
-    return !this.scope.trim().isEmpty();
+    if (this.scope.trim().isEmpty()) {
+      return false;
+    }
+
+    return !"\"\"".equals(this.scope) && !"''".equals(this.scope);
   }
 }
