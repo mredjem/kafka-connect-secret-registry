@@ -1,3 +1,10 @@
+## [0.1.1](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.1.0...0.1.1) (2026-03-23)
+
+
+### Bug Fixes
+
+* shorten kv store readiness wait ([51ae8b9](https://github.com/mredjem/kafka-connect-secret-registry/commit/51ae8b9f9e7cf4476cfdc068fb9fcfb413548068))
+
 # [0.1.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.0.10...0.1.0) (2026-03-23)
 
 
