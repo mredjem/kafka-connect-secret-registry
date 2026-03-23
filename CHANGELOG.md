@@ -1,3 +1,10 @@
+# [0.1.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.0.10...0.1.0) (2026-03-23)
+
+
+### Features
+
+* wait for kv store to be ready ([d3ead90](https://github.com/mredjem/kafka-connect-secret-registry/commit/d3ead9092cb4afc617b72901c4f8209630c76ff1))
+
 ## [0.0.10](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.0.9...0.0.10) (2026-03-22)
 
 
