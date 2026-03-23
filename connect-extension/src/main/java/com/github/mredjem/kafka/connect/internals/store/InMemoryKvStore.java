@@ -33,8 +33,7 @@ public class InMemoryKvStore implements KvStore<KafkaSecretKey, KafkaSecretValue
   private final Consumer<KafkaSecretKey, KafkaSecretValue> kvConsumer;
 
   private volatile boolean running = true;
-
-  private boolean ready;
+  private volatile boolean ready;
 
   private InMemoryKvStore(Map<String, ?> configs) {
     this.kvConsumer = KafkaClients.consumer(configs);
