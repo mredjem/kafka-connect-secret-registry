@@ -1,3 +1,12 @@
+## [0.1.1](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.1.0...0.1.1) (2026-03-24)
+
+
+### Bug Fixes
+
+* allow internal requests ([f60ffec](https://github.com/mredjem/kafka-connect-secret-registry/commit/f60ffec2902e4e4c84f42e586ac78f20a03640bb))
+* detect empty strings for scope ([5209328](https://github.com/mredjem/kafka-connect-secret-registry/commit/5209328de0224e6754898043f8e518f018bde825))
+* shorten kv store readiness wait ([51ae8b9](https://github.com/mredjem/kafka-connect-secret-registry/commit/51ae8b9f9e7cf4476cfdc068fb9fcfb413548068))
+
 # [0.1.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.0.10...0.1.0) (2026-03-23)
 
 
