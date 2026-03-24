@@ -5,33 +5,33 @@ import javax.ws.rs.container.ContainerRequestContext;
 import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 public final class FilterUtils {
 
-  private static final Set<String> ALLOWED_PATHS = new HashSet<>();
+  private static final Set<RequestMatcher> INTERNAL_REQUEST_MATCHERS = new HashSet<>();
 
   static {
-    ALLOWED_PATHS.add("");
-    ALLOWED_PATHS.add("/");
-    ALLOWED_PATHS.add("connector-plugins");
-    ALLOWED_PATHS.add("connector-plugins/");
-    ALLOWED_PATHS.add("/connector-plugins");
-    ALLOWED_PATHS.add("/connector-plugins/");
+    INTERNAL_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.POST, Pattern.compile("/?connectors/([^/]+)/tasks/?")));
+    INTERNAL_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.PUT, Pattern.compile("/?connectors/[^/]+/fence/?")));
+  }
+
+  private static final Set<RequestMatcher> ANONYMOUS_REQUEST_MATCHERS = new HashSet<>();
+
+  static {
+    ANONYMOUS_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?")));
+    ANONYMOUS_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connector-plugins/?")));
   }
 
   private FilterUtils() {
   }
 
+  public static boolean isInternalRequest(ContainerRequestContext containerRequestContext) {
+    return INTERNAL_REQUEST_MATCHERS.stream().anyMatch(matcher -> matcher.test(containerRequestContext));
+  }
+
   public static boolean isAllowedAnonymously(ContainerRequestContext containerRequestContext) {
-    String requestMethod = containerRequestContext.getMethod();
-
-    if (!HttpMethod.GET.equalsIgnoreCase(requestMethod)) {
-      return false;
-    }
-
-    String requestPath = containerRequestContext.getUriInfo().getPath();
-
-    return ALLOWED_PATHS.contains(requestPath.toLowerCase());
+    return ANONYMOUS_REQUEST_MATCHERS.stream().anyMatch(matcher -> matcher.test(containerRequestContext));
   }
 
   public static boolean isWriteAccess(ContainerRequestContext containerRequestContext) {
