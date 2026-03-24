@@ -36,7 +36,7 @@ public class BasicAuthFilter implements ContainerRequestFilter {
 
   @Override
   public void filter(ContainerRequestContext containerRequestContext) throws IOException {
-    if (FilterUtils.isAllowedAnonymously(containerRequestContext)) {
+    if (FilterUtils.isInternalRequest(containerRequestContext) || FilterUtils.isAllowedAnonymously(containerRequestContext)) {
       return;
     }
 
