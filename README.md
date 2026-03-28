@@ -1,3 +1,6 @@
+[![Build](https://github.com/mredjem/kafka-connect-secret-registry/actions/workflows/build.yml/badge.svg)](https://github.com/mredjem/kafka-connect-secret-registry/actions/workflows/build.yml)
+[![Release](https://github.com/mredjem/kafka-connect-secret-registry/actions/workflows/release.yml/badge.svg)](https://github.com/mredjem/kafka-connect-secret-registry/actions/workflows/release.yml)
+
 # Kafka Connect Secret Registry Extension
 
 This is a REST extension for Kafka Connect allowing to store connector secrets in an internal Kafka topic.

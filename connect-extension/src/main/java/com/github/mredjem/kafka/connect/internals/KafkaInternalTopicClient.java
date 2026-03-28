@@ -51,7 +51,7 @@ public class KafkaInternalTopicClient implements Closeable {
   }
 
   public void init() throws ExecutionException, InterruptedException {
-    String topicName = ConfigUtils.getOrThrow(KAFKASTORE_TOPIC_CONFIG, configs);
+    String topicName = ConfigUtils.getOrThrow(KAFKASTORE_TOPIC_CONFIG, this.configs);
 
     try (AdminClient adminClient = KafkaClients.adminClient(this.configs)) {
       ListTopicsOptions options = new ListTopicsOptions().listInternal(false);
@@ -60,7 +60,7 @@ public class KafkaInternalTopicClient implements Closeable {
 
       if (!topicNames.contains(topicName)) {
         try {
-          int replicationFactor = ConfigUtils.getInt(KAFKASTORE_TOPIC_REPLICATION_FACTOR_CONFIG, configs);
+          int replicationFactor = ConfigUtils.getInt(KAFKASTORE_TOPIC_REPLICATION_FACTOR_CONFIG, this.configs);
 
           Map<String, String> cleanupPolicy = Collections.singletonMap(
             TopicConfig.CLEANUP_POLICY_CONFIG,
@@ -85,7 +85,7 @@ public class KafkaInternalTopicClient implements Closeable {
   }
 
   public int saveNewSecret(String path, String key, int version, String secret) {
-    String topicName = ConfigUtils.getOrThrow(KAFKASTORE_TOPIC_CONFIG, configs);
+    String topicName = ConfigUtils.getOrThrow(KAFKASTORE_TOPIC_CONFIG, this.configs);
 
     try (Producer<KafkaSecretKey, KafkaSecretValue> producer = KafkaClients.producer(this.configs)) {
       KafkaSecretKey kafkaSecretKey = KafkaSecretKeyMapper.newKey(path, key, version);
@@ -109,7 +109,7 @@ public class KafkaInternalTopicClient implements Closeable {
   }
 
   public void deleteSecret(String path, String key, int version) {
-    String topicName = ConfigUtils.getOrThrow(KAFKASTORE_TOPIC_CONFIG, configs);
+    String topicName = ConfigUtils.getOrThrow(KAFKASTORE_TOPIC_CONFIG, this.configs);
 
     try (Producer<KafkaSecretKey, KafkaSecretValue> producer = KafkaClients.producer(this.configs)) {
       KafkaSecretKey kafkaSecretKey = KafkaSecretKeyMapper.newKey(path, key, version);
@@ -135,6 +135,13 @@ public class KafkaInternalTopicClient implements Closeable {
     return this.kvStore.get(kafkaSecretKey)
       .map(Arrays::asList)
       .orElse(Collections.emptyList());
+  }
+
+  @Override
+  public void close() throws IOException {
+    if (this.kvStore != null) {
+      this.kvStore.close();
+    }
   }
 
   private KafkaSecretValue newValue(String path, String key, int version, String secret) {
@@ -179,12 +186,5 @@ public class KafkaInternalTopicClient implements Closeable {
 
       return Integer.toString(secretKey.getVersion()).equals(version);
     };
-  }
-
-  @Override
-  public void close() throws IOException {
-    if (this.kvStore != null) {
-      this.kvStore.close();
-    }
   }
 }
