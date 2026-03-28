@@ -70,7 +70,7 @@ class SecretRegistryExtensionIT {
     .withNetworkAliases("kafka")
     .withExposedPorts(9092, 9093, 29092)
     .withListener("kafka:29092")
-    .withEnv("KAFKA_BROKER_ID", "1")
+    .withEnv("KAFKA_NODE_ID", "1")
     .withEnv("KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR", "1")
     .withEnv("KAFKA_AUTO_CREATE_TOPICS_ENABLE", "false")
     .withEnv("CONFLUENT_METRICS_ENABLE", "false");
@@ -102,7 +102,7 @@ class SecretRegistryExtensionIT {
     .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_MASTER_ENCRYPTION_KEY", "juby895fmddr5hw58839d3myz27zw206ffxiv68m")
     .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_SECRET_REGISTRY_GROUP_ID", "secret-registry")
     .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_SUPER_ADMINS", "admin:password:,centreon:password:read")
-    .withLogConsumer(outputFrame -> new Slf4jLogConsumer(LoggerFactory.getLogger("connect")))
+    .withLogConsumer(outputFrame -> new Slf4jLogConsumer(LoggerFactory.getLogger("connect")).accept(outputFrame))
     .dependsOn(KAFKA);
 
   @BeforeAll
