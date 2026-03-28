@@ -1,3 +1,10 @@
+## [0.1.2](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.1.1...0.1.2) (2026-03-28)
+
+
+### Bug Fixes
+
+* allow access to connector status anonymously ([bd31fc8](https://github.com/mredjem/kafka-connect-secret-registry/commit/bd31fc819a03f3ed99995d721e968b2c511ebcf1))
+
 ## [0.1.1](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.1.0...0.1.1) (2026-03-24)
 
 
