@@ -8,6 +8,11 @@
   <artifactId>kafka-connect-secret-registry-extension</artifactId>
   <version>0.1.2</version>
 
+  <organization>
+    <name>mredjem</name>
+    <url>https://github.com/mredjem/</url>
+  </organization>
+
   <properties>
     <connect-api.version>3.7.2</connect-api.version>
     <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
@@ -144,7 +149,7 @@
   </dependencies>
 
   <build>
-    <finalName>mredjem-${project.artifactId}-${project.version}</finalName>
+    <finalName>${organization.name}-${project.artifactId}-${project.version}</finalName>
     <plugins>
       <!-- Compile to 1.8 -->
       <plugin>
