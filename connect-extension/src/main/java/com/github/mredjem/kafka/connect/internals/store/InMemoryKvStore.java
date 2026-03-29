@@ -44,7 +44,7 @@ public class InMemoryKvStore implements KvStore<KafkaSecretKey, KafkaSecretValue
   }
 
   @Override
-  public void startConsumer(String topic) {
+  public void start(String topic) {
     this.threadPool.submit(() -> {
       try {
         ResetConsumerRebalanceListener rebalanceListener = new ResetConsumerRebalanceListener();

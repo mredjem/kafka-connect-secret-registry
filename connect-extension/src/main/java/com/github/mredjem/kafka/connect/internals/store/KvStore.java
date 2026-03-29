@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-public interface KvStore<K, V> extends Closeable, WaitingForConsumerToStart {
+public interface KvStore<K, V> extends Closeable, WaitingConsumer {
 
   Optional<V> get(K key);
 
