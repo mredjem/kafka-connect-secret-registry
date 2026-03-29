@@ -1,6 +1,7 @@
 package com.github.mredjem.kafka.connect.extensions.filters;
 
 import com.github.mredjem.kafka.connect.ScopedCredentials;
+import com.github.mredjem.kafka.connect.utils.ConfigUtils;
 
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -24,7 +25,7 @@ public class BasicAuthFilter implements ContainerRequestFilter {
   private final ContainerRequestFilter next;
 
   private BasicAuthFilter(Map<String, String> configs, ContainerRequestFilter next) {
-    this.superAdmins = Arrays.stream(configs.get(SUPER_ADMINS_CONFIG).split(","))
+    this.superAdmins = Arrays.stream(ConfigUtils.getOrThrow(SUPER_ADMINS_CONFIG, configs).split(","))
       .map(ScopedCredentials::of)
       .collect(Collectors.toList());
     this.next = next;
