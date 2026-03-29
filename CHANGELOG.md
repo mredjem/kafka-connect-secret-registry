@@ -1,3 +1,10 @@
+## [0.1.3](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.1.2...0.1.3) (2026-03-29)
+
+
+### Bug Fixes
+
+* enforce presence of super admins configuration ([de89f9f](https://github.com/mredjem/kafka-connect-secret-registry/commit/de89f9ff512c18c781b74dac1cb5dc0f137ac9df))
+
 ## [0.1.2](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.1.1...0.1.2) (2026-03-28)
 
 
