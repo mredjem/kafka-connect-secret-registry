@@ -1,5 +1,6 @@
 package com.github.mredjem.kafka.connect;
 
+import com.github.mredjem.kafka.connect.containers.ConfluentKafkaConnectContainer;
 import com.github.mredjem.kafka.connect.dtos.CreateConnectorDto;
 import com.github.mredjem.kafka.connect.extensions.SecretRegistryExtension;
 import com.github.mredjem.kafka.connect.extensions.dtos.CreateSecretDto;
@@ -10,22 +11,13 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.images.builder.ImageFromDockerfile;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.kafka.ConfluentKafkaContainer;
 
 import javax.ws.rs.core.HttpHeaders;
-import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.stream.Stream;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsString;
@@ -40,31 +32,6 @@ class SecretRegistryExtensionIT {
 
   private static final Network NETWORK = Network.newNetwork();
 
-  private static final String PLUGIN_PATH = "/etc/kafka-connect/jars";
-
-  private static final File CONNECT_EXTENSION_JAR;
-
-  static {
-    try (Stream<Path> paths = Files.walk(Paths.get("target"))) {
-      CONNECT_EXTENSION_JAR = paths
-        .filter(path -> path.getFileName().toString().endsWith("-all.jar"))
-        .findFirst()
-        .orElseThrow(() -> new IllegalStateException("Unable to find connect extension JAR"))
-        .toFile();
-
-    } catch (final IOException e) {
-      throw new UncheckedIOException(e);
-    }
-  }
-
-  private static final ImageFromDockerfile CONNECT_WITH_EXTENSION = new ImageFromDockerfile()
-    .withFileFromFile("mredjem-kafka-connect-secret-registry-extension.jar", CONNECT_EXTENSION_JAR)
-    .withDockerfileFromBuilder(builder -> builder
-      .from("confluentinc/cp-kafka-connect-base:7.7.0")
-      .copy("mredjem-kafka-connect-secret-registry-extension.jar", PLUGIN_PATH)
-      .build()
-    );
-
   private static final ConfluentKafkaContainer KAFKA = new ConfluentKafkaContainer("confluentinc/cp-kafka:7.7.0")
     .withNetwork(NETWORK)
     .withNetworkAliases("kafka")
@@ -75,7 +42,7 @@ class SecretRegistryExtensionIT {
     .withEnv("KAFKA_AUTO_CREATE_TOPICS_ENABLE", "false")
     .withEnv("CONFLUENT_METRICS_ENABLE", "false");
 
-  private static final GenericContainer<?> CONNECT = new GenericContainer<>(CONNECT_WITH_EXTENSION)
+  private static final ConfluentKafkaConnectContainer CONNECT = new ConfluentKafkaConnectContainer("confluentinc/cp-kafka-connect-base:7.7.0")
     .withNetwork(NETWORK)
     .withNetworkAliases("connect")
     .withExposedPorts(8083)
@@ -91,7 +58,7 @@ class SecretRegistryExtensionIT {
     .withEnv("CONNECT_VALUE_CONVERTER", "org.apache.kafka.connect.json.JsonConverter")
     .withEnv("CONNECT_REST_ADVERTISED_HOST_NAME", "connect")
     .withEnv("CONNECT_REST_PORT", "8083")
-    .withEnv("CONNECT_PLUGIN_PATH", PLUGIN_PATH)
+    .withEnv("CONNECT_PLUGIN_PATH", ConfluentKafkaConnectContainer.PLUGIN_PATH)
     .withEnv("CONNECT_REST_EXTENSION_CLASSES", SecretRegistryExtension.class.getName())
     .withEnv("CONNECT_CONFIG_PROVIDERS", "secret")
     .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_CLASS", InternalSecretConfigProvider.class.getName())
