@@ -1,3 +1,10 @@
+## [0.1.4](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.1.3...0.1.4) (2026-03-29)
+
+
+### Bug Fixes
+
+* solve logback cve ([ab918da](https://github.com/mredjem/kafka-connect-secret-registry/commit/ab918daddea127983fae7a80b461eb1e7329473b))
+
 ## [0.1.3](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.1.2...0.1.3) (2026-03-29)
 
 
