@@ -1,8 +1,8 @@
 package com.github.mredjem.kafka.connect.internals.store;
 
-public interface WaitingForConsumerToStart {
+public interface WaitingConsumer {
 
-  void startConsumer(String topic);
+  void start(String topic);
 
   boolean isReady();
 }

@@ -78,7 +78,7 @@ public class KafkaInternalTopicClient implements Closeable {
         }
       }
 
-      this.kvStore.startConsumer(topicName);
+      this.kvStore.start(topicName);
 
       Awaitility.await().atMost(15L, TimeUnit.SECONDS).until(this.kvStore::isReady);
     }
