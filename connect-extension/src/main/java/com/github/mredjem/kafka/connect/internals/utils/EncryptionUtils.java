@@ -1,7 +1,7 @@
-package com.github.mredjem.kafka.connect.utils;
+package com.github.mredjem.kafka.connect.internals.utils;
 
 import com.github.mredjem.kafka.connect.EncryptedSecret;
-import com.github.mredjem.kafka.connect.exceptions.EncryptionException;
+import com.github.mredjem.kafka.connect.internals.exceptions.EncryptionException;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;

@@ -1,4 +1,4 @@
-package com.github.mredjem.kafka.connect.extensions.filters;
+package com.github.mredjem.kafka.connect.extensions.utils;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import java.util.function.Predicate;

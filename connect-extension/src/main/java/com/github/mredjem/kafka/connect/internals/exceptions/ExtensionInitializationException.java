@@ -1,4 +1,4 @@
-package com.github.mredjem.kafka.connect.exceptions;
+package com.github.mredjem.kafka.connect.internals.exceptions;
 
 public class ExtensionInitializationException extends RuntimeException {
 

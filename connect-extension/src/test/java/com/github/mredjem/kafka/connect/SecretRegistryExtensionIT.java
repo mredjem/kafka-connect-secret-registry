@@ -151,6 +151,90 @@ class SecretRegistryExtensionIT {
   }
 
   @Test
+  void shouldAllowReadingConfigurationAndStatusWhenDeveloperRead() {
+    given()
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMiwicm9sZXMiOlsiS2Fma2FDb25uZWN0LkRldmVsb3BlclJlYWQiXX0.gswwbxRGWer_45x_ZSrcikKA7fRm_vWw_Fmi7ShvV8k")
+      .contentType(ContentType.JSON)
+      .body("{}")
+    .when()
+      .post("/connectors")
+    .then()
+      .statusCode(403);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMiwicm9sZXMiOlsiS2Fma2FDb25uZWN0LkRldmVsb3BlclJlYWQiXX0.gswwbxRGWer_45x_ZSrcikKA7fRm_vWw_Fmi7ShvV8k")
+    .when()
+      .get("/secret/paths")
+    .then()
+      .statusCode(403);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMiwicm9sZXMiOlsiS2Fma2FDb25uZWN0LkRldmVsb3BlclJlYWQiXX0.gswwbxRGWer_45x_ZSrcikKA7fRm_vWw_Fmi7ShvV8k")
+    .when()
+      .get("/connectors/connector/config")
+    .then()
+      .statusCode(404);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMiwicm9sZXMiOlsiS2Fma2FDb25uZWN0LkRldmVsb3BlclJlYWQiXX0.gswwbxRGWer_45x_ZSrcikKA7fRm_vWw_Fmi7ShvV8k")
+    .when()
+      .get("/connectors/connector/status")
+    .then()
+      .statusCode(404);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMiwicm9sZXMiOlsiS2Fma2FDb25uZWN0LkRldmVsb3BlclJlYWQiXX0.gswwbxRGWer_45x_ZSrcikKA7fRm_vWw_Fmi7ShvV8k")
+    .when()
+      .get("/connectors/connector/tasks")
+    .then()
+      .statusCode(404);
+  }
+
+  @Test
+  void shouldAllowReadingStatusAndSecretAndRestartingConnectorsWhenConnectManager() {
+    given()
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMiwicm9sZXMiOlsiS2Fma2FDb25uZWN0LkNvbm5lY3RNYW5hZ2VyIl19.9taRXlnMQjqMEu5jBz3r4N2I_Wdv8PVCdVlz4jS_Odw")
+      .contentType(ContentType.JSON)
+      .body("{}")
+    .when()
+      .post("/connectors")
+    .then()
+      .statusCode(403);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMiwicm9sZXMiOlsiS2Fma2FDb25uZWN0LkNvbm5lY3RNYW5hZ2VyIl19.9taRXlnMQjqMEu5jBz3r4N2I_Wdv8PVCdVlz4jS_Odw")
+    .when()
+      .get("/secret/paths")
+    .then()
+      .statusCode(200);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMiwicm9sZXMiOlsiS2Fma2FDb25uZWN0LkNvbm5lY3RNYW5hZ2VyIl19.9taRXlnMQjqMEu5jBz3r4N2I_Wdv8PVCdVlz4jS_Odw")
+    .when()
+      .get("/connectors/connector/status")
+    .then()
+      .statusCode(404);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMiwicm9sZXMiOlsiS2Fma2FDb25uZWN0LkNvbm5lY3RNYW5hZ2VyIl19.9taRXlnMQjqMEu5jBz3r4N2I_Wdv8PVCdVlz4jS_Odw")
+      .contentType(ContentType.JSON)
+    .when()
+      .post("/connectors/connector/restart")
+    .then()
+      .statusCode(404);
+  }
+
+  @Test
+  void shouldAllowManagingSecretsWhenEnvironmentAdmin() {
+    given()
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMiwicm9sZXMiOlsiS2Fma2FDb25uZWN0LkVudmlyb25tZW50QWRtaW4iXX0.o-_ItotSgJxpGpY-hWUC-XF16whq7yz435NPbamDua8")
+    .when()
+      .get("/secret/paths")
+    .then()
+      .statusCode(200);
+  }
+
+  @Test
   void shouldCreateNewSecrets() {
     CreateSecretDto createPgUserSecret = CreateSecretDto.of("admin");
 

@@ -3,7 +3,10 @@ package com.github.mredjem.kafka.connect.extensions.filters;
 import com.github.mredjem.kafka.connect.AuthenticationCredentials;
 import com.github.mredjem.kafka.connect.AuthenticationKind;
 import com.github.mredjem.kafka.connect.AuthorizationPort;
-import com.github.mredjem.kafka.connect.internals.KafkaClusterPingRepository;
+import com.github.mredjem.kafka.connect.Operation;
+import com.github.mredjem.kafka.connect.extensions.utils.FilterUtils;
+import com.github.mredjem.kafka.connect.extensions.utils.RBACUtils;
+import com.github.mredjem.kafka.connect.internals.KafkaAuthorizationRepository;
 import com.github.mredjem.kafka.connect.utils.ConfigUtils;
 
 import javax.ws.rs.ForbiddenException;
@@ -22,7 +25,7 @@ public class BearerAuthFilter implements ContainerRequestFilter {
   private BearerAuthFilter(Map<String, String> configs) {
     Map<String, String> kafkaConfigs = ConfigUtils.getConfigsForPrefix("kafkastore.", configs);
 
-    this.authorizationPort = KafkaClusterPingRepository.create(kafkaConfigs);
+    this.authorizationPort = KafkaAuthorizationRepository.create(kafkaConfigs);
   }
 
   public static BearerAuthFilter create(Map<String, String> configs) {
@@ -31,14 +34,10 @@ public class BearerAuthFilter implements ContainerRequestFilter {
 
   @Override
   public void filter(ContainerRequestContext containerRequestContext) {
-    if (FilterUtils.isAllowedAnonymously(containerRequestContext)) {
-      return;
-    }
-
     String bearerCredentials = FilterUtils.getBearerCredentials(containerRequestContext);
 
     if (bearerCredentials.isEmpty()) {
-      Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new NotAuthorizedException("Authorization header is not valid", "Bearer"));
+      Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new NotAuthorizedException("Authorization header is not valid", "Basic|Bearer"));
 
       containerRequestContext.abortWith(errorResponse);
 
@@ -47,16 +46,22 @@ public class BearerAuthFilter implements ContainerRequestFilter {
 
     AuthenticationCredentials authenticationCredentials = AuthenticationCredentials.of(AuthenticationKind.BEARER, bearerCredentials);
 
-    if (!this.authorizationPort.checkAccess(authenticationCredentials)) {
-      Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new ForbiddenException("Access is denied, check your configuration"));
+    if (!this.authorizationPort.validateToken(authenticationCredentials)) {
+      Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new ForbiddenException("User token is not valid"));
 
       containerRequestContext.abortWith(errorResponse);
 
       return;
     }
 
-    if (FilterUtils.isWriteAccess(containerRequestContext)) {
-      Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new ForbiddenException("User is allowed read access only"));
+    Operation operation = RBACUtils.getOperationForRequest(containerRequestContext);
+
+    boolean operationAllowed = this.authorizationPort.getAppRoles(authenticationCredentials)
+      .stream()
+      .anyMatch(role -> role.allows(operation));
+
+    if (!operationAllowed) {
+      Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new ForbiddenException("User token is not allowed to access resource"));
 
       containerRequestContext.abortWith(errorResponse);
     }

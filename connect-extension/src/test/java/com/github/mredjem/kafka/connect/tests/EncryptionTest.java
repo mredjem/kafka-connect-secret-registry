@@ -4,7 +4,7 @@ import com.github.mredjem.kafka.connect.EncryptedSecret;
 import com.github.mredjem.kafka.connect.internals.KafkaSecretValue;
 import com.github.mredjem.kafka.connect.internals.mappers.KafkaSecretValueMapper;
 import com.github.mredjem.kafka.connect.internals.serdes.KafkaSecretValueSerde;
-import com.github.mredjem.kafka.connect.utils.EncryptionUtils;
+import com.github.mredjem.kafka.connect.internals.utils.EncryptionUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

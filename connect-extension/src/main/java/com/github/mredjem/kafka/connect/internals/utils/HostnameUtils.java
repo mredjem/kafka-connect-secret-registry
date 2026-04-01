@@ -1,4 +1,4 @@
-package com.github.mredjem.kafka.connect.utils;
+package com.github.mredjem.kafka.connect.internals.utils;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

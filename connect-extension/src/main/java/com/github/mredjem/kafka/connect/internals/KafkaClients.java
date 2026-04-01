@@ -3,7 +3,7 @@ package com.github.mredjem.kafka.connect.internals;
 import com.github.mredjem.kafka.connect.internals.serdes.KafkaSecretKeySerde;
 import com.github.mredjem.kafka.connect.internals.serdes.KafkaSecretValueSerde;
 import com.github.mredjem.kafka.connect.utils.ConfigUtils;
-import com.github.mredjem.kafka.connect.utils.HostnameUtils;
+import com.github.mredjem.kafka.connect.internals.utils.HostnameUtils;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.consumer.Consumer;
