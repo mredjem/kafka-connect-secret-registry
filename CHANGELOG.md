@@ -1,3 +1,15 @@
+# [1.0.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.1.4...1.0.0) (2026-04-05)
+
+
+### Features
+
+* provide rbac management for bearer authentication ([adbd4ca](https://github.com/mredjem/kafka-connect-secret-registry/commit/adbd4ca0a0325ac4c754491cff8c2e34e948b16b))
+
+
+### BREAKING CHANGES
+
+* jwt now requires kafka connect roles claims to be present
+
 ## [0.1.4](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.1.3...0.1.4) (2026-03-29)
 
 
