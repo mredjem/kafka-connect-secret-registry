@@ -2,7 +2,7 @@ package com.github.mredjem.kafka.connect.internals.mappers;
 
 import com.github.mredjem.kafka.connect.internals.KafkaSecretEncrypted;
 import com.github.mredjem.kafka.connect.internals.KafkaSecretValue;
-import com.github.mredjem.kafka.connect.utils.EncryptionUtils;
+import com.github.mredjem.kafka.connect.internals.utils.EncryptionUtils;
 
 import java.time.Instant;
 

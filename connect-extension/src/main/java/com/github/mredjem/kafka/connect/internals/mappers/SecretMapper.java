@@ -3,7 +3,7 @@ package com.github.mredjem.kafka.connect.internals.mappers;
 import com.github.mredjem.kafka.connect.EncryptedSecret;
 import com.github.mredjem.kafka.connect.Secret;
 import com.github.mredjem.kafka.connect.internals.KafkaSecretValue;
-import com.github.mredjem.kafka.connect.utils.EncryptionUtils;
+import com.github.mredjem.kafka.connect.internals.utils.EncryptionUtils;
 
 public class SecretMapper {
 

@@ -1,6 +1,8 @@
 package com.github.mredjem.kafka.connect.extensions.filters;
 
 import com.github.mredjem.kafka.connect.ScopedCredentials;
+import com.github.mredjem.kafka.connect.extensions.utils.FilterUtils;
+import com.github.mredjem.kafka.connect.extensions.utils.RBACUtils;
 import com.github.mredjem.kafka.connect.utils.ConfigUtils;
 
 import javax.ws.rs.ForbiddenException;
@@ -37,7 +39,7 @@ public class BasicAuthFilter implements ContainerRequestFilter {
 
   @Override
   public void filter(ContainerRequestContext containerRequestContext) throws IOException {
-    if (FilterUtils.isInternalRequest(containerRequestContext) || FilterUtils.isAllowedAnonymously(containerRequestContext)) {
+    if (RBACUtils.isInternalRequest(containerRequestContext) || RBACUtils.isAllowedAnonymously(containerRequestContext)) {
       return;
     }
 
@@ -52,7 +54,7 @@ public class BasicAuthFilter implements ContainerRequestFilter {
     ScopedCredentials superAdmin = this.findSuperAdmin(basicCredentials);
 
     if (superAdmin == null) {
-      Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new ForbiddenException("Access is denied, check your configuration"));
+      Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new ForbiddenException("User is not a super admin"));
 
       containerRequestContext.abortWith(errorResponse);
 
@@ -63,8 +65,8 @@ public class BasicAuthFilter implements ContainerRequestFilter {
       return;
     }
 
-    if (!READ_SCOPE.equalsIgnoreCase(superAdmin.getScope()) || FilterUtils.isWriteAccess(containerRequestContext)) {
-      Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new ForbiddenException("Access is denied, check your configuration"));
+    if (!READ_SCOPE.equalsIgnoreCase(superAdmin.getScope()) || RBACUtils.isWriteAccess(containerRequestContext)) {
+      Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new ForbiddenException("User is allowed read access only"));
 
       containerRequestContext.abortWith(errorResponse);
     }

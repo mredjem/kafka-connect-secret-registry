@@ -5,7 +5,7 @@ import com.github.mredjem.kafka.connect.Path;
 import com.github.mredjem.kafka.connect.Secret;
 import com.github.mredjem.kafka.connect.SecretRegistryPort;
 import com.github.mredjem.kafka.connect.Version;
-import com.github.mredjem.kafka.connect.exceptions.ExtensionInitializationException;
+import com.github.mredjem.kafka.connect.internals.exceptions.ExtensionInitializationException;
 import com.github.mredjem.kafka.connect.internals.mappers.SecretMapper;
 
 import java.io.IOException;

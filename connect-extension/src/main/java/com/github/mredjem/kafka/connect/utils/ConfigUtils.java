@@ -1,7 +1,5 @@
 package com.github.mredjem.kafka.connect.utils;
 
-import com.github.mredjem.kafka.connect.exceptions.MissingRequiredConfigException;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
