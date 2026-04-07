@@ -43,7 +43,7 @@ public final class ConfigUtils {
     Properties props = new Properties();
 
     for (Map.Entry<String, ?> config : configs.entrySet()) {
-      props.setProperty(config.getKey(), (String) config.getValue());
+      props.setProperty(config.getKey(), config.getValue().toString());
     }
 
     return props;

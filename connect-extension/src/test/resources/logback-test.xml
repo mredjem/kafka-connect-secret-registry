@@ -5,6 +5,8 @@
     </encoder>
   </appender>
 
+  <logger name="com.github.dockerjava" level="WARN" />
+
   <root level="DEBUG">
     <appender-ref ref="CONSOLE" />
   </root>

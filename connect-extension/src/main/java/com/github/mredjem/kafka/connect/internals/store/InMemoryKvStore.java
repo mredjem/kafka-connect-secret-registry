@@ -134,7 +134,9 @@ public class InMemoryKvStore implements KvStore<KafkaSecretKey, KafkaSecretValue
       if (!this.threadPool.isTerminated()) {
         boolean terminated = this.threadPool.awaitTermination(1L, TimeUnit.SECONDS);
 
-        assert terminated;
+        if (!terminated) {
+          this.threadPool.shutdownNow();
+        }
       }
 
     } catch (final InterruptedException e) {

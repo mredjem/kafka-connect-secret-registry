@@ -1,4 +1,4 @@
-package com.github.mredjem.kafka.connect.roles;
+package com.github.mredjem.kafka.connect.oidc.roles;
 
 import com.github.mredjem.kafka.connect.Operation;
 import com.github.mredjem.kafka.connect.Role;
