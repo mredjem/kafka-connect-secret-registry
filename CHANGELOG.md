@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/1.0.0...1.1.0) (2026-04-09)
+
+
+### Features
+
+* manage rbac stored in confluent cloud ([59ea293](https://github.com/mredjem/kafka-connect-secret-registry/commit/59ea29310fc3f4d6602e5e403e0981f329d15e33))
+
 # [1.0.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/0.1.4...1.0.0) (2026-04-05)
 
 
