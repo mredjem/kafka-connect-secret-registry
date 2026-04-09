@@ -4,6 +4,7 @@ import com.github.mredjem.kafka.connect.Operation;
 
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.container.ContainerRequestContext;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -13,7 +14,7 @@ public final class RBACUtils {
   private static final Set<RequestMatcher> INTERNAL_REQUEST_MATCHERS = new HashSet<>();
 
   static {
-    INTERNAL_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.POST, Pattern.compile("/?connectors/([^/]+)/tasks/?")));
+    INTERNAL_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.POST, Pattern.compile("/?connectors/[^/]+/tasks/?")));
     INTERNAL_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.PUT, Pattern.compile("/?connectors/[^/]+/fence/?")));
   }
 
@@ -28,61 +29,61 @@ public final class RBACUtils {
 
   static {
     READ_CONFIGURATION_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connectors/?")));
-    READ_CONFIGURATION_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connectors/[^/]+/?")));
-    READ_CONFIGURATION_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connectors/[^/]+/config/?")));
-    READ_CONFIGURATION_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connectors/[^/]+/offsets/?")));
-    READ_CONFIGURATION_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connectors/[^/]+/topics/?")));
+    READ_CONFIGURATION_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connectors/([^/]+)/?")));
+    READ_CONFIGURATION_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connectors/([^/]+)/config/?")));
+    READ_CONFIGURATION_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connectors/([^/]+)/offsets/?")));
+    READ_CONFIGURATION_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connectors/([^/]+)/topics/?")));
   }
 
   private static final Set<RequestMatcher> READ_STATUS_REQUEST_MATCHERS = new HashSet<>();
 
   static {
-    READ_STATUS_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connectors/[^/]+/status/?")));
-    READ_STATUS_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connectors/[^/]+/tasks/?")));
-    READ_STATUS_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connectors/[^/]+/tasks/\\d+/status/?")));
+    READ_STATUS_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connectors/([^/]+)/status/?")));
+    READ_STATUS_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connectors/([^/]+)/tasks/?")));
+    READ_STATUS_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connectors/([^/]+)/tasks/\\d+/status/?")));
   }
 
   private static final Set<RequestMatcher> READ_SECRET_REQUEST_MATCHERS = new HashSet<>();
 
   static {
     READ_SECRET_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret/paths/?")));
-    READ_SECRET_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret/paths/[^/]+/?")));
-    READ_SECRET_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret/paths/[^/]+/keys/?")));
-    READ_SECRET_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret/paths/[^/]+/keys/[^/]+/?")));
-    READ_SECRET_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret/paths/[^/]+/keys/[^/]+/versions/?")));
-    READ_SECRET_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret/paths/[^/]+/keys/[^/]+/versions/\\d+/?")));
-    READ_SECRET_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret/paths/[^/]+/keys/[^/]+/versions/latest/?")));
+    READ_SECRET_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret/paths/([^/]+)/?")));
+    READ_SECRET_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret/paths/([^/]+)/keys/?")));
+    READ_SECRET_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret/paths/([^/]+)/keys/[^/]+/?")));
+    READ_SECRET_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret/paths/([^/]+)/keys/[^/]+/versions/?")));
+    READ_SECRET_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret/paths/([^/]+)/keys/[^/]+/versions/\\d+/?")));
+    READ_SECRET_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret/paths/([^/]+)/keys/[^/]+/versions/latest/?")));
   }
 
   private static final Set<RequestMatcher> PAUSE_RESUME_RESTART_REQUEST_MATCHERS = new HashSet<>();
 
   static {
-    PAUSE_RESUME_RESTART_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.POST, Pattern.compile("/?connectors/[^/]+/tasks/\\d+/restart/?")));
-    PAUSE_RESUME_RESTART_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.POST, Pattern.compile("/?connectors/[^/]+/restart/?")));
-    PAUSE_RESUME_RESTART_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.PUT, Pattern.compile("/?connectors/[^/]+/pause/?")));
-    PAUSE_RESUME_RESTART_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.PUT, Pattern.compile("/?connectors/[^/]+/resume/?")));
-    PAUSE_RESUME_RESTART_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.PUT, Pattern.compile("/?connectors/[^/]+/stop/?")));
+    PAUSE_RESUME_RESTART_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.POST, Pattern.compile("/?connectors/([^/]+)/tasks/\\d+/restart/?")));
+    PAUSE_RESUME_RESTART_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.POST, Pattern.compile("/?connectors/([^/]+)/restart/?")));
+    PAUSE_RESUME_RESTART_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.PUT, Pattern.compile("/?connectors/([^/]+)/pause/?")));
+    PAUSE_RESUME_RESTART_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.PUT, Pattern.compile("/?connectors/([^/]+)/resume/?")));
+    PAUSE_RESUME_RESTART_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.PUT, Pattern.compile("/?connectors/([^/]+)/stop/?")));
   }
 
   private static final Set<RequestMatcher> CONFIGURE_REQUEST_MATCHERS = new HashSet<>();
 
   static {
     CONFIGURE_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.POST, Pattern.compile("/?connectors/?")));
-    CONFIGURE_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.PUT, Pattern.compile("/?connectors/[^/]+/config/?")));
-    CONFIGURE_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.PATCH, Pattern.compile("/?connectors/[^/]+/offsets/?")));
-    CONFIGURE_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.DELETE, Pattern.compile("/?connectors/[^/]+/offsets/?")));
+    CONFIGURE_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.PUT, Pattern.compile("/?connectors/([^/]+)/config/?")));
+    CONFIGURE_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.PATCH, Pattern.compile("/?connectors/([^/]+)/offsets/?")));
+    CONFIGURE_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.DELETE, Pattern.compile("/?connectors/([^/]+)/offsets/?")));
   }
 
-  private static final RequestMatcher CONFIGURE_SECRET_REQUEST_MATCHERS = RequestMatcher.of(HttpMethod.POST, Pattern.compile("/?secret/paths/[^/]+/keys/[^/]+/versions/?"));
+  private static final RequestMatcher CONFIGURE_SECRET_REQUEST_MATCHERS = RequestMatcher.of(HttpMethod.POST, Pattern.compile("/?secret/paths/([^/]+)/keys/[^/]+/versions/?"));
 
-  private static final RequestMatcher DELETE_REQUEST_MATCHER = RequestMatcher.of(HttpMethod.DELETE, Pattern.compile("/?connectors/[^/]+/?"));
+  private static final RequestMatcher DELETE_REQUEST_MATCHER = RequestMatcher.of(HttpMethod.DELETE, Pattern.compile("/?connectors/([^/]+)/?"));
 
   private static final Set<RequestMatcher> DELETE_SECRET_REQUEST_MATCHERS = new HashSet<>();
 
   static {
-    DELETE_SECRET_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.DELETE, Pattern.compile("/?secret/paths/[^/]+/keys/[^/]+/versions/\\d+/?")));
-    DELETE_SECRET_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.DELETE, Pattern.compile("/?secret/paths/[^/]+/keys/[^/]+/?")));
-    DELETE_SECRET_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.DELETE, Pattern.compile("/?secret/paths/[^/]+/?")));
+    DELETE_SECRET_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.DELETE, Pattern.compile("/?secret/paths/([^/]+)/keys/[^/]+/versions/\\d+/?")));
+    DELETE_SECRET_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.DELETE, Pattern.compile("/?secret/paths/([^/]+)/keys/[^/]+/?")));
+    DELETE_SECRET_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.DELETE, Pattern.compile("/?secret/paths/([^/]+)/?")));
   }
 
   private RBACUtils() {}
@@ -131,11 +132,55 @@ public final class RBACUtils {
     return null;
   }
 
+  public static String getResourceForRequest(ContainerRequestContext containerRequestContext, Operation operation) {
+    if (Operation.READ_CONFIGURATION == operation) {
+      return getResourceName(containerRequestContext, READ_CONFIGURATION_REQUEST_MATCHERS);
+    }
+
+    if (Operation.READ_STATUS == operation) {
+      return getResourceName(containerRequestContext, READ_STATUS_REQUEST_MATCHERS);
+    }
+
+    if (Operation.READ_SECRET == operation) {
+      return getResourceName(containerRequestContext, READ_SECRET_REQUEST_MATCHERS);
+    }
+
+    if (Operation.PAUSE_RESUME_RESTART == operation) {
+      return getResourceName(containerRequestContext, PAUSE_RESUME_RESTART_REQUEST_MATCHERS);
+    }
+
+    if (Operation.CONFIGURE == operation) {
+      return getResourceName(containerRequestContext, CONFIGURE_REQUEST_MATCHERS);
+    }
+
+    if (Operation.CONFIGURE_SECRET == operation) {
+      return getResourceName(containerRequestContext, Collections.singleton(CONFIGURE_SECRET_REQUEST_MATCHERS));
+    }
+
+    if (Operation.DELETE == operation) {
+      return getResourceName(containerRequestContext, Collections.singleton(DELETE_REQUEST_MATCHER));
+    }
+
+    if (Operation.DELETE_SECRET == operation) {
+      return getResourceName(containerRequestContext, DELETE_SECRET_REQUEST_MATCHERS);
+    }
+
+    return "";
+  }
+
   public static boolean isWriteAccess(ContainerRequestContext containerRequestContext) {
     if (READ_CONFIGURATION_REQUEST_MATCHERS.stream().anyMatch(predicate -> predicate.test(containerRequestContext))) {
       return false;
     }
 
     return READ_STATUS_REQUEST_MATCHERS.stream().noneMatch(predicate -> predicate.test(containerRequestContext));
+  }
+
+  private static String getResourceName(ContainerRequestContext containerRequestContext, Set<RequestMatcher> requestMatchers) {
+    return requestMatchers.stream()
+      .map(predicate -> predicate.getResourceName(containerRequestContext))
+      .filter(resourceName -> !resourceName.isEmpty())
+      .findFirst()
+      .orElse("");
   }
 }

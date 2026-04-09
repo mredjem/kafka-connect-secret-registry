@@ -6,15 +6,12 @@ import com.github.mredjem.kafka.connect.AuthorizationPort;
 import com.github.mredjem.kafka.connect.Operation;
 import com.github.mredjem.kafka.connect.extensions.utils.FilterUtils;
 import com.github.mredjem.kafka.connect.extensions.utils.RBACUtils;
-import com.github.mredjem.kafka.connect.internals.KafkaAuthorizationRepository;
-import com.github.mredjem.kafka.connect.utils.ConfigUtils;
 
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Response;
-import java.util.Map;
 
 import static com.github.mredjem.kafka.connect.extensions.api.SecretRegistryApiExceptionHandler.toErrorResponse;
 
@@ -22,14 +19,12 @@ public class BearerAuthFilter implements ContainerRequestFilter {
 
   private final AuthorizationPort authorizationPort;
 
-  private BearerAuthFilter(Map<String, String> configs) {
-    Map<String, String> kafkaConfigs = ConfigUtils.getConfigsForPrefix("kafkastore.", configs);
-
-    this.authorizationPort = KafkaAuthorizationRepository.create(kafkaConfigs);
+  private BearerAuthFilter(AuthorizationPort authorizationPort) {
+    this.authorizationPort = authorizationPort;
   }
 
-  public static BearerAuthFilter create(Map<String, String> configs) {
-    return new BearerAuthFilter(configs);
+  public static BearerAuthFilter create(AuthorizationPort authorizationPort) {
+    return new BearerAuthFilter(authorizationPort);
   }
 
   @Override
@@ -46,21 +41,11 @@ public class BearerAuthFilter implements ContainerRequestFilter {
 
     AuthenticationCredentials authenticationCredentials = AuthenticationCredentials.of(AuthenticationKind.BEARER, bearerCredentials);
 
-    if (!this.authorizationPort.validateToken(authenticationCredentials)) {
-      Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new ForbiddenException("User token is not valid"));
-
-      containerRequestContext.abortWith(errorResponse);
-
-      return;
-    }
-
     Operation operation = RBACUtils.getOperationForRequest(containerRequestContext);
 
-    boolean operationAllowed = this.authorizationPort.getAppRoles(authenticationCredentials)
-      .stream()
-      .anyMatch(role -> role.allows(operation));
+    String resourceName = RBACUtils.getResourceForRequest(containerRequestContext, operation);
 
-    if (!operationAllowed) {
+    if (!this.authorizationPort.checkAccess(authenticationCredentials, operation, resourceName)) {
       Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new ForbiddenException("User token is not allowed to access resource"));
 
       containerRequestContext.abortWith(errorResponse);

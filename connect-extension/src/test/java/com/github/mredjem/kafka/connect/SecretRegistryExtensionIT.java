@@ -4,11 +4,15 @@ import com.github.mredjem.kafka.connect.containers.ConfluentKafkaConnectContaine
 import com.github.mredjem.kafka.connect.dtos.CreateConnectorDto;
 import com.github.mredjem.kafka.connect.extensions.SecretRegistryExtension;
 import com.github.mredjem.kafka.connect.extensions.dtos.CreateSecretDto;
+import com.github.mredjem.kafka.connect.mocks.ConfluentCloudApi;
 import com.github.mredjem.kafka.connect.providers.InternalSecretConfigProvider;
+import com.github.mredjem.kafka.connect.utils.SocketUtils;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.Network;
@@ -18,6 +22,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.kafka.ConfluentKafkaContainer;
 
 import javax.ws.rs.core.HttpHeaders;
+
+import java.util.concurrent.TimeUnit;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsString;
@@ -29,6 +35,8 @@ import static org.hamcrest.Matchers.is;
 
 @Testcontainers
 class SecretRegistryExtensionIT {
+
+  private static final int MOCKSERVER_PORT = SocketUtils.nextAvailablePort();
 
   private static final Network NETWORK = Network.newNetwork();
 
@@ -60,6 +68,11 @@ class SecretRegistryExtensionIT {
     .withEnv("CONNECT_REST_PORT", "8083")
     .withEnv("CONNECT_PLUGIN_PATH", ConfluentKafkaConnectContainer.PLUGIN_PATH)
     .withEnv("CONNECT_REST_EXTENSION_CLASSES", SecretRegistryExtension.class.getName())
+    .withEnv("CONNECT_CONFLUENT_CLOUD_ORGANIZATION_ID", "9bb441c4-edef-46ac-8a41-c49e44a3fd9a")
+    .withEnv("CONNECT_CONFLUENT_CLOUD_API_BASE_URL", "http://host.testcontainers.internal:" + MOCKSERVER_PORT)
+    .withEnv("CONNECT_CONFLUENT_CLOUD_API_KEY", "ABCDEFGHIJKLMNOP")
+    .withEnv("CONNECT_CONFLUENT_CLOUD_API_SECRET", "R15hoiDIq8Nxu/lY4mPO3DwAVIfU5W7OI+efsB607mLgHTnVW5XJGVqX2ysDx987")
+    .withEnv("CONNECT_CONFLUENT_CLOUD_IDENTITY_PROVIDER_NAME", "azure")
     .withEnv("CONNECT_CONFIG_PROVIDERS", "secret")
     .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_CLASS", InternalSecretConfigProvider.class.getName())
     .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_KAFKASTORE_BOOTSTRAP_SERVERS", "kafka:29092")
@@ -72,8 +85,16 @@ class SecretRegistryExtensionIT {
     .withLogConsumer(outputFrame -> new Slf4jLogConsumer(LoggerFactory.getLogger("connect")).accept(outputFrame))
     .dependsOn(KAFKA);
 
+  private static final ConfluentCloudApi CONFLUENT_CLOUD_API = ConfluentCloudApi.create();
+
   @BeforeAll
   static void setUp() throws InterruptedException {
+    CONFLUENT_CLOUD_API.start(MOCKSERVER_PORT);
+
+    Awaitility.await().atMost(5L, TimeUnit.SECONDS).until(CONFLUENT_CLOUD_API::isRunning);
+
+    org.testcontainers.Testcontainers.exposeHostPorts(MOCKSERVER_PORT);
+
     KAFKA.start();
 
     CONNECT.start();
@@ -85,6 +106,11 @@ class SecretRegistryExtensionIT {
     Thread.sleep(3_000L);
 
     RestAssured.baseURI = "http://localhost:" + CONNECT.getMappedPort(8083);
+  }
+
+  @BeforeEach
+  void beforeEach() {
+    CONFLUENT_CLOUD_API.initMocks();
   }
 
   @Test
@@ -153,39 +179,39 @@ class SecretRegistryExtensionIT {
   @Test
   void shouldAllowReadingConfigurationAndStatusWhenDeveloperRead() {
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMiwicm9sZXMiOlsiS2Fma2FDb25uZWN0LkRldmVsb3BlclJlYWQiXX0.gswwbxRGWer_45x_ZSrcikKA7fRm_vWw_Fmi7ShvV8k")
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
       .contentType(ContentType.JSON)
       .body("{}")
     .when()
       .post("/connectors")
     .then()
-      .statusCode(403);
+      .statusCode(500);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMiwicm9sZXMiOlsiS2Fma2FDb25uZWN0LkRldmVsb3BlclJlYWQiXX0.gswwbxRGWer_45x_ZSrcikKA7fRm_vWw_Fmi7ShvV8k")
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
     .when()
       .get("/secret/paths")
     .then()
-      .statusCode(403);
+      .statusCode(200);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMiwicm9sZXMiOlsiS2Fma2FDb25uZWN0LkRldmVsb3BlclJlYWQiXX0.gswwbxRGWer_45x_ZSrcikKA7fRm_vWw_Fmi7ShvV8k")
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
     .when()
-      .get("/connectors/connector/config")
+      .get("/connectors/my_datagen_connector/config")
     .then()
       .statusCode(404);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMiwicm9sZXMiOlsiS2Fma2FDb25uZWN0LkRldmVsb3BlclJlYWQiXX0.gswwbxRGWer_45x_ZSrcikKA7fRm_vWw_Fmi7ShvV8k")
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
     .when()
-      .get("/connectors/connector/status")
+      .get("/connectors/my_datagen_connector/status")
     .then()
       .statusCode(404);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMiwicm9sZXMiOlsiS2Fma2FDb25uZWN0LkRldmVsb3BlclJlYWQiXX0.gswwbxRGWer_45x_ZSrcikKA7fRm_vWw_Fmi7ShvV8k")
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
     .when()
-      .get("/connectors/connector/tasks")
+      .get("/connectors/my_datagen_connector/tasks")
     .then()
       .statusCode(404);
   }
@@ -193,33 +219,33 @@ class SecretRegistryExtensionIT {
   @Test
   void shouldAllowReadingStatusAndSecretAndRestartingConnectorsWhenConnectManager() {
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMiwicm9sZXMiOlsiS2Fma2FDb25uZWN0LkNvbm5lY3RNYW5hZ2VyIl19.9taRXlnMQjqMEu5jBz3r4N2I_Wdv8PVCdVlz4jS_Odw")
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
       .contentType(ContentType.JSON)
       .body("{}")
     .when()
       .post("/connectors")
     .then()
-      .statusCode(403);
+      .statusCode(500);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMiwicm9sZXMiOlsiS2Fma2FDb25uZWN0LkNvbm5lY3RNYW5hZ2VyIl19.9taRXlnMQjqMEu5jBz3r4N2I_Wdv8PVCdVlz4jS_Odw")
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
     .when()
       .get("/secret/paths")
     .then()
       .statusCode(200);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMiwicm9sZXMiOlsiS2Fma2FDb25uZWN0LkNvbm5lY3RNYW5hZ2VyIl19.9taRXlnMQjqMEu5jBz3r4N2I_Wdv8PVCdVlz4jS_Odw")
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
     .when()
-      .get("/connectors/connector/status")
+      .get("/connectors/my_mirror_connector/status")
     .then()
       .statusCode(404);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMiwicm9sZXMiOlsiS2Fma2FDb25uZWN0LkNvbm5lY3RNYW5hZ2VyIl19.9taRXlnMQjqMEu5jBz3r4N2I_Wdv8PVCdVlz4jS_Odw")
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
       .contentType(ContentType.JSON)
     .when()
-      .post("/connectors/connector/restart")
+      .post("/connectors/my_mirror_connector/restart")
     .then()
       .statusCode(404);
   }
@@ -227,11 +253,32 @@ class SecretRegistryExtensionIT {
   @Test
   void shouldAllowManagingSecretsWhenEnvironmentAdmin() {
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMiwicm9sZXMiOlsiS2Fma2FDb25uZWN0LkVudmlyb25tZW50QWRtaW4iXX0.o-_ItotSgJxpGpY-hWUC-XF16whq7yz435NPbamDua8")
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
     .when()
       .get("/secret/paths")
     .then()
       .statusCode(200);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+    .when()
+      .get("/secret/paths/my_jdbc_connector")
+    .then()
+      .statusCode(200);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+    .when()
+      .get("/secret/paths/my_mirror_connector")
+    .then()
+      .statusCode(200);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+    .when()
+      .get("/secret/paths/my_datagen_connector")
+    .then()
+      .statusCode(403);
   }
 
   @Test
@@ -435,5 +482,6 @@ class SecretRegistryExtensionIT {
   static void tearDown() {
     CONNECT.stop();
     KAFKA.stop();
+    CONFLUENT_CLOUD_API.stop();
   }
 }

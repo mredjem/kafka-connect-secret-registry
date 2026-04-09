@@ -4,7 +4,13 @@ import com.github.mredjem.kafka.connect.SecretRegistryPort;
 import com.github.mredjem.kafka.connect.extensions.api.SecretRegistryApi;
 import com.github.mredjem.kafka.connect.extensions.filters.BasicAuthFilter;
 import com.github.mredjem.kafka.connect.extensions.filters.BearerAuthFilter;
+import com.github.mredjem.kafka.connect.internals.KafkaAuthorizationRepository;
 import com.github.mredjem.kafka.connect.internals.KafkaInternalTopicRepository;
+import com.github.mredjem.kafka.connect.oidc.OidcConfigs;
+import com.github.mredjem.kafka.connect.oidc.OidcPort;
+import com.github.mredjem.kafka.connect.oidc.azure.EntraIDRepository;
+import com.github.mredjem.kafka.connect.oidc.azure.managed.ConfluentCloudRepository;
+import com.github.mredjem.kafka.connect.providers.InternalSecretConfigs;
 import com.github.mredjem.kafka.connect.utils.ConfigUtils;
 import org.apache.kafka.connect.rest.ConnectRestExtension;
 import org.apache.kafka.connect.rest.ConnectRestExtensionContext;
@@ -13,14 +19,9 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import java.io.IOException;
 import java.util.Map;
 
-import static com.github.mredjem.kafka.connect.providers.InternalSecretConfigs.PROVIDER_NAME;
-import static com.github.mredjem.kafka.connect.providers.InternalSecretConfigs.PROVIDER_PREFIX;
-import static com.github.mredjem.kafka.connect.providers.InternalSecretConfigs.SECRET_REGISTRY_GROUP_ID_CONFIG;
-
 public class SecretRegistryExtension implements ConnectRestExtension {
 
   private SecretRegistryPort secretRegistryPort;
-
   private ContainerRequestFilter containerRequestFilter;
 
   @Override
@@ -30,17 +31,8 @@ public class SecretRegistryExtension implements ConnectRestExtension {
 
   @Override
   public void configure(Map<String, ?> configs) {
-    Map<String, String> extensionConfigs = ConfigUtils.getConfigsForPrefix(String.format(PROVIDER_PREFIX, PROVIDER_NAME), configs);
-
-    String registryGroupId = extensionConfigs.get(SECRET_REGISTRY_GROUP_ID_CONFIG);
-
-    this.secretRegistryPort = KafkaInternalTopicRepository.create(ConfigUtils.addEntry(
-      extensionConfigs,
-      SECRET_REGISTRY_GROUP_ID_CONFIG,
-      String.format("%s-rest", registryGroupId)
-    ));
-
-    this.containerRequestFilter = BasicAuthFilter.create(extensionConfigs, BearerAuthFilter.create(extensionConfigs));
+    this.doConfigureSecretRegistryPort(configs);
+    this.doConfigureSecretRegistryFilter(configs);
   }
 
   @Override
@@ -55,5 +47,50 @@ public class SecretRegistryExtension implements ConnectRestExtension {
     if (this.secretRegistryPort != null) {
       this.secretRegistryPort.close();
     }
+  }
+
+  private void doConfigureSecretRegistryPort(Map<String, ?> configs) {
+    Map<String, String> extensionConfigs = this.getExtensionConfigs(configs);
+
+    String registryGroupId = extensionConfigs.get(InternalSecretConfigs.SECRET_REGISTRY_GROUP_ID_CONFIG);
+
+    this.secretRegistryPort = KafkaInternalTopicRepository.create(ConfigUtils.addEntry(
+      extensionConfigs,
+      InternalSecretConfigs.SECRET_REGISTRY_GROUP_ID_CONFIG,
+      String.format("%s-rest", registryGroupId)
+    ));
+  }
+
+  private void doConfigureSecretRegistryFilter(Map<String, ?> configs) {
+    Map<String, String> extensionConfigs = this.getExtensionConfigs(configs);
+
+    OidcPort oidcPort = this.getOidcImplementation(configs, extensionConfigs);
+
+    this.containerRequestFilter = BasicAuthFilter.create(
+      extensionConfigs,
+      BearerAuthFilter.create(KafkaAuthorizationRepository.create(oidcPort))
+    );
+  }
+
+  private OidcPort getOidcImplementation(Map<String, ?> configs, Map<String, String> extensionConfigs) {
+    Map<String, String> oidcConfigs = ConfigUtils.getConfigsForPrefix(OidcConfigs.OIDC_PREFIX, configs);
+
+    if (oidcConfigs.isEmpty()) {
+      Map<String, String> kafkaStoreConfigs = ConfigUtils.getConfigsForPrefix(InternalSecretConfigs.KAFKASTORE_PREFIX, extensionConfigs);
+
+      return EntraIDRepository.create(kafkaStoreConfigs);
+    }
+
+    return ConfluentCloudRepository.create(oidcConfigs);
+  }
+
+  private Map<String, String> getExtensionConfigs(Map<String, ?> configs) {
+    return ConfigUtils.getConfigsForPrefix(
+      String.format(
+        InternalSecretConfigs.PROVIDER_PREFIX,
+        InternalSecretConfigs.PROVIDER_NAME
+      ),
+      configs
+    );
   }
 }
