@@ -27,6 +27,6 @@ public class KafkaAuthorizationRepository implements AuthorizationPort {
 
     return this.oidcPort.getRoleBindings(authenticationCredentials)
       .stream()
-      .anyMatch(roleBinding -> roleBinding.getRole().allows(operation) && roleBinding.getScope().matches(resourceName));
+      .anyMatch(roleBinding -> roleBinding.allows(operation, resourceName));
   }
 }

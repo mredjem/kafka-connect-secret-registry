@@ -81,7 +81,39 @@ public class ConfluentCloudApi {
         response()
           .withStatusCode(200)
           .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-          .withBody(this.loadResource("mocks/role.bindings.json"))
+          .withBody(this.loadResource("mocks/role.bindings.organization.json"))
+      );
+
+    this.server
+      .when(
+        request()
+          .withMethod("GET")
+          .withPath("/iam/v2/role-bindings")
+          .withHeader(HttpHeaders.AUTHORIZATION, expectedAuthorization)
+          .withQueryStringParameter("principal", "User:pool-abc")
+          .withQueryStringParameter("crn_pattern", "crn://confluent.cloud/organization=9bb441c4-edef-46ac-8a41-c49e44a3fd9a/environment=env-456xy/*")
+      )
+      .respond(
+        response()
+          .withStatusCode(200)
+          .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+          .withBody(this.loadResource("mocks/role.bindings.environment.json"))
+      );
+
+    this.server
+      .when(
+        request()
+          .withMethod("GET")
+          .withPath("/iam/v2/role-bindings")
+          .withHeader(HttpHeaders.AUTHORIZATION, expectedAuthorization)
+          .withQueryStringParameter("principal", "User:pool-abc")
+          .withQueryStringParameter("crn_pattern", "crn://confluent.cloud/organization=9bb441c4-edef-46ac-8a41-c49e44a3fd9a/environment=env-456xy/cloud-cluster=lkc-123abc/*")
+      )
+      .respond(
+        response()
+          .withStatusCode(200)
+          .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+          .withBody(this.loadResource("mocks/role.bindings.cluster.json"))
       );
   }
 

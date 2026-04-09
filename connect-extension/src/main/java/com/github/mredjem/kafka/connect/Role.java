@@ -6,6 +6,8 @@ public interface Role {
 
   Set<Operation> allowedOperations();
 
+  Set<Scope> applicableScopes();
+
   default String roleName() {
     return this.getClass().getSimpleName();
   }
