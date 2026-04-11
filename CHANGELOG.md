@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/1.1.0...1.2.0) (2026-04-11)
+
+
+### Features
+
+* improve and fix issues with rbac management ([5811c46](https://github.com/mredjem/kafka-connect-secret-registry/commit/5811c46530573a2b49303b6274aad2e0f93f8d3a))
+
 # [1.1.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/1.0.0...1.1.0) (2026-04-09)
 
 
