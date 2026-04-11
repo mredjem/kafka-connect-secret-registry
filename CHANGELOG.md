@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/mredjem/kafka-connect-secret-registry/compare/1.2.0...1.2.1) (2026-04-11)
+
+
+### Bug Fixes
+
+* solve minor coding warnings ([50b672f](https://github.com/mredjem/kafka-connect-secret-registry/commit/50b672f1a97a025e614bdddc69ed37c73c80ffbd))
+
 # [1.2.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/1.1.0...1.2.0) (2026-04-11)
 
 
