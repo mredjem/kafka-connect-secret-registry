@@ -1,39 +1,18 @@
 package com.github.mredjem.kafka.connect;
 
-public class Scope {
+import java.util.Arrays;
 
-  public static final Scope ALL = new Scope("*");
+public enum Scope {
 
-  private final String scope;
+  CONNECTOR,
+  CLUSTER,
+  ENVIRONMENT,
+  ORGANIZATION;
 
-  private Scope(String scope) {
-    if (scope == null || scope.isEmpty()) {
-      throw new IllegalArgumentException("scope cannot be null or empty");
-    }
-
-    this.scope = scope;
-  }
-
-  public static Scope of(String scope) {
-    return new Scope(scope);
-  }
-
-  public boolean matches(String resourceName) {
-    if (resourceName.isEmpty() || "*".equals(this.scope)) {
-      return true;
-    }
-
-    if (this.scope.endsWith("*")) {
-      return resourceName.startsWith(this.scope.substring(0, this.scope.length() - 1));
-    }
-
-    return this.scope.equals(resourceName);
-  }
-
-  @Override
-  public String toString() {
-    return "Scope{" +
-      "scope='" + this.scope + '\'' +
-      '}';
+  public static Scope fromName(String name) {
+    return Arrays.stream(values())
+      .filter(scope -> scope.name().equalsIgnoreCase(name))
+      .findFirst()
+      .orElseThrow(() -> new IllegalArgumentException("Unknown scope '" + name + "'"));
   }
 }

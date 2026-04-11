@@ -9,7 +9,7 @@ import com.github.mredjem.kafka.connect.internals.KafkaInternalTopicRepository;
 import com.github.mredjem.kafka.connect.oidc.OidcConfigs;
 import com.github.mredjem.kafka.connect.oidc.OidcPort;
 import com.github.mredjem.kafka.connect.oidc.azure.EntraIDRepository;
-import com.github.mredjem.kafka.connect.oidc.azure.managed.ConfluentCloudRepository;
+import com.github.mredjem.kafka.connect.oidc.azure.ccloud.ConfluentCloudRepository;
 import com.github.mredjem.kafka.connect.providers.InternalSecretConfigs;
 import com.github.mredjem.kafka.connect.utils.ConfigUtils;
 import org.apache.kafka.connect.rest.ConnectRestExtension;

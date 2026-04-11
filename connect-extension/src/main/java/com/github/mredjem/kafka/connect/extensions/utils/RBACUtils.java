@@ -1,15 +1,20 @@
 package com.github.mredjem.kafka.connect.extensions.utils;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.mredjem.kafka.connect.Operation;
 
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.container.ContainerRequestContext;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 public final class RBACUtils {
+
+  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
   private static final Set<RequestMatcher> INTERNAL_REQUEST_MATCHERS = new HashSet<>();
 
@@ -134,7 +139,9 @@ public final class RBACUtils {
 
   public static String getResourceForRequest(ContainerRequestContext containerRequestContext, Operation operation) {
     if (Operation.READ_CONFIGURATION == operation) {
-      return getResourceName(containerRequestContext, READ_CONFIGURATION_REQUEST_MATCHERS);
+      String resourceName = getResourceName(containerRequestContext, READ_CONFIGURATION_REQUEST_MATCHERS);
+
+      return resourceName.isEmpty() ? "LIST_CONNECTOR_NAMES" : resourceName;
     }
 
     if (Operation.READ_STATUS == operation) {
@@ -142,7 +149,9 @@ public final class RBACUtils {
     }
 
     if (Operation.READ_SECRET == operation) {
-      return getResourceName(containerRequestContext, READ_SECRET_REQUEST_MATCHERS);
+      String resourceName = getResourceName(containerRequestContext, READ_SECRET_REQUEST_MATCHERS);
+
+      return resourceName.isEmpty() ? "LIST_SECRET_PATHS" : resourceName;
     }
 
     if (Operation.PAUSE_RESUME_RESTART == operation) {
@@ -150,6 +159,12 @@ public final class RBACUtils {
     }
 
     if (Operation.CONFIGURE == operation) {
+      String requestMethod = containerRequestContext.getMethod();
+
+      if (HttpMethod.POST.equals(requestMethod)) {
+        return getConnectorNameFromBody(containerRequestContext);
+      }
+
       return getResourceName(containerRequestContext, CONFIGURE_REQUEST_MATCHERS);
     }
 
@@ -182,5 +197,18 @@ public final class RBACUtils {
       .filter(resourceName -> !resourceName.isEmpty())
       .findFirst()
       .orElse("");
+  }
+
+  private static String getConnectorNameFromBody(ContainerRequestContext containerRequestContext) {
+    try {
+      String rawBody = IOUtils.toString(containerRequestContext.getEntityStream());
+
+      Map<String, Object> body = OBJECT_MAPPER.readValue(rawBody, new TypeReference<Map<String, Object>>() {});
+
+      return (String) body.get("name");
+
+    } catch (final Exception ignored) {
+      return "";
+    }
   }
 }

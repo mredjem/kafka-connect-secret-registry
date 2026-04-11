@@ -7,15 +7,15 @@ import com.github.mredjem.kafka.connect.Scope;
 import java.util.EnumSet;
 import java.util.Set;
 
-public class DeveloperRead implements Role {
+public class CloudClusterAdmin implements Role {
 
   @Override
   public Set<Scope> applicableScopes() {
-    return EnumSet.of(Scope.CONNECTOR);
+    return EnumSet.of(Scope.CLUSTER);
   }
 
   @Override
   public Set<Operation> allowedOperations() {
-    return EnumSet.of(Operation.READ_CONFIGURATION, Operation.READ_STATUS);
+    return EnumSet.allOf(Operation.class);
   }
 }

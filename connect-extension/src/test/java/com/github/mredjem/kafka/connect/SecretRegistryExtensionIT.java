@@ -68,7 +68,7 @@ class SecretRegistryExtensionIT {
     .withEnv("CONNECT_REST_PORT", "8083")
     .withEnv("CONNECT_PLUGIN_PATH", ConfluentKafkaConnectContainer.PLUGIN_PATH)
     .withEnv("CONNECT_REST_EXTENSION_CLASSES", SecretRegistryExtension.class.getName())
-    .withEnv("CONNECT_CONFLUENT_CLOUD_ORGANIZATION_ID", "9bb441c4-edef-46ac-8a41-c49e44a3fd9a")
+    .withEnv("CONNECT_CONFLUENT_CLOUD_CLUSTER_CRN_PATTERN", "crn://confluent.cloud/organization=9bb441c4-edef-46ac-8a41-c49e44a3fd9a/environment=env-456xy/cloud-cluster=lkc-123abc")
     .withEnv("CONNECT_CONFLUENT_CLOUD_API_BASE_URL", "http://host.testcontainers.internal:" + MOCKSERVER_PORT)
     .withEnv("CONNECT_CONFLUENT_CLOUD_API_KEY", "ABCDEFGHIJKLMNOP")
     .withEnv("CONNECT_CONFLUENT_CLOUD_API_SECRET", "R15hoiDIq8Nxu/lY4mPO3DwAVIfU5W7OI+efsB607mLgHTnVW5XJGVqX2ysDx987")
@@ -177,11 +177,11 @@ class SecretRegistryExtensionIT {
   }
 
   @Test
-  void shouldAllowReadingConfigurationAndStatusWhenDeveloperRead() {
+  void shouldAllowReadingConfigurationAndStatusWhenDeveloperWrite() {
     given()
       .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
       .contentType(ContentType.JSON)
-      .body("{}")
+      .body("{ \"name\": \"my_datagen_connector\" }")
     .when()
       .post("/connectors")
     .then()
@@ -214,6 +214,41 @@ class SecretRegistryExtensionIT {
       .get("/connectors/my_datagen_connector/tasks")
     .then()
       .statusCode(404);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+    .when()
+      .delete("/connectors/my_datagen_connector")
+    .then()
+      .statusCode(403);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+    .when()
+      .get("/connectors/my_mirror_connector/config")
+    .then()
+      .statusCode(404);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+    .when()
+      .get("/connectors/my_mirror_connector/status")
+    .then()
+      .statusCode(404);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+    .when()
+      .get("/connectors/my_mirror_connector/tasks")
+    .then()
+      .statusCode(404);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+    .when()
+      .delete("/connectors/my_mirror_connector")
+    .then()
+      .statusCode(403);
   }
 
   @Test
@@ -225,7 +260,7 @@ class SecretRegistryExtensionIT {
     .when()
       .post("/connectors")
     .then()
-      .statusCode(500);
+      .statusCode(403);
 
     given()
       .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
@@ -248,37 +283,70 @@ class SecretRegistryExtensionIT {
       .post("/connectors/my_mirror_connector/restart")
     .then()
       .statusCode(404);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+      .contentType(ContentType.JSON)
+    .when()
+      .delete("/connectors/my_mirror_connector")
+    .then()
+      .statusCode(403);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+    .when()
+      .get("/connectors/my_datagen_connector/status")
+    .then()
+      .statusCode(404);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+      .contentType(ContentType.JSON)
+    .when()
+      .post("/connectors/my_datagen_connector/restart")
+    .then()
+      .statusCode(404);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+      .contentType(ContentType.JSON)
+    .when()
+      .delete("/connectors/my_datagen_connector")
+    .then()
+      .statusCode(403);
   }
 
   @Test
-  void shouldAllowManagingSecretsWhenEnvironmentAdmin() {
+  void shouldAllowReadingStatusAndRestartingConnectorsWhenEnvironmentOperator() {
     given()
       .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
     .when()
-      .get("/secret/paths")
+      .get("/connectors/my_mirror_connector/status")
     .then()
-      .statusCode(200);
+      .statusCode(404);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+      .contentType(ContentType.JSON)
+    .when()
+      .post("/connectors/my_mirror_connector/restart")
+    .then()
+      .statusCode(404);
 
     given()
       .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
     .when()
-      .get("/secret/paths/my_jdbc_connector")
+      .get("/connectors/my_datagen_connector/status")
     .then()
-      .statusCode(200);
+      .statusCode(404);
 
     given()
       .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+      .contentType(ContentType.JSON)
     .when()
-      .get("/secret/paths/my_mirror_connector")
+      .post("/connectors/my_datagen_connector/restart")
     .then()
-      .statusCode(200);
-
-    given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
-    .when()
-      .get("/secret/paths/my_datagen_connector")
-    .then()
-      .statusCode(403);
+      .statusCode(404);
   }
 
   @Test

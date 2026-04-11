@@ -1,8 +1,8 @@
 package com.github.mredjem.kafka.connect.oidc.azure;
 
 import com.github.mredjem.kafka.connect.AuthenticationCredentials;
+import com.github.mredjem.kafka.connect.ResourceScope;
 import com.github.mredjem.kafka.connect.RoleBinding;
-import com.github.mredjem.kafka.connect.Scope;
 import com.github.mredjem.kafka.connect.internals.callbacks.StaticTokenCallbackHandlerCallback;
 import com.github.mredjem.kafka.connect.oidc.OidcPort;
 import com.github.mredjem.kafka.connect.oidc.Roles;
@@ -55,7 +55,7 @@ public class EntraIDRepository implements OidcPort {
     return roles.stream()
       .map(roleName -> Roles.getRoles().get(roleName.replaceFirst(ROLE_PREFIX, "")))
       .filter(Objects::nonNull)
-      .map(role -> RoleBinding.of(role, Scope.ALL))
+      .map(role -> RoleBinding.of(role, ResourceScope.ALL))
       .collect(Collectors.toList());
   }
 

@@ -19,6 +19,7 @@
     <slf4j-api.version>1.7.36</slf4j-api.version>
     <jackson-databind.version>2.20.0</jackson-databind.version>
     <awaitility.version>4.3.0</awaitility.version>
+    <cel.version>0.12.0</cel.version>
     <logback-classic.version>1.2.13</logback-classic.version>
     <junit-jupiter.version>5.10.2</junit-jupiter.version>
     <testcontainers.version>2.0.4</testcontainers.version>
@@ -90,6 +91,14 @@
       <version>${awaitility.version}</version>
     </dependency>
     <!-- End of Utilities dependencies -->
+
+    <!-- CEL dependencies -->
+    <dependency>
+      <groupId>dev.cel</groupId>
+      <artifactId>cel</artifactId>
+      <version>${cel.version}</version>
+    </dependency>
+    <!-- End of CEL dependencies -->
 
     <!-- Logging dependencies -->
     <dependency>
