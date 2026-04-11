@@ -6,12 +6,9 @@ import java.util.Map;
 
 public class CreateConnectorDto {
 
-  private final String name;
-
   private final Map<String, String> config;
 
-  private CreateConnectorDto(String name, Map<String, String> config) {
-    this.name = name;
+  private CreateConnectorDto(Map<String, String> config) {
     this.config = Collections.unmodifiableMap(config);
   }
 
@@ -25,11 +22,11 @@ public class CreateConnectorDto {
     connectorConfig.put("source.cluster.bootstrap.servers", "kafka:29092");
     connectorConfig.put("target.cluster.bootstrap.servers", "kafka:29092");
 
-    return new CreateConnectorDto("test-connector", connectorConfig);
+    return new CreateConnectorDto(connectorConfig);
   }
 
   public String getName() {
-    return this.name;
+    return "test-connector";
   }
 
   public Map<String, String> getConfig() {

@@ -17,7 +17,7 @@ public class KafkaSecretKeySerde {
       try {
         Objects.requireNonNull(data);
 
-        return SharedObjectMapper.getInstance().serialize(data);
+        return SharedObjectMapper.INSTANCE.serialize(data);
 
       } catch (final Exception e) {
         throw new DeSerializationException("serialize", true, e);
@@ -32,7 +32,7 @@ public class KafkaSecretKeySerde {
       try {
         Objects.requireNonNull(data);
 
-        return SharedObjectMapper.getInstance().deserialize(data, KafkaSecretKey.class);
+        return SharedObjectMapper.INSTANCE.deserialize(data, KafkaSecretKey.class);
 
       } catch (final Exception e) {
         throw new DeSerializationException("deserialize", true, e);
