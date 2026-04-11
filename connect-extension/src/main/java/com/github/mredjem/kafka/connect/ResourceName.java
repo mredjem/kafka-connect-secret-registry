@@ -18,10 +18,6 @@ public class ResourceName {
     return new ResourceName(organization, environment, cluster);
   }
 
-  public String getOrganization() {
-    return this.organization;
-  }
-
   public String getOrganizationUrn() {
     return String.format("crn://confluent.cloud/organization=%s", this.organization);
   }

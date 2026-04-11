@@ -19,8 +19,7 @@ public class SecretDto {
     this.secret = secret.getSecret();
   }
 
-  public SecretDto() {
-  }
+  public SecretDto() {}
 
   public static SecretDto toDto(Secret secret) {
     return new SecretDto(secret);

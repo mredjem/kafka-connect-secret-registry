@@ -17,7 +17,7 @@ public class KafkaSecretValueSerde {
           return null;
         }
 
-        return SharedObjectMapper.getInstance().serialize(data);
+        return SharedObjectMapper.INSTANCE.serialize(data);
 
       } catch (final Exception e) {
         throw new DeSerializationException("serialize", false, e);
@@ -34,7 +34,7 @@ public class KafkaSecretValueSerde {
           return null;
         }
 
-        return SharedObjectMapper.getInstance().deserialize(data, KafkaSecretValue.class);
+        return SharedObjectMapper.INSTANCE.deserialize(data, KafkaSecretValue.class);
 
       } catch (final Exception e) {
         throw new DeSerializationException("deserialize", false, e);

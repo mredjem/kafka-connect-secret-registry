@@ -43,7 +43,7 @@ public class ConfluentCloudRepository implements OidcPort {
 
   @Override
   public List<RoleBinding> getRoleBindings(AuthenticationCredentials authenticationCredentials) {
-    Map<String, Object> claims = JwtUtils.parseClaims(authenticationCredentials.getCredentials());;
+    Map<String, Object> claims = JwtUtils.parseClaims(authenticationCredentials.getCredentials());
 
     Predicate<IdentityPoolDto> identityPoolPredicate = this.identityPoolPredicate(claims);
 

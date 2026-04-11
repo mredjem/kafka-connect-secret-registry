@@ -15,10 +15,6 @@ public final class SharedObjectMapper {
     this.objectMapper = new ObjectMapper();
   }
 
-  public static SharedObjectMapper getInstance() {
-    return INSTANCE;
-  }
-
   public byte[] serialize(Object obj) throws JsonProcessingException {
     return this.objectMapper.writeValueAsBytes(obj);
   }

@@ -22,7 +22,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.kafka.ConfluentKafkaContainer;
 
 import javax.ws.rs.core.HttpHeaders;
-
 import java.util.concurrent.TimeUnit;
 
 import static io.restassured.RestAssured.given;
