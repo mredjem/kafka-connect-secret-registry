@@ -1,3 +1,10 @@
+## [1.2.4](https://github.com/mredjem/kafka-connect-secret-registry/compare/1.2.3...1.2.4) (2026-04-12)
+
+
+### Bug Fixes
+
+* filter available claims variables in cel filter ([5a64af4](https://github.com/mredjem/kafka-connect-secret-registry/commit/5a64af4ad99fa9ef1d2e4c9fa5b5081b6daf5f27))
+
 ## [1.2.3](https://github.com/mredjem/kafka-connect-secret-registry/compare/1.2.2...1.2.3) (2026-04-12)
 
 
