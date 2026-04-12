@@ -7,6 +7,7 @@ public class Version {
   private static final int INIT_VERSION = 1;
 
   private final Key key;
+
   private final int version;
 
   private Version(Key key, int version) {

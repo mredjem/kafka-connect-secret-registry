@@ -20,8 +20,7 @@ import static com.github.mredjem.kafka.connect.providers.InternalSecretConfigs.S
 
 public final class KafkaClients {
 
-  private KafkaClients() {
-  }
+  private KafkaClients() {}
 
   public static AdminClient adminClient(Map<String, ?> configs) {
     Properties properties = kafkaProperties(configs);

@@ -26,4 +26,12 @@ public class RoleBinding {
 
     return this.role.allows(operation) && this.resourceScope.matches(resourceName);
   }
+
+  @Override
+  public String toString() {
+    return "RoleBinding{" +
+      "role=" + this.role +
+      ", resourceScope=" + this.resourceScope +
+      '}';
+  }
 }

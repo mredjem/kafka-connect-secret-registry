@@ -17,8 +17,7 @@ import java.security.spec.InvalidKeySpecException;
 
 public final class EncryptionUtils {
 
-  private EncryptionUtils() {
-  }
+  private EncryptionUtils() {}
 
   public static EncryptedSecret encrypt(String secret, String masterKey) {
     try {
@@ -31,12 +30,7 @@ public final class EncryptionUtils {
 
       byte[] encrypted = cipher.doFinal(secret.getBytes(StandardCharsets.UTF_8));
 
-      EncryptedSecret encryptedSecret = new EncryptedSecret();
-
-      encryptedSecret.setEncryptedSecret(encrypted);
-      encryptedSecret.setSalt(salt);
-
-      return encryptedSecret;
+      return EncryptedSecret.of(encrypted, salt);
 
     } catch (final Exception e) {
       throw new EncryptionException("Failed to encrypt secret", e);

@@ -5,15 +5,9 @@ import com.github.mredjem.kafka.connect.internals.KafkaSecretEncrypted;
 
 public class EncryptedSecretMapper {
 
-  private EncryptedSecretMapper() {
-  }
+  private EncryptedSecretMapper() {}
 
   public static EncryptedSecret newEncryptedSecret(KafkaSecretEncrypted kafkaSecretEncrypted) {
-    EncryptedSecret encrypted = new EncryptedSecret();
-
-    encrypted.setEncryptedSecret(kafkaSecretEncrypted.getContent());
-    encrypted.setSalt(kafkaSecretEncrypted.getSalt());
-
-    return encrypted;
+    return EncryptedSecret.of(kafkaSecretEncrypted.getContent(), kafkaSecretEncrypted.getSalt());
   }
 }

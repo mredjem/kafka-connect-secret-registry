@@ -5,6 +5,7 @@ import java.util.Objects;
 public class Key {
 
   private final Path path;
+
   private final String key;
 
   private Key(Path path, String key) {

@@ -106,7 +106,7 @@ public class ConfluentCloudApi {
           .withPath("/iam/v2/role-bindings")
           .withHeader(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.CONFLUENT_CLOUD)
           .withQueryStringParameter("principal", "User:pool-abc")
-          .withQueryStringParameter("crn_pattern", "crn://confluent.cloud/organization=9bb441c4-edef-46ac-8a41-c49e44a3fd9a/environment=env-456xy/cloud-cluster=lkc-123abc/*")
+          .withQueryStringParameter("crn_pattern", "crn://confluent.cloud/organization=9bb441c4-edef-46ac-8a41-c49e44a3fd9a/environment=env-456xy/cloud-cluster=lkc-123abc/connector=*")
       )
       .respond(
         response()
