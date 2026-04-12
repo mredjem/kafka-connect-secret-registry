@@ -152,14 +152,14 @@ class SecretRegistryExtensionIT {
   @Test
   void shouldRespectSuperAdminScope() {
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Basic Y2VudHJlb246cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.CENTREON)
     .when()
       .get("/connectors")
     .then()
       .statusCode(200);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Basic Y2VudHJlb246cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.CENTREON)
       .contentType(ContentType.JSON)
       .body("{}")
     .when()
@@ -168,7 +168,7 @@ class SecretRegistryExtensionIT {
       .statusCode(403);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Basic Y2VudHJlb246cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.CENTREON)
     .when()
       .get("/secret/paths")
     .then()
@@ -178,7 +178,7 @@ class SecretRegistryExtensionIT {
   @Test
   void shouldAllowReadingConfigurationAndStatusWhenDeveloperWrite() {
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.SERVICE_PRINCIPAL)
       .contentType(ContentType.JSON)
       .body("{ \"name\": \"my_datagen_connector\" }")
     .when()
@@ -187,63 +187,63 @@ class SecretRegistryExtensionIT {
       .statusCode(500);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.SERVICE_PRINCIPAL)
     .when()
       .get("/secret/paths")
     .then()
       .statusCode(200);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.SERVICE_PRINCIPAL)
     .when()
       .get("/connectors/my_datagen_connector/config")
     .then()
       .statusCode(404);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.SERVICE_PRINCIPAL)
     .when()
       .get("/connectors/my_datagen_connector/status")
     .then()
       .statusCode(404);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.SERVICE_PRINCIPAL)
     .when()
       .get("/connectors/my_datagen_connector/tasks")
     .then()
       .statusCode(404);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.SERVICE_PRINCIPAL)
     .when()
       .delete("/connectors/my_datagen_connector")
     .then()
       .statusCode(403);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.SERVICE_PRINCIPAL)
     .when()
       .get("/connectors/my_mirror_connector/config")
     .then()
       .statusCode(404);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.SERVICE_PRINCIPAL)
     .when()
       .get("/connectors/my_mirror_connector/status")
     .then()
       .statusCode(404);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.SERVICE_PRINCIPAL)
     .when()
       .get("/connectors/my_mirror_connector/tasks")
     .then()
       .statusCode(404);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.SERVICE_PRINCIPAL)
     .when()
       .delete("/connectors/my_mirror_connector")
     .then()
@@ -253,7 +253,7 @@ class SecretRegistryExtensionIT {
   @Test
   void shouldAllowReadingStatusAndSecretAndRestartingConnectorsWhenConnectManager() {
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.SERVICE_PRINCIPAL)
       .contentType(ContentType.JSON)
       .body("{}")
     .when()
@@ -262,21 +262,21 @@ class SecretRegistryExtensionIT {
       .statusCode(403);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.SERVICE_PRINCIPAL)
     .when()
       .get("/secret/paths")
     .then()
       .statusCode(200);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.SERVICE_PRINCIPAL)
     .when()
       .get("/connectors/my_mirror_connector/status")
     .then()
       .statusCode(404);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.SERVICE_PRINCIPAL)
       .contentType(ContentType.JSON)
     .when()
       .post("/connectors/my_mirror_connector/restart")
@@ -284,7 +284,7 @@ class SecretRegistryExtensionIT {
       .statusCode(404);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.SERVICE_PRINCIPAL)
       .contentType(ContentType.JSON)
     .when()
       .delete("/connectors/my_mirror_connector")
@@ -292,14 +292,14 @@ class SecretRegistryExtensionIT {
       .statusCode(403);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.SERVICE_PRINCIPAL)
     .when()
       .get("/connectors/my_datagen_connector/status")
     .then()
       .statusCode(404);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.SERVICE_PRINCIPAL)
       .contentType(ContentType.JSON)
     .when()
       .post("/connectors/my_datagen_connector/restart")
@@ -307,7 +307,7 @@ class SecretRegistryExtensionIT {
       .statusCode(404);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.SERVICE_PRINCIPAL)
       .contentType(ContentType.JSON)
     .when()
       .delete("/connectors/my_datagen_connector")
@@ -318,14 +318,14 @@ class SecretRegistryExtensionIT {
   @Test
   void shouldAllowReadingStatusAndRestartingConnectorsWhenEnvironmentOperator() {
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.SERVICE_PRINCIPAL)
     .when()
       .get("/connectors/my_mirror_connector/status")
     .then()
       .statusCode(404);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.SERVICE_PRINCIPAL)
       .contentType(ContentType.JSON)
     .when()
       .post("/connectors/my_mirror_connector/restart")
@@ -333,14 +333,14 @@ class SecretRegistryExtensionIT {
       .statusCode(404);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.SERVICE_PRINCIPAL)
     .when()
       .get("/connectors/my_datagen_connector/status")
     .then()
       .statusCode(404);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOWJiNDQxYzQtZWRlZi00NmFjLThhNDEtYzQ5ZTQ0YTNmZDlhL3YyLjAiLCJhdWQiOiJjb25mbHVlbnQiLCJhenAiOiJzZXJ2aWNlX3ByaW5jaXBhbCJ9.y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.SERVICE_PRINCIPAL)
       .contentType(ContentType.JSON)
     .when()
       .post("/connectors/my_datagen_connector/restart")
@@ -353,7 +353,7 @@ class SecretRegistryExtensionIT {
     CreateSecretDto createPgUserSecret = CreateSecretDto.of("admin");
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Basic YWRtaW46cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.ADMIN)
       .contentType(ContentType.JSON)
       .pathParam("path", "dev.users.postgres.jdbc-sink-connector")
       .pathParam("key", "pg.user")
@@ -371,7 +371,7 @@ class SecretRegistryExtensionIT {
     CreateSecretDto createPgPasswordSecret = CreateSecretDto.of("password");
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Basic YWRtaW46cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.ADMIN)
       .contentType(ContentType.JSON)
       .pathParam("path", "dev.users.postgres.jdbc-sink-connector")
       .pathParam("key", "pg.password")
@@ -387,7 +387,7 @@ class SecretRegistryExtensionIT {
       .body("secret", is(createPgPasswordSecret.getSecret()));
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Basic YWRtaW46cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.ADMIN)
     .when()
       .get("/secret/paths")
     .then()
@@ -396,7 +396,7 @@ class SecretRegistryExtensionIT {
       .body("$", hasItem("dev.users.postgres.jdbc-sink-connector"));
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Basic YWRtaW46cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.ADMIN)
       .pathParam("path", "dev.users.postgres.jdbc-sink-connector")
     .when()
       .get("/secret/paths/{path}/keys")
@@ -412,7 +412,7 @@ class SecretRegistryExtensionIT {
     CreateSecretDto createOracleUserV1 = CreateSecretDto.of("admin1");
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Basic YWRtaW46cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.ADMIN)
       .contentType(ContentType.JSON)
       .pathParam("path", "dev.users.oracle.jdbc-sink-connector")
       .pathParam("key", "oracle.user")
@@ -430,7 +430,7 @@ class SecretRegistryExtensionIT {
     CreateSecretDto createOracleUserV2 = CreateSecretDto.of("admin2");
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Basic YWRtaW46cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.ADMIN)
       .contentType(ContentType.JSON)
       .pathParam("path", "dev.users.oracle.jdbc-sink-connector")
       .pathParam("key", "oracle.user")
@@ -446,7 +446,7 @@ class SecretRegistryExtensionIT {
       .body("secret", is(createOracleUserV2.getSecret()));
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Basic YWRtaW46cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.ADMIN)
       .pathParam("path", "dev.users.oracle.jdbc-sink-connector")
       .pathParam("key", "oracle.user")
     .when()
@@ -458,7 +458,7 @@ class SecretRegistryExtensionIT {
       .body("$", hasItems(1, 2));
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Basic YWRtaW46cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.ADMIN)
       .pathParam("path", "dev.users.oracle.jdbc-sink-connector")
       .pathParam("key", "oracle.user")
       .pathParam("version", "latest")
@@ -478,7 +478,7 @@ class SecretRegistryExtensionIT {
     CreateSecretDto createSqlServerUserSecret = CreateSecretDto.of("admin");
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Basic YWRtaW46cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.ADMIN)
       .contentType(ContentType.JSON)
       .pathParam("path", "dev.users.mssql.jdbc-sink-connector")
       .pathParam("key", "mssql.user")
@@ -494,7 +494,7 @@ class SecretRegistryExtensionIT {
       .body("secret", is(createSqlServerUserSecret.getSecret()));
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Basic YWRtaW46cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.ADMIN)
       .pathParam("path", "dev.users.mssql.jdbc-sink-connector")
       .pathParam("key", "mssql.user")
       .pathParam("version", "1")
@@ -504,7 +504,7 @@ class SecretRegistryExtensionIT {
       .statusCode(204);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Basic YWRtaW46cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.ADMIN)
       .pathParam("path", "dev.users.mssql.jdbc-sink-connector")
       .pathParam("key", "mssql.user")
     .when()
@@ -520,7 +520,7 @@ class SecretRegistryExtensionIT {
     CreateSecretDto createTestConnectorSecret = CreateSecretDto.of("-1");
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Basic YWRtaW46cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.ADMIN)
       .contentType(ContentType.JSON)
       .pathParam("path", "test-connector")
       .pathParam("key", "tasks.max")
@@ -534,7 +534,7 @@ class SecretRegistryExtensionIT {
     CreateConnectorDto createTestConnectorDto = CreateConnectorDto.createDummy();
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, "Basic YWRtaW46cGFzc3dvcmQ=")
+      .header(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.ADMIN)
       .contentType(ContentType.JSON)
       .body(createTestConnectorDto)
     .when()

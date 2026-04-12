@@ -1,5 +1,6 @@
 package com.github.mredjem.kafka.connect.mocks;
 
+import com.github.mredjem.kafka.connect.SecretRegistryExtensionITCredentials;
 import org.apache.commons.io.IOUtils;
 import org.mockserver.integration.ClientAndServer;
 
@@ -22,29 +23,27 @@ public class ConfluentCloudApi {
     return new ConfluentCloudApi();
   }
 
-  public synchronized void start(int port) {
-    new Thread(() -> this.server = ClientAndServer.startClientAndServer(port)).start();
+  public void start(int port) {
+    this.server = ClientAndServer.startClientAndServer(port);
   }
 
-  public synchronized boolean isRunning() {
+  public boolean isRunning() {
     return this.server != null && this.server.isRunning();
   }
 
-  public synchronized void stop() {
+  public void stop() {
     if (this.isRunning()) {
       this.server.stop();
     }
   }
 
   public void initMocks() {
-    String expectedAuthorization = "Basic QUJDREVGR0hJSktMTU5PUDpSMTVob2lESXE4Tnh1L2xZNG1QTzNEd0FWSWZVNVc3T0krZWZzQjYwN21MZ0hUblZXNVhKR1ZxWDJ5c0R4OTg3";
-
     this.server
       .when(
           request()
             .withMethod("GET")
             .withPath("/iam/v2/identity-providers")
-            .withHeader(HttpHeaders.AUTHORIZATION, expectedAuthorization)
+            .withHeader(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.CONFLUENT_CLOUD)
         )
       .respond(
         response()
@@ -59,7 +58,7 @@ public class ConfluentCloudApi {
           .withMethod("GET")
           .withPath("/iam/v2/identity-providers/{identityProvider}/identity-pools")
           .withPathParameter("identityProvider", "dlz-f3a90de")
-          .withHeader(HttpHeaders.AUTHORIZATION, expectedAuthorization)
+          .withHeader(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.CONFLUENT_CLOUD)
       )
       .respond(
         response()
@@ -73,7 +72,7 @@ public class ConfluentCloudApi {
         request()
           .withMethod("GET")
           .withPath("/iam/v2/role-bindings")
-          .withHeader(HttpHeaders.AUTHORIZATION, expectedAuthorization)
+          .withHeader(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.CONFLUENT_CLOUD)
           .withQueryStringParameter("principal", "User:pool-abc")
           .withQueryStringParameter("crn_pattern", "crn://confluent.cloud/organization=9bb441c4-edef-46ac-8a41-c49e44a3fd9a/*")
       )
@@ -89,7 +88,7 @@ public class ConfluentCloudApi {
         request()
           .withMethod("GET")
           .withPath("/iam/v2/role-bindings")
-          .withHeader(HttpHeaders.AUTHORIZATION, expectedAuthorization)
+          .withHeader(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.CONFLUENT_CLOUD)
           .withQueryStringParameter("principal", "User:pool-abc")
           .withQueryStringParameter("crn_pattern", "crn://confluent.cloud/organization=9bb441c4-edef-46ac-8a41-c49e44a3fd9a/environment=env-456xy/*")
       )
@@ -105,7 +104,7 @@ public class ConfluentCloudApi {
         request()
           .withMethod("GET")
           .withPath("/iam/v2/role-bindings")
-          .withHeader(HttpHeaders.AUTHORIZATION, expectedAuthorization)
+          .withHeader(HttpHeaders.AUTHORIZATION, SecretRegistryExtensionITCredentials.CONFLUENT_CLOUD)
           .withQueryStringParameter("principal", "User:pool-abc")
           .withQueryStringParameter("crn_pattern", "crn://confluent.cloud/organization=9bb441c4-edef-46ac-8a41-c49e44a3fd9a/environment=env-456xy/cloud-cluster=lkc-123abc/*")
       )
