@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/mredjem/kafka-connect-secret-registry/compare/1.2.1...1.2.2) (2026-04-12)
+
+
+### Performance Improvements
+
+* remove mock server startup thread ([2dc6d20](https://github.com/mredjem/kafka-connect-secret-registry/commit/2dc6d20985a560ae47f6d87f6ac1a8b54d5bde61))
+
 ## [1.2.1](https://github.com/mredjem/kafka-connect-secret-registry/compare/1.2.0...1.2.1) (2026-04-11)
 
 
