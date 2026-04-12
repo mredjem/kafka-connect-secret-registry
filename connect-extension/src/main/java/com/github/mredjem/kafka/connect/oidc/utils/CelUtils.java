@@ -2,8 +2,10 @@ package com.github.mredjem.kafka.connect.oidc.utils;
 
 import dev.cel.common.CelAbstractSyntaxTree;
 import dev.cel.common.CelValidationException;
+import dev.cel.common.types.CelType;
 import dev.cel.common.types.SimpleType;
 import dev.cel.compiler.CelCompiler;
+import dev.cel.compiler.CelCompilerBuilder;
 import dev.cel.compiler.CelCompilerFactory;
 import dev.cel.runtime.CelEvaluationException;
 import dev.cel.runtime.CelRuntime;
@@ -14,24 +16,37 @@ import java.util.Map;
 
 public final class CelUtils {
 
-  private static final CelCompiler CEL_COMPILER = CelCompilerFactory.standardCelCompilerBuilder()
-    .addVar("claims.auth_time", SimpleType.INT)
-    .addVar("claims.aud", SimpleType.STRING)
-    .addVar("claims.cid", SimpleType.STRING)
-    .addVar("claims.exp", SimpleType.INT)
-    .addVar("claims.iat", SimpleType.INT)
-    .addVar("claims.iss", SimpleType.STRING)
-    .addVar("claims.jti", SimpleType.STRING)
-    .addVar("claims.sub", SimpleType.STRING)
-    .addVar("claims.scp", SimpleType.ANY)
-    .addVar("claims.uid", SimpleType.STRING)
-    .addVar("claims.ver", SimpleType.INT)
-    .addVar("claims.acr", SimpleType.STRING)
+  private static final Map<String, CelType> VARIABLES = new HashMap<>();
+
+  static {
+    VARIABLES.put("claims.auth_time", SimpleType.INT);
+    VARIABLES.put("claims.aud", SimpleType.STRING);
+    VARIABLES.put("claims.cid", SimpleType.STRING);
+    VARIABLES.put("claims.exp", SimpleType.INT);
+    VARIABLES.put("claims.iat", SimpleType.INT);
+    VARIABLES.put("claims.iss", SimpleType.STRING);
+    VARIABLES.put("claims.jti", SimpleType.STRING);
+    VARIABLES.put("claims.sub", SimpleType.STRING);
+    VARIABLES.put("claims.scp", SimpleType.ANY);
+    VARIABLES.put("claims.uid", SimpleType.STRING);
+    VARIABLES.put("claims.ver", SimpleType.INT);
+    VARIABLES.put("claims.acr", SimpleType.STRING);
     // azure specific
-    .addVar("claims.azp", SimpleType.STRING)
-    .addVar("claims.appid", SimpleType.STRING)
-    .setResultType(SimpleType.BOOL)
-    .build();
+    VARIABLES.put("claims.azp", SimpleType.STRING);
+    VARIABLES.put("claims.appid", SimpleType.STRING);
+  }
+
+  private static final CelCompiler CEL_COMPILER;
+
+  static {
+    CelCompilerBuilder celCompilerBuilder = CelCompilerFactory.standardCelCompilerBuilder();
+
+    VARIABLES.forEach(celCompilerBuilder::addVar);
+
+    CEL_COMPILER = celCompilerBuilder
+      .setResultType(SimpleType.BOOL)
+      .build();
+  }
 
   private static final CelRuntime CEL_RUNTIME = CelRuntimeFactory.standardCelRuntimeBuilder().build();
 
@@ -55,7 +70,13 @@ public final class CelUtils {
   private static Map<String, Object> getVariables(Map<String, Object> claims) {
     Map<String, Object> variables = new HashMap<>();
 
-    claims.forEach((name, value) -> variables.put("claims." + name, value));
+    claims.forEach((name, value) -> {
+      String variableName = "claims." + name;
+
+      if (VARIABLES.containsKey(variableName)) {
+        variables.put(variableName, value);
+      }
+    });
 
     return variables;
   }
