@@ -6,7 +6,7 @@ import java.net.URI;
 
 public final class CrnUtils {
 
-  private static final String CRN_SCHEMA = "crn";
+  private static final String CRN_SCHEME = "crn";
 
   private static final String CRN_AUTHORITY = "confluent.cloud";
 
@@ -15,7 +15,7 @@ public final class CrnUtils {
   public static ResourceName parseCrnPattern(String crnPattern) {
     URI uri = URI.create(crnPattern);
 
-    if (!CRN_SCHEMA.equals(uri.getScheme()) || !CRN_AUTHORITY.equals(uri.getAuthority())) {
+    if (!CRN_SCHEME.equals(uri.getScheme()) || !CRN_AUTHORITY.equals(uri.getAuthority())) {
       throw new IllegalArgumentException("Invalid resource name: " + crnPattern);
     }
 
