@@ -48,9 +48,9 @@ public class ConfluentCloudRepository implements OidcPort {
     Predicate<IdentityPoolDto> identityPoolPredicate = this.identityPoolPredicate(claims);
 
     return Stream.of(
-        this.client.listRoleBindings(this.resourceName.getOrganizationUrn(), identityPoolPredicate),
-        this.client.listRoleBindings(this.resourceName.getEnvironmentUrn(), identityPoolPredicate),
-        this.client.listRoleBindings(this.resourceName.getClusterUrn(), identityPoolPredicate)
+        this.client.listRoleBindings(this.resourceName.getOrganizationUrn() + "/*", identityPoolPredicate),
+        this.client.listRoleBindings(this.resourceName.getEnvironmentUrn() + "/*", identityPoolPredicate),
+        this.client.listRoleBindings(this.resourceName.getClusterUrn() + "/connector=*", identityPoolPredicate)
       )
       .flatMap(Collection::stream)
       .map(RoleBindingMapper::map)

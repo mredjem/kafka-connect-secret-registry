@@ -6,8 +6,7 @@ import java.util.Base64;
 
 public final class FilterUtils {
 
-  private FilterUtils() {
-  }
+  private FilterUtils() {}
 
   public static String getBasicCredentials(ContainerRequestContext containerRequestContext) {
     String authorization = getAuthorizationValue(containerRequestContext);

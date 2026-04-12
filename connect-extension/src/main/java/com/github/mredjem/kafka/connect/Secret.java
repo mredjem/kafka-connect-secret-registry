@@ -5,6 +5,7 @@ import java.util.Objects;
 public class Secret {
 
   private final Version version;
+
   private final String secret;
 
   private Secret(Version version, String secret) {

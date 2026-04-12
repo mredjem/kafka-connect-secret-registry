@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-public final class RBACUtils {
+public final class RbacUtils {
 
   private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -91,7 +91,7 @@ public final class RBACUtils {
     DELETE_SECRET_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.DELETE, Pattern.compile("/?secret/paths/([^/]+)/?")));
   }
 
-  private RBACUtils() {}
+  private RbacUtils() {}
 
   public static boolean isInternalRequest(ContainerRequestContext containerRequestContext) {
     return INTERNAL_REQUEST_MATCHERS.stream().anyMatch(matcher -> matcher.test(containerRequestContext));

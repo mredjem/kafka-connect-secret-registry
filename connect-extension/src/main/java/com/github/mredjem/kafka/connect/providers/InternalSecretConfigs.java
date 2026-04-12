@@ -11,6 +11,5 @@ public final class InternalSecretConfigs {
   public static final String MASTER_ENCRYPTION_KEY_CONFIG = "master.encryption.key";
   public static final String SECRET_REGISTRY_GROUP_ID_CONFIG = "secret.registry.group.id";
 
-  private InternalSecretConfigs() {
-  }
+  private InternalSecretConfigs() {}
 }

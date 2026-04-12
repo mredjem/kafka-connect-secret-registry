@@ -6,8 +6,7 @@ import java.util.Properties;
 
 public final class ConfigUtils {
 
-  private ConfigUtils() {
-  }
+  private ConfigUtils() {}
 
   public static Map<String, String> getConfigsForPrefix(String prefix, Map<String, ?> configs) {
     Map<String, String> newConfigs = new HashMap<>();

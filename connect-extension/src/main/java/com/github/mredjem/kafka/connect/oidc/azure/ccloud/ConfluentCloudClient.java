@@ -41,7 +41,7 @@ public class ConfluentCloudClient {
 
     String path = UriBuilder.fromPath("iam/v2/role-bindings")
       .queryParam("principal", "User:" + appIdentityPool.getId())
-      .queryParam("crn_pattern", crnPattern + "/*")
+      .queryParam("crn_pattern", crnPattern)
       .build()
       .toString();
 
@@ -51,6 +51,7 @@ public class ConfluentCloudClient {
   private IdentityPoolDto readIdentityPool(String identityProviderName, Predicate<IdentityPoolDto> identityPoolDtoPredicate) {
     return this.listIdentityPools(identityProviderName)
       .stream()
+      .filter(identityPool -> "ENABLED".equalsIgnoreCase(identityPool.getState()))
       .filter(identityPoolDtoPredicate)
       .findFirst()
       .orElseThrow(() -> new ResourceNotFoundException("Identity pool"));
