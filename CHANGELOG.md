@@ -1,3 +1,10 @@
+## [1.2.6](https://github.com/mredjem/kafka-connect-secret-registry/compare/1.2.5...1.2.6) (2026-04-14)
+
+
+### Performance Improvements
+
+* reduce loops to extract operation and resource name from request ([3c37373](https://github.com/mredjem/kafka-connect-secret-registry/commit/3c373736f532b9181b4ba62c497be86cdc914559))
+
 ## [1.2.5](https://github.com/mredjem/kafka-connect-secret-registry/compare/1.2.4...1.2.5) (2026-04-14)
 
 
