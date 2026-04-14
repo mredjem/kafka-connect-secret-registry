@@ -3,7 +3,7 @@ package com.github.mredjem.kafka.connect.extensions.filters;
 import com.github.mredjem.kafka.connect.AuthenticationCredentials;
 import com.github.mredjem.kafka.connect.AuthenticationKind;
 import com.github.mredjem.kafka.connect.AuthorizationPort;
-import com.github.mredjem.kafka.connect.extensions.utils.RbacUtils;
+import com.github.mredjem.kafka.connect.extensions.rbac.RbacRules;
 
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -32,7 +32,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
   @Override
   public void filter(ContainerRequestContext containerRequestContext) throws IOException {
-    if (RbacUtils.isInternalRequest(containerRequestContext) || RbacUtils.isAllowedAnonymously(containerRequestContext)) {
+    if (RbacRules.isInternalRequest(containerRequestContext) || RbacRules.isAllowedAnonymously(containerRequestContext)) {
       return;
     }
 

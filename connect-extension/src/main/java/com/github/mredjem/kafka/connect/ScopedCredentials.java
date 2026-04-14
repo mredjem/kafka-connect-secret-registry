@@ -4,7 +4,7 @@ import java.util.Base64;
 
 public class ScopedCredentials {
 
-  public static final String READ_SCOPE = "read";
+  private static final String READ_SCOPE = "read";
 
   private final String credentials;
 
@@ -31,15 +31,7 @@ public class ScopedCredentials {
     return this.credentials;
   }
 
-  public String getScope() {
-    return this.scope;
-  }
-
-  public boolean hasScope() {
-    if (this.scope.trim().isEmpty()) {
-      return false;
-    }
-
-    return !"\"\"".equals(this.scope) && !"''".equals(this.scope);
+  public boolean hasReadScope() {
+    return READ_SCOPE.equalsIgnoreCase(this.scope);
   }
 }

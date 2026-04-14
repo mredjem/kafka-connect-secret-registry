@@ -2,7 +2,7 @@ package com.github.mredjem.kafka.connect.extensions.filters;
 
 import com.github.mredjem.kafka.connect.AuthenticationCredentials;
 import com.github.mredjem.kafka.connect.ScopedCredentials;
-import com.github.mredjem.kafka.connect.extensions.utils.RbacUtils;
+import com.github.mredjem.kafka.connect.extensions.rbac.RbacRules;
 import com.github.mredjem.kafka.connect.utils.ConfigUtils;
 
 import javax.ws.rs.ForbiddenException;
@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.github.mredjem.kafka.connect.ScopedCredentials.READ_SCOPE;
 import static com.github.mredjem.kafka.connect.extensions.api.SecretRegistryApiExceptionHandler.toErrorResponse;
 
 public class BasicAuthenticationFilter implements ContainerRequestFilter {
@@ -49,11 +48,7 @@ public class BasicAuthenticationFilter implements ContainerRequestFilter {
       return;
     }
 
-    if (!superAdmin.hasScope()) {
-      return;
-    }
-
-    if (!READ_SCOPE.equalsIgnoreCase(superAdmin.getScope()) || RbacUtils.isWriteAccess(containerRequestContext)) {
+    if (superAdmin.hasReadScope() && RbacRules.isWriteAccess(containerRequestContext)) {
       Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new ForbiddenException("User is allowed read access only"));
 
       containerRequestContext.abortWith(errorResponse);
