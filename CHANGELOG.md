@@ -1,3 +1,10 @@
+## [1.2.7](https://github.com/mredjem/kafka-connect-secret-registry/compare/1.2.6...1.2.7) (2026-04-14)
+
+
+### Bug Fixes
+
+* reset request entity stream in filter ([f843caf](https://github.com/mredjem/kafka-connect-secret-registry/commit/f843caf19c4de8f73fac9cd5e3784c1a26d7a2ba))
+
 ## [1.2.6](https://github.com/mredjem/kafka-connect-secret-registry/compare/1.2.5...1.2.6) (2026-04-14)
 
 
