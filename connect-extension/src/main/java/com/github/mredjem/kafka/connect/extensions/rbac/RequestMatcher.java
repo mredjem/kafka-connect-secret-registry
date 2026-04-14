@@ -1,4 +1,4 @@
-package com.github.mredjem.kafka.connect.extensions.utils;
+package com.github.mredjem.kafka.connect.extensions.rbac;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import java.util.function.Predicate;

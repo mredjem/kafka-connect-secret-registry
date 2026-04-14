@@ -2,8 +2,8 @@ package com.github.mredjem.kafka.connect.extensions.filters;
 
 import com.github.mredjem.kafka.connect.AuthenticationCredentials;
 import com.github.mredjem.kafka.connect.AuthorizationPort;
-import com.github.mredjem.kafka.connect.Operation;
-import com.github.mredjem.kafka.connect.extensions.utils.RbacUtils;
+import com.github.mredjem.kafka.connect.extensions.rbac.RequestedAction;
+import com.github.mredjem.kafka.connect.extensions.rbac.RbacRules;
 
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -29,11 +29,9 @@ public class BearerAuthenticationFilter implements ContainerRequestFilter {
   public void filter(ContainerRequestContext containerRequestContext) {
     AuthenticationCredentials authenticationCredentials = AuthenticationCredentials.of(containerRequestContext.getHeaderString(HttpHeaders.AUTHORIZATION));
 
-    Operation operation = RbacUtils.getOperationForRequest(containerRequestContext);
+    RequestedAction requestedAction = RbacRules.getActionForRequest(containerRequestContext);
 
-    String resourceName = RbacUtils.getResourceForRequest(containerRequestContext, operation);
-
-    if (!this.authorizationPort.checkAccess(authenticationCredentials, operation, resourceName)) {
+    if (!this.authorizationPort.checkAccess(authenticationCredentials, requestedAction.getOperation(), requestedAction.getResourceName())) {
       Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new ForbiddenException("User token is not allowed to access resource"));
 
       containerRequestContext.abortWith(errorResponse);
