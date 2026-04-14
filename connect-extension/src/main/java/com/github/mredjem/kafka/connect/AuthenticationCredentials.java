@@ -6,13 +6,13 @@ public class AuthenticationCredentials {
 
   private final String credentials;
 
-  private AuthenticationCredentials(AuthenticationKind kind, String credentials) {
-    this.kind = kind;
-    this.credentials = credentials;
+  private AuthenticationCredentials(String authorization) {
+    this.kind = AuthenticationKind.fromAuthorization(authorization);
+    this.credentials = AuthenticationKind.NONE != this.kind ? authorization.substring(this.kind.toString().length() + 1) : "";
   }
 
-  public static AuthenticationCredentials of(AuthenticationKind kind, String credentials) {
-    return new AuthenticationCredentials(kind, credentials);
+  public static AuthenticationCredentials of(String authorization) {
+    return new AuthenticationCredentials(authorization);
   }
 
   public AuthenticationKind getKind() {

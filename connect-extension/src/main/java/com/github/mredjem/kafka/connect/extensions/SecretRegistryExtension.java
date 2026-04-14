@@ -2,8 +2,7 @@ package com.github.mredjem.kafka.connect.extensions;
 
 import com.github.mredjem.kafka.connect.SecretRegistryPort;
 import com.github.mredjem.kafka.connect.extensions.api.SecretRegistryApi;
-import com.github.mredjem.kafka.connect.extensions.filters.BasicAuthFilter;
-import com.github.mredjem.kafka.connect.extensions.filters.BearerAuthFilter;
+import com.github.mredjem.kafka.connect.extensions.filters.AuthenticationFilter;
 import com.github.mredjem.kafka.connect.internals.KafkaAuthorizationRepository;
 import com.github.mredjem.kafka.connect.internals.KafkaInternalTopicRepository;
 import com.github.mredjem.kafka.connect.oidc.OidcConfigs;
@@ -22,7 +21,7 @@ import java.util.Map;
 public class SecretRegistryExtension implements ConnectRestExtension {
 
   private SecretRegistryPort secretRegistryPort;
-  private ContainerRequestFilter containerRequestFilter;
+  private ContainerRequestFilter authenticationFilter;
 
   @Override
   public String version() {
@@ -38,7 +37,7 @@ public class SecretRegistryExtension implements ConnectRestExtension {
   @Override
   public void register(ConnectRestExtensionContext restPluginContext) {
     restPluginContext.configurable()
-      .register(this.containerRequestFilter)
+      .register(this.authenticationFilter)
       .register(SecretRegistryApi.create(this.secretRegistryPort));
   }
 
@@ -66,10 +65,7 @@ public class SecretRegistryExtension implements ConnectRestExtension {
 
     OidcPort oidcPort = this.getOidcImplementation(configs, extensionConfigs);
 
-    this.containerRequestFilter = BasicAuthFilter.create(
-      extensionConfigs,
-      BearerAuthFilter.create(KafkaAuthorizationRepository.create(oidcPort))
-    );
+    this.authenticationFilter = AuthenticationFilter.create(extensionConfigs, KafkaAuthorizationRepository.create(oidcPort));
   }
 
   private OidcPort getOidcImplementation(Map<String, ?> configs, Map<String, String> extensionConfigs) {

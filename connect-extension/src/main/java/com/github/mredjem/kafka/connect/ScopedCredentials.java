@@ -1,5 +1,7 @@
 package com.github.mredjem.kafka.connect;
 
+import java.util.Base64;
+
 public class ScopedCredentials {
 
   public static final String READ_SCOPE = "read";
@@ -9,7 +11,7 @@ public class ScopedCredentials {
   private final String scope;
 
   private ScopedCredentials(String credentials, String scope) {
-    this.credentials = credentials;
+    this.credentials = Base64.getEncoder().encodeToString(credentials.getBytes());
     this.scope = scope;
   }
 

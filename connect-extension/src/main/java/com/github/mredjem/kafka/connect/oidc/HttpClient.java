@@ -19,6 +19,7 @@ public class HttpClient {
   private static final ObjectMapper OM = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
   private final String baseUrl;
+
   private final String credentials;
 
   private HttpClient(String baseUrl, String username, String password) {
