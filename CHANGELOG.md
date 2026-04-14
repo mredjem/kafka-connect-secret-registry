@@ -1,3 +1,10 @@
+## [1.2.5](https://github.com/mredjem/kafka-connect-secret-registry/compare/1.2.4...1.2.5) (2026-04-14)
+
+
+### Performance Improvements
+
+* remove some utility classes ([27b5e3e](https://github.com/mredjem/kafka-connect-secret-registry/commit/27b5e3e69c3d43f3bb8e915ba8ef2d3041434254))
+
 ## [1.2.4](https://github.com/mredjem/kafka-connect-secret-registry/compare/1.2.3...1.2.4) (2026-04-12)
 
 
