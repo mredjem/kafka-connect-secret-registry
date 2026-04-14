@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 public class RequestMatcher implements Predicate<ContainerRequestContext> {
 
   private final String method;
+
   private final Pattern path;
 
   private RequestMatcher(String method, Pattern path) {

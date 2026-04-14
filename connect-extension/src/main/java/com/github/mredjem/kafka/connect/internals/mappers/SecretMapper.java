@@ -2,6 +2,7 @@ package com.github.mredjem.kafka.connect.internals.mappers;
 
 import com.github.mredjem.kafka.connect.EncryptedSecret;
 import com.github.mredjem.kafka.connect.Secret;
+import com.github.mredjem.kafka.connect.internals.KafkaSecretEncrypted;
 import com.github.mredjem.kafka.connect.internals.KafkaSecretValue;
 import com.github.mredjem.kafka.connect.internals.utils.EncryptionUtils;
 
@@ -18,7 +19,9 @@ public class SecretMapper {
   }
 
   public Secret newSecret(KafkaSecretValue kafkaSecretValue) {
-    EncryptedSecret encryptedSecret = EncryptedSecretMapper.newEncryptedSecret(kafkaSecretValue.getEncrypted());
+    KafkaSecretEncrypted kafkaSecretEncrypted = kafkaSecretValue.getEncrypted();
+
+    EncryptedSecret encryptedSecret = EncryptedSecret.of(kafkaSecretEncrypted.getContent(), kafkaSecretEncrypted.getSalt());
 
     byte[] decrypted = EncryptionUtils.decrypt(encryptedSecret, this.masterKey);
 
