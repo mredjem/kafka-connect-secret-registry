@@ -6,7 +6,6 @@ import com.github.mredjem.kafka.connect.RoleBinding;
 import com.github.mredjem.kafka.connect.internals.callbacks.StaticTokenCallbackHandlerCallback;
 import com.github.mredjem.kafka.connect.oidc.OidcPort;
 import com.github.mredjem.kafka.connect.oidc.Roles;
-import com.github.mredjem.kafka.connect.oidc.utils.JwtUtils;
 import com.github.mredjem.kafka.connect.utils.ConfigUtils;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.common.config.SaslConfigs;
@@ -50,7 +49,7 @@ public class EntraIDRepository implements OidcPort {
 
   @Override
   public List<RoleBinding> getRoleBindings(AuthenticationCredentials authenticationCredentials) {
-    List<String> roles = JwtUtils.getClaimAsList(authenticationCredentials.getCredentials(), "roles");
+    List<String> roles = EntraIDToken.parse(authenticationCredentials.getCredentials()).getRoles();
 
     return roles.stream()
       .map(roleName -> Roles.getRoles().get(roleName.replaceFirst(ROLE_PREFIX, "")))

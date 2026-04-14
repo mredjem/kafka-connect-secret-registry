@@ -9,8 +9,7 @@ import java.time.Instant;
 
 public final class SecretRegistryApiExceptionHandler {
 
-  private SecretRegistryApiExceptionHandler() {
-  }
+  private SecretRegistryApiExceptionHandler() {}
 
   public static Response toErrorResponse(UriInfo uriInfo, Throwable exception) {
     ErrorDto error = toError(uriInfo, exception);

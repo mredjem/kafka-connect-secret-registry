@@ -1,13 +1,14 @@
 package com.github.mredjem.kafka.connect.extensions.filters;
 
+import com.github.mredjem.kafka.connect.AuthenticationCredentials;
 import com.github.mredjem.kafka.connect.ScopedCredentials;
-import com.github.mredjem.kafka.connect.extensions.utils.FilterUtils;
 import com.github.mredjem.kafka.connect.extensions.utils.RbacUtils;
 import com.github.mredjem.kafka.connect.utils.ConfigUtils;
 
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.Arrays;
@@ -18,40 +19,27 @@ import java.util.stream.Collectors;
 import static com.github.mredjem.kafka.connect.ScopedCredentials.READ_SCOPE;
 import static com.github.mredjem.kafka.connect.extensions.api.SecretRegistryApiExceptionHandler.toErrorResponse;
 
-public class BasicAuthFilter implements ContainerRequestFilter {
+public class BasicAuthenticationFilter implements ContainerRequestFilter {
 
   private static final String SUPER_ADMINS_CONFIG = "super.admins";
 
   private final List<ScopedCredentials> superAdmins;
 
-  private final ContainerRequestFilter next;
-
-  private BasicAuthFilter(Map<String, String> configs, ContainerRequestFilter next) {
+  private BasicAuthenticationFilter(Map<String, String> configs) {
     this.superAdmins = Arrays.stream(ConfigUtils.getOrThrow(SUPER_ADMINS_CONFIG, configs).split(","))
       .map(ScopedCredentials::of)
       .collect(Collectors.toList());
-    this.next = next;
   }
 
-  public static BasicAuthFilter create(Map<String, String> configs, ContainerRequestFilter next) {
-    return new BasicAuthFilter(configs, next);
+  public static BasicAuthenticationFilter create(Map<String, String> configs) {
+    return new BasicAuthenticationFilter(configs);
   }
 
   @Override
   public void filter(ContainerRequestContext containerRequestContext) throws IOException {
-    if (RbacUtils.isInternalRequest(containerRequestContext) || RbacUtils.isAllowedAnonymously(containerRequestContext)) {
-      return;
-    }
+    AuthenticationCredentials authenticationCredentials = AuthenticationCredentials.of(containerRequestContext.getHeaderString(HttpHeaders.AUTHORIZATION));
 
-    String basicCredentials = FilterUtils.getBasicCredentials(containerRequestContext);
-
-    if (basicCredentials.isEmpty()) {
-      this.next.filter(containerRequestContext);
-
-      return;
-    }
-
-    ScopedCredentials superAdmin = this.findSuperAdmin(basicCredentials);
+    ScopedCredentials superAdmin = this.findSuperAdmin(authenticationCredentials.getCredentials());
 
     if (superAdmin == null) {
       Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new ForbiddenException("User is not a super admin"));
