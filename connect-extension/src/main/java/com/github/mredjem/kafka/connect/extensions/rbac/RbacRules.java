@@ -7,10 +7,10 @@ import com.github.mredjem.kafka.connect.Operation;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.container.ContainerRequestContext;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -165,21 +165,23 @@ public final class RbacRules {
 
   private static String getConnectorNameFromBody(ContainerRequestContext containerRequestContext) {
     try {
-      String rawBody = toString(containerRequestContext.getEntityStream());
+      byte[] requestBodyBytes = toByteArray(containerRequestContext.getEntityStream());
 
-      Map<String, Object> body = OBJECT_MAPPER.readValue(rawBody, new TypeReference<Map<String, Object>>() {});
+      resetEntityStream(containerRequestContext, requestBodyBytes);
 
-      return (String) body.get("name");
+      Map<String, Object> requestBody = OBJECT_MAPPER.readValue(requestBodyBytes, new TypeReference<Map<String, Object>>() {});
+
+      return (String) requestBody.get("name");
 
     } catch (final Exception ignored) {
       return "";
     }
   }
 
-  private static String toString(InputStream inputStream) throws IOException {
+  private static byte[] toByteArray(InputStream inputStream) throws IOException {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-    byte[] buffer = new byte[1024];
+    byte[] buffer = new byte[4096];
     int len;
 
     while ((len = inputStream.read(buffer)) > -1) {
@@ -188,6 +190,12 @@ public final class RbacRules {
 
     outputStream.flush();
 
-    return new String(outputStream.toByteArray(), StandardCharsets.UTF_8);
+    return outputStream.toByteArray();
+  }
+
+  private static void resetEntityStream(ContainerRequestContext containerRequestContext, byte[] requestBodyBytes) {
+    InputStream entityStreamCopy = new ByteArrayInputStream(requestBodyBytes);
+
+    containerRequestContext.setEntityStream(entityStreamCopy);
   }
 }
