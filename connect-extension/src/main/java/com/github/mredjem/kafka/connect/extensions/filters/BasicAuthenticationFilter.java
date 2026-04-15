@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.github.mredjem.kafka.connect.extensions.api.SecretRegistryApiExceptionHandler.toErrorResponse;
+import static com.github.mredjem.kafka.connect.extensions.api.ApiExceptionHandler.toErrorResponse;
 
 public class BasicAuthenticationFilter implements ContainerRequestFilter {
 

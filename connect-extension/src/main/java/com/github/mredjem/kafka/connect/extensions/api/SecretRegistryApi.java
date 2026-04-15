@@ -232,7 +232,7 @@ public class SecretRegistryApi {
       return supplier.get();
 
     } catch (final Exception e) {
-      return SecretRegistryApiExceptionHandler.toErrorResponse(uriInfo, e);
+      return ApiExceptionHandler.toErrorResponse(uriInfo, e);
     }
   }
 }

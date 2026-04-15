@@ -11,7 +11,7 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
-import static com.github.mredjem.kafka.connect.extensions.api.SecretRegistryApiExceptionHandler.toErrorResponse;
+import static com.github.mredjem.kafka.connect.extensions.api.ApiExceptionHandler.toErrorResponse;
 
 public class BearerAuthenticationFilter implements ContainerRequestFilter {
 
@@ -31,7 +31,17 @@ public class BearerAuthenticationFilter implements ContainerRequestFilter {
 
     RequestedAction requestedAction = RbacRules.getActionForRequest(containerRequestContext);
 
-    if (!this.authorizationPort.checkAccess(authenticationCredentials, requestedAction.getOperation(), requestedAction.getResourceName())) {
+    if (requestedAction == null) {
+      Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new ForbiddenException("Resource being accessed is unregistered"));
+
+      containerRequestContext.abortWith(errorResponse);
+
+      return;
+    }
+
+    boolean checkAccess = this.authorizationPort.checkAccess(authenticationCredentials, requestedAction.getOperation(), requestedAction.getResourceName());
+
+    if (!checkAccess) {
       Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new ForbiddenException("User token is not allowed to access resource"));
 
       containerRequestContext.abortWith(errorResponse);
