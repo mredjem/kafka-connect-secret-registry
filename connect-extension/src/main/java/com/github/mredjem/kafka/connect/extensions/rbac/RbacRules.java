@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.mredjem.kafka.connect.Operation;
 
-import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.container.ContainerRequestContext;
 import java.io.ByteArrayInputStream;
@@ -14,9 +13,8 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
@@ -24,38 +22,34 @@ public final class RbacRules {
 
   private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-  private static final Set<RequestMatcher> INTERNAL_REQUEST_MATCHERS = new HashSet<>();
+  private static final List<RequestMatcher> INTERNAL_REQUEST_MATCHERS = Arrays.asList(
+    RequestMatcher.of(HttpMethod.POST, Pattern.compile("/?connectors/[^/]+/tasks/?")),
+    RequestMatcher.of(HttpMethod.PUT, Pattern.compile("/?connectors/[^/]+/fence/?"))
+  );
+
+  private static final List<RequestMatcher> ANONYMOUS_REQUEST_MATCHERS = Arrays.asList(
+    RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?")),
+    RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connector-plugins/?"))
+  );
+
+  private static final Map<Operation, List<RequestMatcher>> REQUEST_MATCHERS = new HashMap<>();
 
   static {
-    INTERNAL_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.POST, Pattern.compile("/?connectors/[^/]+/tasks/?")));
-    INTERNAL_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.PUT, Pattern.compile("/?connectors/[^/]+/fence/?")));
-  }
-
-  private static final Set<RequestMatcher> ANONYMOUS_REQUEST_MATCHERS = new HashSet<>();
-
-  static {
-    ANONYMOUS_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?")));
-    ANONYMOUS_REQUEST_MATCHERS.add(RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connector-plugins/?")));
-  }
-
-  private static final Map<Operation, Set<RequestMatcher>> REQUEST_MATCHERS = new HashMap<>();
-
-  static {
-    REQUEST_MATCHERS.put(Operation.READ_CONFIGURATION, new HashSet<>(Arrays.asList(
+    REQUEST_MATCHERS.put(Operation.READ_CONFIGURATION, Arrays.asList(
       RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connectors/?")),
       RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connectors/([^/]+)/?")),
       RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connectors/([^/]+)/config/?")),
       RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connectors/([^/]+)/offsets/?")),
       RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connectors/([^/]+)/topics/?"))
-    )));
+    ));
 
-    REQUEST_MATCHERS.put(Operation.READ_STATUS, new HashSet<>(Arrays.asList(
+    REQUEST_MATCHERS.put(Operation.READ_STATUS, Arrays.asList(
       RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connectors/([^/]+)/status/?")),
       RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connectors/([^/]+)/tasks/?")),
       RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connectors/([^/]+)/tasks/\\d+/status/?"))
-    )));
+    ));
 
-    REQUEST_MATCHERS.put(Operation.READ_SECRET, new HashSet<>(Arrays.asList(
+    REQUEST_MATCHERS.put(Operation.READ_SECRET, Arrays.asList(
       RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret/paths/?")),
       RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret/paths/([^/]+)/?")),
       RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret/paths/([^/]+)/keys/?")),
@@ -63,36 +57,36 @@ public final class RbacRules {
       RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret/paths/([^/]+)/keys/[^/]+/versions/?")),
       RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret/paths/([^/]+)/keys/[^/]+/versions/\\d+/?")),
       RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret/paths/([^/]+)/keys/[^/]+/versions/latest/?"))
-    )));
+    ));
 
-    REQUEST_MATCHERS.put(Operation.PAUSE_RESUME_RESTART, new HashSet<>(Arrays.asList(
+    REQUEST_MATCHERS.put(Operation.PAUSE_RESUME_RESTART, Arrays.asList(
       RequestMatcher.of(HttpMethod.POST, Pattern.compile("/?connectors/([^/]+)/tasks/\\d+/restart/?")),
       RequestMatcher.of(HttpMethod.POST, Pattern.compile("/?connectors/([^/]+)/restart/?")),
       RequestMatcher.of(HttpMethod.PUT, Pattern.compile("/?connectors/([^/]+)/pause/?")),
       RequestMatcher.of(HttpMethod.PUT, Pattern.compile("/?connectors/([^/]+)/resume/?")),
       RequestMatcher.of(HttpMethod.PUT, Pattern.compile("/?connectors/([^/]+)/stop/?"))
-    )));
+    ));
 
-    REQUEST_MATCHERS.put(Operation.CONFIGURE, new HashSet<>(Arrays.asList(
+    REQUEST_MATCHERS.put(Operation.CONFIGURE, Arrays.asList(
       RequestMatcher.of(HttpMethod.POST, Pattern.compile("/?connectors/?")),
       RequestMatcher.of(HttpMethod.PUT, Pattern.compile("/?connectors/([^/]+)/config/?")),
       RequestMatcher.of(HttpMethod.PATCH, Pattern.compile("/?connectors/([^/]+)/offsets/?")),
       RequestMatcher.of(HttpMethod.DELETE, Pattern.compile("/?connectors/([^/]+)/offsets/?"))
-    )));
+    ));
 
-    REQUEST_MATCHERS.put(Operation.CONFIGURE_SECRET, new HashSet<>(Collections.singletonList(
+    REQUEST_MATCHERS.put(Operation.CONFIGURE_SECRET, Collections.singletonList(
       RequestMatcher.of(HttpMethod.POST, Pattern.compile("/?secret/paths/([^/]+)/keys/[^/]+/versions/?"))
-    )));
+    ));
 
-    REQUEST_MATCHERS.put(Operation.DELETE, new HashSet<>(Collections.singletonList(
+    REQUEST_MATCHERS.put(Operation.DELETE, Collections.singletonList(
       RequestMatcher.of(HttpMethod.DELETE, Pattern.compile("/?connectors/([^/]+)/?"))
-    )));
+    ));
 
-    REQUEST_MATCHERS.put(Operation.DELETE_SECRET, new HashSet<>(Arrays.asList(
+    REQUEST_MATCHERS.put(Operation.DELETE_SECRET, Arrays.asList(
       RequestMatcher.of(HttpMethod.DELETE, Pattern.compile("/?secret/paths/([^/]+)/keys/[^/]+/versions/\\d+/?")),
       RequestMatcher.of(HttpMethod.DELETE, Pattern.compile("/?secret/paths/([^/]+)/keys/[^/]+/?")),
       RequestMatcher.of(HttpMethod.DELETE, Pattern.compile("/?secret/paths/([^/]+)/?"))
-    )));
+    ));
   }
 
   private RbacRules() {}
@@ -106,22 +100,22 @@ public final class RbacRules {
   }
 
   public static boolean isWriteAccess(ContainerRequestContext containerRequestContext) {
-    Set<RequestMatcher> readConfigurationMatchers = REQUEST_MATCHERS.get(Operation.READ_CONFIGURATION);
+    List<RequestMatcher> readConfigurationMatchers = REQUEST_MATCHERS.get(Operation.READ_CONFIGURATION);
 
     if (readConfigurationMatchers.stream().anyMatch(predicate -> predicate.test(containerRequestContext))) {
       return false;
     }
 
-    Set<RequestMatcher> readStatusMatchers = REQUEST_MATCHERS.get(Operation.READ_STATUS);
+    List<RequestMatcher> readStatusMatchers = REQUEST_MATCHERS.get(Operation.READ_STATUS);
 
     return readStatusMatchers.stream().noneMatch(predicate -> predicate.test(containerRequestContext));
   }
 
   public static RequestedAction getActionForRequest(ContainerRequestContext containerRequestContext) {
-    for (Map.Entry<Operation, Set<RequestMatcher>> e : REQUEST_MATCHERS.entrySet()) {
+    for (Map.Entry<Operation, List<RequestMatcher>> e : REQUEST_MATCHERS.entrySet()) {
       Operation operation = e.getKey();
 
-      Set<RequestMatcher> matchers = e.getValue();
+      List<RequestMatcher> matchers = e.getValue();
 
       String resourceName = matchers.stream()
         .filter(matcher -> matcher.test(containerRequestContext))
@@ -138,7 +132,7 @@ public final class RbacRules {
       }
     }
 
-    throw new ForbiddenException("Resource being accessed is unregistered");
+    return null;
   }
 
   private static Function<ContainerRequestContext, String> getResourceName(Operation operation, RequestMatcher matcher) {

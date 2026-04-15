@@ -7,9 +7,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.time.Instant;
 
-public final class SecretRegistryApiExceptionHandler {
+public final class ApiExceptionHandler {
 
-  private SecretRegistryApiExceptionHandler() {}
+  private ApiExceptionHandler() {}
 
   public static Response toErrorResponse(UriInfo uriInfo, Throwable exception) {
     ErrorDto error = toError(uriInfo, exception);

@@ -13,7 +13,7 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.Map;
 
-import static com.github.mredjem.kafka.connect.extensions.api.SecretRegistryApiExceptionHandler.toErrorResponse;
+import static com.github.mredjem.kafka.connect.extensions.api.ApiExceptionHandler.toErrorResponse;
 
 public class AuthenticationFilter implements ContainerRequestFilter {
 
