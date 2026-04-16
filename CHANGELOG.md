@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/1.2.7...1.3.0) (2026-04-16)
+
+
+### Features
+
+* manage rbac with kafka api keys ([fbfa53c](https://github.com/mredjem/kafka-connect-secret-registry/commit/fbfa53c2d8fc050ca4d33939bd3a9e1b44260f03))
+
 ## [1.2.7](https://github.com/mredjem/kafka-connect-secret-registry/compare/1.2.6...1.2.7) (2026-04-14)
 
 
