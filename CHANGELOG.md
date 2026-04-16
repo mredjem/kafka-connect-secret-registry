@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/mredjem/kafka-connect-secret-registry/compare/1.3.0...1.3.1) (2026-04-16)
+
+
+### Bug Fixes
+
+* provide reliability and maintainability fixes ([f42fad9](https://github.com/mredjem/kafka-connect-secret-registry/commit/f42fad95934650d0e1e89deb08acbef2c665e01b))
+
 # [1.3.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/1.2.7...1.3.0) (2026-04-16)
 
 
