@@ -8,15 +8,15 @@ public class Version {
 
   private final Key key;
 
-  private final int version;
+  private final int value;
 
-  private Version(Key key, int version) {
+  private Version(Key key, int value) {
     this.key = key;
-    this.version = version;
+    this.value = value;
   }
 
-  public static Version of(String path, String key, int version) {
-    return new Version(Key.of(path, key), version);
+  public static Version of(String path, String key, int value) {
+    return new Version(Key.of(path, key), value);
   }
 
   public static Version init(String path, String key) {
@@ -27,12 +27,12 @@ public class Version {
     return this.key;
   }
 
-  public int getVersion() {
-    return this.version;
+  public int getValue() {
+    return this.value;
   }
 
   public Version nextVersion() {
-    return new Version(this.key, this.version + 1);
+    return new Version(this.key, this.value + 1);
   }
 
   @Override
@@ -41,19 +41,19 @@ public class Version {
       return false;
     }
 
-    return this.version == ((Version) obj).version && Objects.equals(this.key, ((Version) obj).key);
+    return this.value == ((Version) obj).value && Objects.equals(this.key, ((Version) obj).key);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(this.key, this.version);
+    return Objects.hash(this.key, this.value);
   }
 
   @Override
   public String toString() {
     return "Version{" +
       "key=" + this.key +
-      ", version=" + this.version +
+      ", value=" + this.value +
       '}';
   }
 }

@@ -22,9 +22,9 @@ public class EntraIDToken {
 
       String payload = new String(Base64.getDecoder().decode(encodedPayload));
 
-      Map<String, Object> claims = OBJECT_MAPPER.readValue(payload, new TypeReference<Map<String, Object>>() {});
+      Map<String, Object> tokenClaims = OBJECT_MAPPER.readValue(payload, new TypeReference<Map<String, Object>>() {});
 
-      this.claims = Collections.unmodifiableMap(claims);
+      this.claims = Collections.unmodifiableMap(tokenClaims);
 
     } catch (final JsonProcessingException e) {
       throw new IllegalArgumentException("Failed to parse token", e);

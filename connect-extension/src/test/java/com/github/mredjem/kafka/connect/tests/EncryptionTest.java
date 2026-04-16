@@ -22,7 +22,7 @@ class EncryptionTest {
 
     byte[] decryptedSecret = EncryptionUtils.decrypt(encrypted, MASTER_KEY);
 
-    Assertions.assertNotEquals(secret, new String(encrypted.getEncryptedSecret()));
+    Assertions.assertNotEquals(secret, new String(encrypted.getSecret()));
     Assertions.assertEquals(secret, new String(decryptedSecret));
   }
 

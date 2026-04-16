@@ -87,7 +87,7 @@ class SecretRegistryExtensionIT {
   private static final ConfluentCloudApi CONFLUENT_CLOUD_API = ConfluentCloudApi.create();
 
   @BeforeAll
-  static void setUp() throws InterruptedException {
+  static void setUp() {
     CONFLUENT_CLOUD_API.start(MOCKSERVER_PORT);
 
     Awaitility.await().atMost(5L, TimeUnit.SECONDS).until(CONFLUENT_CLOUD_API::isRunning);
@@ -101,8 +101,6 @@ class SecretRegistryExtensionIT {
       .waitingFor(Wait.forHealthcheck())
       .waitingFor(Wait.forHttp("/connector-plugins"))
       .waitingFor(Wait.forLogMessage("server is started and ready to handle requests", 1));
-
-    Thread.sleep(3_000L);
 
     RestAssured.baseURI = "http://localhost:" + CONNECT.getMappedPort(8083);
   }

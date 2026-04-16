@@ -47,7 +47,12 @@ public class EntraIDRepository implements OidcPort {
 
       return clusterId != null && !clusterId.isEmpty();
 
-    } catch (final Exception ignored) {
+    } catch (final InterruptedException e) {
+      Thread.currentThread().interrupt();
+
+      return false;
+
+    } catch (final Exception e) {
       return false;
     }
   }

@@ -33,6 +33,11 @@ public class KafkaInternalTopicRepository implements SecretRegistryPort {
 
       this.secretMapper = SecretMapper.create((String) configs.get(MASTER_ENCRYPTION_KEY_CONFIG));
 
+    } catch (final InterruptedException e) {
+      Thread.currentThread().interrupt();
+
+      throw new ExtensionInitializationException(e);
+
     } catch (final Exception e) {
       throw new ExtensionInitializationException(e);
     }
@@ -104,7 +109,7 @@ public class KafkaInternalTopicRepository implements SecretRegistryPort {
       .map(e -> e.getVersion().nextVersion())
       .orElse(Version.init(path, key));
 
-    int newVersion = this.kafkaInternalTopicClient.saveNewSecret(path, key, nextVersion.getVersion(), secret);
+    int newVersion = this.kafkaInternalTopicClient.saveNewSecret(path, key, nextVersion.getValue(), secret);
 
     return Secret.of(path, key, newVersion, secret);
   }

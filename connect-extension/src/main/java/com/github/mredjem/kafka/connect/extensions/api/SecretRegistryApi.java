@@ -46,7 +46,7 @@ public class SecretRegistryApi {
     Supplier<Response> supplier = () -> {
       List<String> paths = this.secretRegistryPort.getPaths()
         .stream()
-        .map(com.github.mredjem.kafka.connect.Path::getPath)
+        .map(com.github.mredjem.kafka.connect.Path::getValue)
         .sorted(Comparator.naturalOrder())
         .collect(Collectors.toList());
 
@@ -63,7 +63,7 @@ public class SecretRegistryApi {
     Supplier<Response> supplier = () -> {
       Set<String> keys = this.secretRegistryPort.getKeys(path)
         .stream()
-        .map(Key::getKey)
+        .map(Key::getValue)
         .collect(Collectors.toSet());
 
       List<SecretDto> secrets = this.secretRegistryPort.getSecrets(path, keys)
@@ -85,7 +85,7 @@ public class SecretRegistryApi {
     Supplier<Response> supplier = () -> {
       List<String> keys = this.secretRegistryPort.getKeys(path)
         .stream()
-        .map(Key::getKey)
+        .map(Key::getValue)
         .sorted(Comparator.naturalOrder())
         .collect(Collectors.toList());
 
@@ -127,7 +127,7 @@ public class SecretRegistryApi {
     Supplier<Response> supplier = () -> {
       List<Integer> versions = this.secretRegistryPort.getVersions(path, key)
         .stream()
-        .map(Version::getVersion)
+        .map(Version::getValue)
         .sorted(Comparator.naturalOrder())
         .collect(Collectors.toList());
 
@@ -171,7 +171,7 @@ public class SecretRegistryApi {
       Secret createdSecret = this.secretRegistryPort.createSecret(path, key, createSecretDto.getSecret());
 
       URI resourceUri = uriInfo.getAbsolutePathBuilder()
-        .path(String.valueOf(createdSecret.getVersion().getVersion()))
+        .path(String.valueOf(createdSecret.getVersion().getValue()))
         .build();
 
       return Response.created(resourceUri)

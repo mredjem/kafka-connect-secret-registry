@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -32,7 +32,7 @@ public final class RbacRules {
     RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connector-plugins/?"))
   );
 
-  private static final Map<Operation, List<RequestMatcher>> REQUEST_MATCHERS = new HashMap<>();
+  private static final Map<Operation, List<RequestMatcher>> REQUEST_MATCHERS = new EnumMap<>(Operation.class);
 
   static {
     REQUEST_MATCHERS.put(Operation.READ_CONFIGURATION, Arrays.asList(

@@ -5,6 +5,7 @@ public class CreateSecretDto {
   private String secret;
 
   public CreateSecretDto() {
+    // empty constructor for jackson
   }
 
   public static CreateSecretDto of(String secret) {

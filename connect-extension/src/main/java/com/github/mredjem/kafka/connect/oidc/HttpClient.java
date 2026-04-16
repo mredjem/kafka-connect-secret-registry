@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.Base64;
 
@@ -23,7 +24,7 @@ public class HttpClient {
   private final String credentials;
 
   private HttpClient(String baseUrl, String username, String password) {
-    this.baseUrl = baseUrl.replaceAll("/+$", "");
+    this.baseUrl = baseUrl.replaceAll("/$", "");
     this.credentials = Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
   }
 
@@ -32,10 +33,8 @@ public class HttpClient {
   }
 
   public <T> T doGET(String path, TypeReference<T> typeReference) {
-    BufferedReader br = null;
-
     try {
-      URL url = new URL(String.format("%s/%s", this.baseUrl, path));
+      URL url = URI.create(String.format("%s/%s", this.baseUrl, path)).toURL();
 
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
@@ -46,30 +45,19 @@ public class HttpClient {
       connection.setReadTimeout(5_000);
       connection.setDoOutput(true);
 
-      br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+      try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+        StringBuilder response = new StringBuilder();
 
-      StringBuilder response = new StringBuilder();
+        String line;
 
-      String line;
+        while ((line = br.readLine()) != null) {
+          response.append(line);
+        }
 
-      while ((line = br.readLine()) != null) {
-        response.append(line);
+        return OM.readValue(response.toString(), typeReference);
       }
-
-      return OM.readValue(response.toString(), typeReference);
-
     } catch (final IOException e) {
       throw new UncheckedIOException(e);
-
-    } finally {
-      if (br != null) {
-        try {
-          br.close();
-
-        } catch (final IOException ignored) {
-          // noop
-        }
-      }
     }
   }
 }

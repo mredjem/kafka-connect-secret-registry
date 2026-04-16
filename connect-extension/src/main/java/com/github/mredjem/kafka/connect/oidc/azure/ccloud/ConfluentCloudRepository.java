@@ -48,9 +48,9 @@ public class ConfluentCloudRepository implements OidcPort {
     AuthenticationKind kind = authenticationCredentials.getKind();
 
     if (AuthenticationKind.BASIC == kind) {
-      String decodedCredentials = new String(Base64.getDecoder().decode(authenticationCredentials.getCredentials()));
+      String apiKeyId = this.getAPIKeyId(authenticationCredentials);
 
-      return this.getRoleBindingsForAPIKey(decodedCredentials.split(":")[0]);
+      return this.getRoleBindingsForAPIKey(apiKeyId);
     }
 
     return this.getRoleBindingsForExternalAccessToken(authenticationCredentials.getCredentials());
@@ -92,5 +92,17 @@ public class ConfluentCloudRepository implements OidcPort {
 
       return celFilter.evaluate(claims);
     };
+  }
+
+  private String getAPIKeyId(AuthenticationCredentials authenticationCredentials) {
+    String decodedCredentials = new String(Base64.getDecoder().decode(authenticationCredentials.getCredentials()));
+
+    String[] usernameAndPassword = decodedCredentials.split(":");
+
+    if (usernameAndPassword.length != 2) {
+      throw new IllegalArgumentException("Invalid basic credentials");
+    }
+
+    return usernameAndPassword[0];
   }
 }

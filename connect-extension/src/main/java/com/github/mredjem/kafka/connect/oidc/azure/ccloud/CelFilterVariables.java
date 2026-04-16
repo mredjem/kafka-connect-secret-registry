@@ -8,7 +8,7 @@ import java.util.Map;
 
 public final class CelFilterVariables {
 
-  public static final Map<String, CelType> VARIABLES = new HashMap<>();
+  static final Map<String, CelType> VARIABLES = new HashMap<>();
 
   static {
     VARIABLES.put("claims.auth_time", SimpleType.INT);

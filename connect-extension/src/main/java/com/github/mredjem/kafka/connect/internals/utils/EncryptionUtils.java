@@ -14,8 +14,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Random;
 
 public final class EncryptionUtils {
+
+  private static final Random RANDOM = new SecureRandom();
 
   private EncryptionUtils() {}
 
@@ -44,7 +47,7 @@ public final class EncryptionUtils {
       Cipher cipher = Cipher.getInstance("AES");
       cipher.init(Cipher.DECRYPT_MODE, aesKey);
 
-      return cipher.doFinal(encryptedSecret.getEncryptedSecret());
+      return cipher.doFinal(encryptedSecret.getSecret());
 
     } catch (final Exception e) {
       throw new EncryptionException("Failed to decrypt secret", e);
@@ -81,8 +84,7 @@ public final class EncryptionUtils {
   private static byte[] generateSalt() {
     byte[] salt = new byte[100];
 
-    SecureRandom random = new SecureRandom();
-    random.nextBytes(salt);
+    RANDOM.nextBytes(salt);
 
     return salt;
   }
