@@ -21,6 +21,7 @@ import java.util.Map;
 public class SecretRegistryExtension implements ConnectRestExtension {
 
   private SecretRegistryPort secretRegistryPort;
+
   private ContainerRequestFilter authenticationFilter;
 
   @Override
@@ -30,8 +31,9 @@ public class SecretRegistryExtension implements ConnectRestExtension {
 
   @Override
   public void configure(Map<String, ?> configs) {
-    this.doConfigureSecretRegistryPort(configs);
-    this.doConfigureSecretRegistryFilter(configs);
+    this.configureSecretRegistryPort(configs);
+
+    this.configureAuthenticationFilter(configs);
   }
 
   @Override
@@ -48,7 +50,7 @@ public class SecretRegistryExtension implements ConnectRestExtension {
     }
   }
 
-  private void doConfigureSecretRegistryPort(Map<String, ?> configs) {
+  private void configureSecretRegistryPort(Map<String, ?> configs) {
     Map<String, String> extensionConfigs = this.getExtensionConfigs(configs);
 
     String registryGroupId = extensionConfigs.get(InternalSecretConfigs.SECRET_REGISTRY_GROUP_ID_CONFIG);
@@ -60,7 +62,7 @@ public class SecretRegistryExtension implements ConnectRestExtension {
     ));
   }
 
-  private void doConfigureSecretRegistryFilter(Map<String, ?> configs) {
+  private void configureAuthenticationFilter(Map<String, ?> configs) {
     Map<String, String> extensionConfigs = this.getExtensionConfigs(configs);
 
     OidcPort oidcPort = this.getOidcImplementation(configs, extensionConfigs);
@@ -69,10 +71,10 @@ public class SecretRegistryExtension implements ConnectRestExtension {
   }
 
   private OidcPort getOidcImplementation(Map<String, ?> configs, Map<String, String> extensionConfigs) {
-    Map<String, String> oidcConfigs = ConfigUtils.getConfigsForPrefix(OidcConfigs.OIDC_PREFIX, configs);
+    Map<String, String> oidcConfigs = ConfigUtils.configsForPrefix(OidcConfigs.OIDC_PREFIX, configs);
 
     if (oidcConfigs.isEmpty()) {
-      Map<String, String> kafkaStoreConfigs = ConfigUtils.getConfigsForPrefix(InternalSecretConfigs.KAFKASTORE_PREFIX, extensionConfigs);
+      Map<String, String> kafkaStoreConfigs = ConfigUtils.configsForPrefix(InternalSecretConfigs.KAFKASTORE_PREFIX, extensionConfigs);
 
       return EntraIDRepository.create(kafkaStoreConfigs);
     }
@@ -81,7 +83,7 @@ public class SecretRegistryExtension implements ConnectRestExtension {
   }
 
   private Map<String, String> getExtensionConfigs(Map<String, ?> configs) {
-    return ConfigUtils.getConfigsForPrefix(
+    return ConfigUtils.configsForPrefix(
       String.format(
         InternalSecretConfigs.PROVIDER_PREFIX,
         InternalSecretConfigs.PROVIDER_NAME

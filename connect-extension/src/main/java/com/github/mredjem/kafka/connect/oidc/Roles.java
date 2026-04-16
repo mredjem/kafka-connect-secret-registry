@@ -11,6 +11,7 @@ import com.github.mredjem.kafka.connect.oidc.roles.OrganizationAdmin;
 import com.github.mredjem.kafka.connect.oidc.roles.ResourceOwner;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -38,6 +39,6 @@ public final class Roles {
   private Roles() {}
 
   public static Map<String, Role> getRoles() {
-    return ROLES_BY_NAME;
+    return Collections.unmodifiableMap(ROLES_BY_NAME);
   }
 }

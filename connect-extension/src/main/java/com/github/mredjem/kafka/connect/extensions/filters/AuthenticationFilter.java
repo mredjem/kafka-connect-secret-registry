@@ -43,12 +43,10 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
       containerRequestContext.abortWith(errorResponse);
     }
-
-    if (AuthenticationKind.BASIC == authenticationCredentials.getKind()) {
+    else if (AuthenticationKind.BASIC == authenticationCredentials.getKind()) {
       this.basicAuthenticationFilter.filter(containerRequestContext);
     }
-
-    if (AuthenticationKind.BEARER == authenticationCredentials.getKind()) {
+    else {
       this.bearerAuthenticationFilter.filter(containerRequestContext);
     }
   }

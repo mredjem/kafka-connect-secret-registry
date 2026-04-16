@@ -59,7 +59,7 @@ public final class KafkaClients {
   }
 
   private static Properties kafkaProperties(Map<String, ?> configs) {
-    Map<String, String> kafkaConfigs = ConfigUtils.getConfigsForPrefix("kafkastore.", configs);
+    Map<String, String> kafkaConfigs = ConfigUtils.configsForPrefix("kafkastore.", configs);
 
     return ConfigUtils.toProperties(kafkaConfigs);
   }
