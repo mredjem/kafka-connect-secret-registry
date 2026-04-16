@@ -26,6 +26,12 @@ public final class Credentials {
     return "Basic " + Base64.getEncoder().encodeToString(credentials.getBytes());
   }
 
+  public static String ci() {
+    String credentials = "QRSTUVWXYZABCDEF:R15hoiDIq8Nxu/lY4mPO3DwAVIfU5W7OI+efsB607mLgHTnVW5XJGVqX2ysDx987";
+
+    return "Basic " + Base64.getEncoder().encodeToString(credentials.getBytes());
+  }
+
   public static String confluentCloud() {
     String credentials = "ABCDEFGHIJKLMNOP:R15hoiDIq8Nxu/lY4mPO3DwAVIfU5W7OI+efsB607mLgHTnVW5XJGVqX2ysDx987";
 

@@ -3,6 +3,7 @@ package com.github.mredjem.kafka.connect.oidc.azure.ccloud;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.mredjem.kafka.connect.oidc.HttpClient;
 import com.github.mredjem.kafka.connect.oidc.OidcConfigs;
+import com.github.mredjem.kafka.connect.oidc.azure.ccloud.dtos.APIKeyDto;
 import com.github.mredjem.kafka.connect.oidc.azure.ccloud.dtos.DataResponseDto;
 import com.github.mredjem.kafka.connect.oidc.azure.ccloud.dtos.IdentityPoolDto;
 import com.github.mredjem.kafka.connect.oidc.azure.ccloud.dtos.IdentityProviderDto;
@@ -36,16 +37,28 @@ public class ConfluentCloudClient {
     return new ConfluentCloudClient(configs);
   }
 
-  public List<RoleBindingDto> listRoleBindings(String crnPattern, Predicate<IdentityPoolDto> identityPoolPredicate) {
-    IdentityPoolDto appIdentityPool = this.readIdentityPool(this.identityProviderName, identityPoolPredicate);
-
+  public List<RoleBindingDto> listRoleBindings(String crnPattern, String principal) {
     String path = UriBuilder.fromPath("iam/v2/role-bindings")
-      .queryParam("principal", "User:" + appIdentityPool.getId())
+      .queryParam("principal", "User:" + principal)
       .queryParam("crn_pattern", crnPattern)
       .build()
       .toString();
 
     return this.httpClient.doGET(path, new TypeReference<DataResponseDto<RoleBindingDto>>() {}).getData();
+  }
+
+  public List<RoleBindingDto> listRoleBindings(String crnPattern, Predicate<IdentityPoolDto> identityPoolPredicate) {
+    IdentityPoolDto appIdentityPool = this.readIdentityPool(this.identityProviderName, identityPoolPredicate);
+
+    return this.listRoleBindings(crnPattern, appIdentityPool.getId());
+  }
+
+  public APIKeyDto readAPIKey(String apiKeyId) {
+    String path = UriBuilder.fromPath("iam/v2/api-keys/{apiKeyId}")
+      .build(apiKeyId)
+      .toString();
+
+    return this.httpClient.doGET(path, new TypeReference<APIKeyDto>() {});
   }
 
   private IdentityPoolDto readIdentityPool(String identityProviderName, Predicate<IdentityPoolDto> identityPoolDtoPredicate) {

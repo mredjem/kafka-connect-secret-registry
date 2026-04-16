@@ -1,6 +1,7 @@
 package com.github.mredjem.kafka.connect.oidc.azure;
 
 import com.github.mredjem.kafka.connect.AuthenticationCredentials;
+import com.github.mredjem.kafka.connect.AuthenticationKind;
 import com.github.mredjem.kafka.connect.ResourceScope;
 import com.github.mredjem.kafka.connect.RoleBinding;
 import com.github.mredjem.kafka.connect.internals.callbacks.StaticTokenCallbackHandlerCallback;
@@ -33,6 +34,10 @@ public class EntraIDRepository implements OidcPort {
 
   @Override
   public boolean validateCredentials(AuthenticationCredentials authenticationCredentials) {
+    if (AuthenticationKind.BEARER != authenticationCredentials.getKind()) {
+      return false;
+    }
+
     Properties adminConfigs = this.getBearerConfigs(authenticationCredentials);
 
     try (AdminClient adminClient = AdminClient.create(adminConfigs)) {

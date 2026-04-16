@@ -17,13 +17,13 @@ import static com.github.mredjem.kafka.connect.extensions.api.ApiExceptionHandle
 
 public class AuthenticationFilter implements ContainerRequestFilter {
 
-  private final ContainerRequestFilter basicAuthenticationFilter;
+  private final ContainerRequestFilter adminAuthenticationFilter;
 
-  private final ContainerRequestFilter bearerAuthenticationFilter;
+  private final ContainerRequestFilter rbacAuthenticationFilter;
 
   private AuthenticationFilter(Map<String, String> configs, AuthorizationPort authorizationPort) {
-    this.basicAuthenticationFilter = BasicAuthenticationFilter.create(configs);
-    this.bearerAuthenticationFilter = BearerAuthenticationFilter.create(authorizationPort);
+    this.adminAuthenticationFilter = AdminAuthenticationFilter.create(configs);
+    this.rbacAuthenticationFilter = RbacAuthenticationFilter.create(authorizationPort);
   }
 
   public static AuthenticationFilter create(Map<String, String> configs, AuthorizationPort authorizationPort) {
@@ -42,12 +42,16 @@ public class AuthenticationFilter implements ContainerRequestFilter {
       Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new NotAuthorizedException("Authorization header is not valid", "Basic|Bearer"));
 
       containerRequestContext.abortWith(errorResponse);
+
+      return;
     }
-    else if (AuthenticationKind.BASIC == authenticationCredentials.getKind()) {
-      this.basicAuthenticationFilter.filter(containerRequestContext);
+
+    if (((AdminAuthenticationFilter) this.adminAuthenticationFilter).applicableTo(containerRequestContext)) {
+      this.adminAuthenticationFilter.filter(containerRequestContext);
+
+      return;
     }
-    else {
-      this.bearerAuthenticationFilter.filter(containerRequestContext);
-    }
+
+    this.rbacAuthenticationFilter.filter(containerRequestContext);
   }
 }
