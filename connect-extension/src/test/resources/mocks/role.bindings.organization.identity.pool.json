@@ -1,0 +1,6 @@
+{
+  "api_version": "iam/v2",
+  "kind": "RoleBindingList",
+  "data": [],
+  "metadata": {}
+}

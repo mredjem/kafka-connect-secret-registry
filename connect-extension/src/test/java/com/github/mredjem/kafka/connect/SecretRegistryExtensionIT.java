@@ -316,6 +316,71 @@ class SecretRegistryExtensionIT {
   }
 
   @Test
+  void shouldAllowReadingStatusAndSecretAndRestartingConnectorsWhenConnectManagerUsingAPIKey() {
+    given()
+      .header(HttpHeaders.AUTHORIZATION, Credentials.ci())
+      .contentType(ContentType.JSON)
+      .body("{}")
+    .when()
+      .post("/connectors")
+    .then()
+      .statusCode(403);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, Credentials.ci())
+    .when()
+      .get("/secret/paths")
+    .then()
+      .statusCode(200);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, Credentials.ci())
+    .when()
+      .get("/connectors/my_mirror_connector/status")
+    .then()
+      .statusCode(404);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, Credentials.ci())
+      .contentType(ContentType.JSON)
+    .when()
+      .post("/connectors/my_mirror_connector/restart")
+    .then()
+      .statusCode(404);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, Credentials.ci())
+      .contentType(ContentType.JSON)
+    .when()
+      .delete("/connectors/my_mirror_connector")
+    .then()
+      .statusCode(403);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, Credentials.ci())
+    .when()
+      .get("/connectors/my_datagen_connector/status")
+    .then()
+      .statusCode(403);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, Credentials.ci())
+      .contentType(ContentType.JSON)
+    .when()
+      .post("/connectors/my_datagen_connector/restart")
+    .then()
+      .statusCode(403);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, Credentials.ci())
+      .contentType(ContentType.JSON)
+    .when()
+      .delete("/connectors/my_datagen_connector")
+    .then()
+      .statusCode(403);
+  }
+
+  @Test
   void shouldAllowReadingStatusAndRestartingConnectorsWhenEnvironmentOperator() {
     given()
       .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())

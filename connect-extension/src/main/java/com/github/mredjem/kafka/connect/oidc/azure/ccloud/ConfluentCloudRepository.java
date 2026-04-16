@@ -8,9 +8,11 @@ import com.github.mredjem.kafka.connect.oidc.OidcConfigs;
 import com.github.mredjem.kafka.connect.oidc.OidcPort;
 import com.github.mredjem.kafka.connect.oidc.azure.EntraIDToken;
 import com.github.mredjem.kafka.connect.oidc.azure.ccloud.dtos.IdentityPoolDto;
+import com.github.mredjem.kafka.connect.oidc.azure.ccloud.dtos.OwnerDto;
 import com.github.mredjem.kafka.connect.oidc.azure.ccloud.mappers.RoleBindingMapper;
 import com.github.mredjem.kafka.connect.utils.ConfigUtils;
 
+import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -36,12 +38,40 @@ public class ConfluentCloudRepository implements OidcPort {
 
   @Override
   public boolean validateCredentials(AuthenticationCredentials authenticationCredentials) {
-    return AuthenticationKind.BEARER == authenticationCredentials.getKind();
+    AuthenticationKind kind = authenticationCredentials.getKind();
+
+    return AuthenticationKind.BASIC == kind || AuthenticationKind.BEARER == kind;
   }
 
   @Override
   public List<RoleBinding> getRoleBindings(AuthenticationCredentials authenticationCredentials) {
-    Map<String, Object> claims = EntraIDToken.parse(authenticationCredentials.getCredentials()).getClaims();
+    AuthenticationKind kind = authenticationCredentials.getKind();
+
+    if (AuthenticationKind.BASIC == kind) {
+      String decodedCredentials = new String(Base64.getDecoder().decode(authenticationCredentials.getCredentials()));
+
+      return this.getRoleBindingsForAPIKey(decodedCredentials.split(":")[0]);
+    }
+
+    return this.getRoleBindingsForExternalAccessToken(authenticationCredentials.getCredentials());
+  }
+
+  private List<RoleBinding> getRoleBindingsForAPIKey(String apiKeyId) {
+    OwnerDto serviceAccount = this.client.readAPIKey(apiKeyId).getSpec().getOwner();
+
+    return Stream.of(
+        this.client.listRoleBindings(this.resourceName.organizationUrn() + "/*", serviceAccount.getId()),
+        this.client.listRoleBindings(this.resourceName.environmentUrn() + "/*", serviceAccount.getId()),
+        this.client.listRoleBindings(this.resourceName.clusterUrn() + "/connector=*", serviceAccount.getId())
+      )
+      .flatMap(Collection::stream)
+      .map(RoleBindingMapper::map)
+      .filter(Objects::nonNull)
+      .collect(Collectors.toList());
+  }
+
+  private List<RoleBinding> getRoleBindingsForExternalAccessToken(String externalAccessToken) {
+    Map<String, Object> claims = EntraIDToken.parse(externalAccessToken).getClaims();
 
     Predicate<IdentityPoolDto> identityPoolPredicate = this.identityPoolPredicate(claims);
 
