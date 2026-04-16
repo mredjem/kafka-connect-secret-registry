@@ -39,9 +39,9 @@ public class BearerAuthenticationFilter implements ContainerRequestFilter {
       return;
     }
 
-    boolean checkAccess = this.authorizationPort.checkAccess(authenticationCredentials, requestedAction.getOperation(), requestedAction.getResourceName());
+    boolean hasAccess = this.authorizationPort.checkAccess(authenticationCredentials, requestedAction.getOperation(), requestedAction.getResourceName());
 
-    if (!checkAccess) {
+    if (!hasAccess) {
       Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new ForbiddenException("User token is not allowed to access resource"));
 
       containerRequestContext.abortWith(errorResponse);

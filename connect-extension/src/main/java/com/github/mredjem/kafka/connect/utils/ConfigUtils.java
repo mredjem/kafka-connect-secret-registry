@@ -8,7 +8,7 @@ public final class ConfigUtils {
 
   private ConfigUtils() {}
 
-  public static Map<String, String> getConfigsForPrefix(String prefix, Map<String, ?> configs) {
+  public static Map<String, String> configsForPrefix(String prefix, Map<String, ?> configs) {
     Map<String, String> newConfigs = new HashMap<>();
 
     for (Map.Entry<String, ?> config : configs.entrySet()) {
