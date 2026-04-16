@@ -22,7 +22,7 @@ public class KafkaSecretEncryptedMapper {
     EncryptedSecret encryptedSecret = EncryptionUtils.encrypt(secret, this.masterKey);
 
     encrypted.setDerivationInfo(path + "/" + key);
-    encrypted.setContent(encryptedSecret.getEncryptedSecret());
+    encrypted.setContent(encryptedSecret.getSecret());
     encrypted.setSalt(encryptedSecret.getSalt());
 
     return encrypted;

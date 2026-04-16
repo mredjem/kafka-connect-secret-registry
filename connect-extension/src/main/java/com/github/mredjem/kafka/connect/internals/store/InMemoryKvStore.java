@@ -5,8 +5,6 @@ import com.github.mredjem.kafka.connect.internals.KafkaSecretKey;
 import com.github.mredjem.kafka.connect.internals.KafkaSecretValue;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 
@@ -45,7 +43,7 @@ public class InMemoryKvStore implements KvStore<KafkaSecretKey, KafkaSecretValue
 
   @Override
   public void start(String topic) {
-    this.threadPool.submit(() -> {
+    Runnable runnable = () -> {
       try {
         ResetConsumerRebalanceListener rebalanceListener = new ResetConsumerRebalanceListener();
 
@@ -63,17 +61,15 @@ public class InMemoryKvStore implements KvStore<KafkaSecretKey, KafkaSecretValue
             rebalanceListener.resetSeekToBeginningFlag();
           }
 
-          ConsumerRecords<KafkaSecretKey, KafkaSecretValue> consumerRecords = this.kvConsumer.poll(Duration.ofSeconds(1L));
+          this.kvConsumer.poll(Duration.ofSeconds(1L)).forEach(secret -> {
+            if (secret.value() == null) {
+              this.kvStore.remove(secret.key());
 
-          for (ConsumerRecord<KafkaSecretKey, KafkaSecretValue> record : consumerRecords) {
-            if (record.value() == null) {
-              this.kvStore.remove(record.key());
-
-              continue;
+              return;
             }
 
-            this.kvStore.put(record.key(), record.value());
-          }
+            this.kvStore.put(secret.key(), secret.value());
+          });
 
           this.kvConsumer.commitAsync();
 
@@ -91,7 +87,9 @@ public class InMemoryKvStore implements KvStore<KafkaSecretKey, KafkaSecretValue
           this.kvConsumer.close();
         }
       }
-    });
+    };
+
+    this.threadPool.submit(runnable);
   }
 
   @Override

@@ -97,11 +97,16 @@ public class KafkaInternalTopicClient implements Closeable {
         secret
       );
 
-      ProducerRecord<KafkaSecretKey, KafkaSecretValue> record = new ProducerRecord<>(topicName, kafkaSecretKey, kafkaSecretValue);
+      ProducerRecord<KafkaSecretKey, KafkaSecretValue> newSecret = new ProducerRecord<>(topicName, kafkaSecretKey, kafkaSecretValue);
 
-      producer.send(record).get(5L, TimeUnit.SECONDS);
+      producer.send(newSecret).get(5L, TimeUnit.SECONDS);
 
       return kafkaSecretKey.getVersion();
+
+    } catch (final InterruptedException e) {
+      Thread.currentThread().interrupt();
+
+      throw new KafkaInternalTopicOperationException("produce to", e);
 
     } catch (final Exception e) {
       throw new KafkaInternalTopicOperationException("produce to", e);
@@ -114,9 +119,14 @@ public class KafkaInternalTopicClient implements Closeable {
     try (Producer<KafkaSecretKey, KafkaSecretValue> producer = KafkaClients.producer(this.configs)) {
       KafkaSecretKey kafkaSecretKey = KafkaSecretKeyMapper.newKey(path, key, version);
 
-      ProducerRecord<KafkaSecretKey, KafkaSecretValue> record = new ProducerRecord<>(topicName, kafkaSecretKey, null);
+      ProducerRecord<KafkaSecretKey, KafkaSecretValue> tombstone = new ProducerRecord<>(topicName, kafkaSecretKey, null);
 
-      producer.send(record).get(5L, TimeUnit.SECONDS);
+      producer.send(tombstone).get(5L, TimeUnit.SECONDS);
+
+    } catch (final InterruptedException e) {
+      Thread.currentThread().interrupt();
+
+      throw new KafkaInternalTopicOperationException("delete from", e);
 
     } catch (final Exception e) {
       throw new KafkaInternalTopicOperationException("delete from", e);

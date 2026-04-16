@@ -4,18 +4,18 @@ import java.util.Objects;
 
 public class Path {
 
-  private final String path;
+  private final String value;
 
-  private Path(String path) {
-    this.path = path;
+  private Path(String value) {
+    this.value = value;
   }
 
-  public static Path of(String path) {
-    return new Path(path);
+  public static Path of(String value) {
+    return new Path(value);
   }
 
-  public String getPath() {
-    return path;
+  public String getValue() {
+    return value;
   }
 
   @Override
@@ -24,18 +24,18 @@ public class Path {
       return false;
     }
 
-    return this.path.equals(((Path) obj).path);
+    return this.value.equals(((Path) obj).value);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(this.path);
+    return Objects.hashCode(this.value);
   }
 
   @Override
   public String toString() {
     return "Path{" +
-      "path='" + this.path + '\'' +
+      "value='" + this.value + '\'' +
       '}';
   }
 }

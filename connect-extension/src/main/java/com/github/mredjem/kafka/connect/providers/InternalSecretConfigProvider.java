@@ -34,8 +34,8 @@ public class InternalSecretConfigProvider implements ConfigProvider {
     Map<String, String> secrets = this.secretRegistryPort.getSecrets(path, keys)
       .stream()
       .collect(Collectors.toMap(
-        secret -> secret.getVersion().getKey().getKey(),
-        Secret::getSecret
+        secret -> secret.getVersion().getKey().getValue(),
+        Secret::getValue
       ));
 
     return new ConfigData(secrets);

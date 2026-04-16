@@ -6,23 +6,23 @@ public class Key {
 
   private final Path path;
 
-  private final String key;
+  private final String value;
 
-  private Key(Path path, String key) {
+  private Key(Path path, String value) {
     this.path = path;
-    this.key = key;
+    this.value = value;
   }
 
-  public static Key of(String path, String key) {
-    return new Key(Path.of(path), key);
+  public static Key of(String path, String value) {
+    return new Key(Path.of(path), value);
   }
 
   public Path getPath() {
     return this.path;
   }
 
-  public String getKey() {
-    return this.key;
+  public String getValue() {
+    return this.value;
   }
 
   @Override
@@ -31,19 +31,19 @@ public class Key {
       return false;
     }
 
-    return Objects.equals(this.path, ((Key) obj).path) && this.key.equals(((Key) obj).key);
+    return Objects.equals(this.path, ((Key) obj).path) && this.value.equals(((Key) obj).value);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(this.path, this.key);
+    return Objects.hash(this.path, this.value);
   }
 
   @Override
   public String toString() {
     return "Key{" +
       "path=" + this.path +
-      ", key='" + this.key + '\'' +
+      ", value='" + this.value + '\'' +
       '}';
   }
 }

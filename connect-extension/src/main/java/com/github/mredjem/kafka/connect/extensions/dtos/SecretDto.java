@@ -13,10 +13,10 @@ public class SecretDto {
   private String secret;
 
   private SecretDto(Secret secret) {
-    this.path = secret.getVersion().getKey().getPath().getPath();
-    this.key = secret.getVersion().getKey().getKey();
-    this.version = secret.getVersion().getVersion();
-    this.secret = secret.getSecret();
+    this.path = secret.getVersion().getKey().getPath().getValue();
+    this.key = secret.getVersion().getKey().getValue();
+    this.version = secret.getVersion().getValue();
+    this.secret = secret.getValue();
   }
 
   public SecretDto() {}

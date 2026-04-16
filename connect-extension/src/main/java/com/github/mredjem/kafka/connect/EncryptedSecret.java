@@ -2,21 +2,21 @@ package com.github.mredjem.kafka.connect;
 
 public class EncryptedSecret {
 
-  private final byte[] encryptedSecret;
+  private final byte[] secret;
 
   private final byte[] salt;
 
-  private EncryptedSecret(byte[] encryptedSecret, byte[] salt) {
-    this.encryptedSecret = encryptedSecret;
+  private EncryptedSecret(byte[] secret, byte[] salt) {
+    this.secret = secret;
     this.salt = salt;
   }
 
-  public static EncryptedSecret of(byte[] encryptedSecret, byte[] salt) {
-    return new EncryptedSecret(encryptedSecret, salt);
+  public static EncryptedSecret of(byte[] secret, byte[] salt) {
+    return new EncryptedSecret(secret, salt);
   }
 
-  public byte[] getEncryptedSecret() {
-    return this.encryptedSecret;
+  public byte[] getSecret() {
+    return this.secret;
   }
 
   public byte[] getSalt() {

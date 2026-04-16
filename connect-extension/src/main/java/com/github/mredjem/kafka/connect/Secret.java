@@ -6,23 +6,23 @@ public class Secret {
 
   private final Version version;
 
-  private final String secret;
+  private final String value;
 
-  private Secret(Version version, String secret) {
+  private Secret(Version version, String value) {
     this.version = version;
-    this.secret = secret;
+    this.value = value;
   }
 
-  public static Secret of(String path, String key, int version, String secret) {
-    return new Secret(Version.of(path, key, version), secret);
+  public static Secret of(String path, String key, int version, String value) {
+    return new Secret(Version.of(path, key, version), value);
   }
 
   public Version getVersion() {
     return this.version;
   }
 
-  public String getSecret() {
-    return this.secret;
+  public String getValue() {
+    return this.value;
   }
 
   @Override
@@ -31,12 +31,12 @@ public class Secret {
       return false;
     }
 
-    return Objects.equals(this.version, ((Secret) obj).version) && Objects.equals(this.secret, ((Secret) obj).secret);
+    return Objects.equals(this.version, ((Secret) obj).version) && Objects.equals(this.value, ((Secret) obj).value);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(this.version, this.secret);
+    return Objects.hash(this.version, this.value);
   }
 
   @Override
