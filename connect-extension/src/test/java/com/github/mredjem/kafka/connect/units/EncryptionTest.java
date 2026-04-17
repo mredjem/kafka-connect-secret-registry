@@ -1,4 +1,4 @@
-package com.github.mredjem.kafka.connect.tests;
+package com.github.mredjem.kafka.connect.units;
 
 import com.github.mredjem.kafka.connect.EncryptedSecret;
 import com.github.mredjem.kafka.connect.internals.KafkaSecretValue;
