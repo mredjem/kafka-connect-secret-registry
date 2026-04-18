@@ -1,3 +1,15 @@
+# [2.0.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/1.3.3...2.0.0) (2026-04-18)
+
+
+### Features
+
+* use stronger encryption algorithm ([c706300](https://github.com/mredjem/kafka-connect-secret-registry/commit/c70630010162f649af78a6f39f05bd2de6cb0a40))
+
+
+### BREAKING CHANGES
+
+* the new algorithm will not be able to decrypt cypher texts encrypted with the previous implementation
+
 ## [1.3.3](https://github.com/mredjem/kafka-connect-secret-registry/compare/1.3.2...1.3.3) (2026-04-18)
 
 
