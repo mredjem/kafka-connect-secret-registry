@@ -169,31 +169,31 @@ class SecretRegistryApiIT extends AbstractIT {
 
     String key = "storage.account";
 
-    CreateSecretDto createStorageAccountSecretV1 = CreateSecretDto.of("app1");
+    for (int i = 1; i <= 2; i++) {
+      CreateSecretDto createStorageAccountSecret = CreateSecretDto.of("app" + i);
 
-    Response createdV1Response = secretRegistryApi.createSecret(
-      MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions"),
-      path,
-      key,
-      createStorageAccountSecretV1
-    );
+      Response createdResponse = secretRegistryApi.createSecret(
+        MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions"),
+        path,
+        key,
+        createStorageAccountSecret
+      );
 
-    Assertions.assertEquals(Response.Status.CREATED.getStatusCode(), createdV1Response.getStatus());
+      Assertions.assertEquals(Response.Status.CREATED.getStatusCode(), createdResponse.getStatus());
 
-    createdV1Response.close();
+      createdResponse.close();
+    }
 
-    CreateSecretDto createStorageAccountSecretV2 = CreateSecretDto.of("app2");
+    Awaitility.await().atMost(10L, TimeUnit.SECONDS).until(() -> {
+      Response version2Response = secretRegistryApi.getSecret(
+        MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions/2"),
+        path,
+        key,
+        "2"
+      );
 
-    Response createdV2Response = secretRegistryApi.createSecret(
-      MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions"),
-      path,
-      key,
-      createStorageAccountSecretV2
-    );
-
-    Assertions.assertEquals(Response.Status.CREATED.getStatusCode(), createdV2Response.getStatus());
-
-    createdV2Response.close();
+      return Response.Status.OK.getStatusCode() == version2Response.getStatus();
+    });
 
     // check available paths
     Response pathsResponse = secretRegistryApi.listAllPaths(MockUriInfo.of("/secret/paths"));

@@ -1,6 +1,5 @@
 [![Build](https://github.com/mredjem/kafka-connect-secret-registry/actions/workflows/build.yml/badge.svg)](https://github.com/mredjem/kafka-connect-secret-registry/actions/workflows/build.yml)
-[![Release](https://github.com/mredjem/kafka-connect-secret-registry/actions/workflows/release.yml/badge.svg)](https://github.com/mredjem/kafka-connect-secret-registry/actions/workflows/release.yml)
-[![CodeQL](https://github.com/mredjem/kafka-connect-secret-registry/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/mredjem/kafka-connect-secret-registry/actions/workflows/github-code-scanning/codeql)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mredjem_kafka-connect-secret-registry-extension&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=mredjem_kafka-connect-secret-registry-extension)
 
 # Kafka Connect Secret Registry Extension
 
