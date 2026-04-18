@@ -1,3 +1,10 @@
+## [1.3.3](https://github.com/mredjem/kafka-connect-secret-registry/compare/1.3.2...1.3.3) (2026-04-18)
+
+
+### Bug Fixes
+
+* solve race condition when creating multiple secrets for same key ([eb27356](https://github.com/mredjem/kafka-connect-secret-registry/commit/eb273563051d8a7e4b3f1e0bdb8fae03933d12fb))
+
 ## [1.3.2](https://github.com/mredjem/kafka-connect-secret-registry/compare/1.3.1...1.3.2) (2026-04-18)
 
 
