@@ -38,6 +38,8 @@ public class ConfluentCloudApi {
   }
 
   public void initMocks() {
+    this.server.reset();
+
     this.server
       .when(
         request()
