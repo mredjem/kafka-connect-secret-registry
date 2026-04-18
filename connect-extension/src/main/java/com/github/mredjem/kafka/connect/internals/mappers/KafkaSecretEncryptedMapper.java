@@ -24,6 +24,7 @@ public class KafkaSecretEncryptedMapper {
     encrypted.setDerivationInfo(path + "/" + key);
     encrypted.setContent(encryptedSecret.getSecret());
     encrypted.setSalt(encryptedSecret.getSalt());
+    encrypted.setIv(encryptedSecret.getIv());
 
     return encrypted;
   }

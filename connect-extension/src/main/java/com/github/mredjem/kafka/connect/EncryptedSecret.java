@@ -6,13 +6,16 @@ public class EncryptedSecret {
 
   private final byte[] salt;
 
-  private EncryptedSecret(byte[] secret, byte[] salt) {
+  private final byte[] iv;
+
+  private EncryptedSecret(byte[] secret, byte[] salt, byte[] iv) {
     this.secret = secret;
     this.salt = salt;
+    this.iv = iv;
   }
 
-  public static EncryptedSecret of(byte[] secret, byte[] salt) {
-    return new EncryptedSecret(secret, salt);
+  public static EncryptedSecret of(byte[] secret, byte[] salt, byte[] iv) {
+    return new EncryptedSecret(secret, salt, iv);
   }
 
   public byte[] getSecret() {
@@ -21,5 +24,9 @@ public class EncryptedSecret {
 
   public byte[] getSalt() {
     return this.salt;
+  }
+
+  public byte[] getIv() {
+    return this.iv;
   }
 }

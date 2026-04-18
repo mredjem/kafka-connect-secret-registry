@@ -6,6 +6,7 @@ import com.github.mredjem.kafka.connect.internals.exceptions.EncryptionException
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
@@ -25,15 +26,18 @@ public final class EncryptionUtils {
   public static EncryptedSecret encrypt(String secret, String masterKey) {
     try {
       byte[] salt = generateSalt();
+      byte[] iv = generateIv();
 
       Key aesKey = generateAESKey(masterKey, salt);
 
-      Cipher cipher = Cipher.getInstance("AES");
-      cipher.init(Cipher.ENCRYPT_MODE, aesKey);
+      GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(128, iv);
+
+      Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+      cipher.init(Cipher.ENCRYPT_MODE, aesKey, gcmParameterSpec);
 
       byte[] encrypted = cipher.doFinal(secret.getBytes(StandardCharsets.UTF_8));
 
-      return EncryptedSecret.of(encrypted, salt);
+      return EncryptedSecret.of(encrypted, salt, iv);
 
     } catch (final Exception e) {
       throw new EncryptionException("Failed to encrypt secret", e);
@@ -44,8 +48,10 @@ public final class EncryptionUtils {
     try {
       Key aesKey = generateAESKey(masterKey, encryptedSecret.getSalt());
 
-      Cipher cipher = Cipher.getInstance("AES");
-      cipher.init(Cipher.DECRYPT_MODE, aesKey);
+      GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(128, encryptedSecret.getIv());
+
+      Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+      cipher.init(Cipher.DECRYPT_MODE, aesKey, gcmParameterSpec);
 
       return cipher.doFinal(encryptedSecret.getSecret());
 
@@ -87,5 +93,13 @@ public final class EncryptionUtils {
     RANDOM.nextBytes(salt);
 
     return salt;
+  }
+
+  private static byte[] generateIv() {
+    byte[] iv = new byte[12];
+
+    RANDOM.nextBytes(iv);
+
+    return iv;
   }
 }
