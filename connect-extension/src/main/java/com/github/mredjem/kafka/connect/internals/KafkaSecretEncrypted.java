@@ -8,6 +8,8 @@ public class KafkaSecretEncrypted {
 
   private byte[] salt;
 
+  private byte[] iv;
+
   public String getDerivationInfo() {
     return this.derivationInfo;
   }
@@ -30,5 +32,13 @@ public class KafkaSecretEncrypted {
 
   public void setSalt(byte[] salt) {
     this.salt = salt;
+  }
+
+  public byte[] getIv() {
+    return this.iv;
+  }
+
+  public void setIv(byte[] iv) {
+    this.iv = iv;
   }
 }

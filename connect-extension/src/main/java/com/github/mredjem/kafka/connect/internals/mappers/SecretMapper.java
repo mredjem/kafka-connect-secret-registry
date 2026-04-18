@@ -21,7 +21,11 @@ public class SecretMapper {
   public Secret newSecret(KafkaSecretValue kafkaSecretValue) {
     KafkaSecretEncrypted kafkaSecretEncrypted = kafkaSecretValue.getEncrypted();
 
-    EncryptedSecret encryptedSecret = EncryptedSecret.of(kafkaSecretEncrypted.getContent(), kafkaSecretEncrypted.getSalt());
+    EncryptedSecret encryptedSecret = EncryptedSecret.of(
+      kafkaSecretEncrypted.getContent(),
+      kafkaSecretEncrypted.getSalt(),
+      kafkaSecretEncrypted.getIv()
+    );
 
     byte[] decrypted = EncryptionUtils.decrypt(encryptedSecret, this.masterKey);
 

@@ -45,7 +45,11 @@ class EncryptionTest {
   }
 
   private static EncryptedSecret encryptedSecret(KafkaSecretValue kafkaSecretValue) {
-    return EncryptedSecret.of(kafkaSecretValue.getEncrypted().getContent(), kafkaSecretValue.getEncrypted().getSalt());
+    return EncryptedSecret.of(
+      kafkaSecretValue.getEncrypted().getContent(),
+      kafkaSecretValue.getEncrypted().getSalt(),
+      kafkaSecretValue.getEncrypted().getIv()
+    );
   }
 
   private static byte[] serialize(KafkaSecretValue kafkaSecretValue) {
