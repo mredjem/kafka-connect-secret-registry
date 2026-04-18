@@ -7,7 +7,6 @@ import com.github.mredjem.kafka.connect.providers.InternalSecretConfigProvider;
 import com.github.mredjem.kafka.connect.utils.SocketUtils;
 import io.restassured.RestAssured;
 import org.awaitility.Awaitility;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.LoggerFactory;
@@ -86,24 +85,19 @@ abstract class AbstractIT {
       .waitingFor(Wait.forHealthcheck())
       .waitingFor(Wait.forHttp("/connector-plugins"))
       .waitingFor(Wait.forLogMessage("server is started and ready to handle requests", 1));
+
+    CONFLUENT_CLOUD_API.start(MOCKSERVER_PORT);
+
+    Awaitility.await().atMost(5L, TimeUnit.SECONDS).until(CONFLUENT_CLOUD_API::isRunning);
   }
 
   @BeforeAll
   static void setup() {
-    CONFLUENT_CLOUD_API.start(MOCKSERVER_PORT);
-
-    Awaitility.await().atMost(5L, TimeUnit.SECONDS).until(CONFLUENT_CLOUD_API::isRunning);
-
     RestAssured.baseURI = "http://localhost:" + CONNECT.getMappedPort(8083);
   }
 
   @BeforeEach
   void beforeEach() {
     CONFLUENT_CLOUD_API.initMocks();
-  }
-
-  @AfterAll
-  static void tearDown() {
-    CONFLUENT_CLOUD_API.stop();
   }
 }

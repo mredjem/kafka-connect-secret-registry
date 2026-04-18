@@ -43,6 +43,26 @@ class AuthenticationFilterIT extends AbstractIT {
   }
 
   @Test
+  void shouldRejectUnregisteredPath() throws IOException {
+    Map<String, String> headers = ConfigUtils.addEntry(this.defaultHeaders(), HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal());
+
+    MockContainerRequestContext unregisteredRequest = MockContainerRequestContext.of(HttpMethod.GET, "/connectors/my_datagen_connector/configuration/", headers);
+
+    unregisteredRequest.addAssertion(response -> {
+      Response.Status expectedStatus = Response.Status.FORBIDDEN;
+
+      Assertions.assertEquals(expectedStatus.getStatusCode(), response.getStatus());
+      Assertions.assertInstanceOf(ErrorDto.class, response.getEntity());
+
+      ErrorDto error = (ErrorDto) response.getEntity();
+
+      Assertions.assertTrue(error.getMessage().contains("Resource being accessed is unregistered"));
+    });
+
+    authenticationFilter.filter(unregisteredRequest);
+  }
+
+  @Test
   void shouldBeRejectedIfUnauthenticated() throws IOException {
     Map<String, String> headers = this.defaultHeaders();
 
@@ -126,6 +146,16 @@ class AuthenticationFilterIT extends AbstractIT {
     createRequest.addAssertion(response -> Assertions.fail());
 
     authenticationFilter.filter(createRequest);
+
+    MockContainerRequestContext offsetsRequest = MockContainerRequestContext.of(
+      HttpMethod.GET,
+      "/connectors/my_datagen_connector/offsets",
+      headers
+    );
+
+    offsetsRequest.addAssertion(response -> Assertions.fail());
+
+    authenticationFilter.filter(offsetsRequest);
 
     MockContainerRequestContext deleteRequest = MockContainerRequestContext.of(
       HttpMethod.DELETE,
