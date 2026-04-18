@@ -15,6 +15,14 @@ public class RoleBinding {
     return new RoleBinding(role, resourceScope);
   }
 
+  public Role getRole() {
+    return this.role;
+  }
+
+  public ResourceScope getResourceScope() {
+    return this.resourceScope;
+  }
+
   public boolean allows(Operation operation, String resourceName) {
     if (Operation.READ_CONFIGURATION == operation && "LIST_CONNECTOR_NAMES".equals(resourceName)) {
       return true;

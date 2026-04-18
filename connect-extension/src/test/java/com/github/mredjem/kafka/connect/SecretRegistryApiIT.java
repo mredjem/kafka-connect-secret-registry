@@ -14,6 +14,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.shaded.org.awaitility.Awaitility;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
@@ -22,6 +23,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 class SecretRegistryApiIT extends AbstractIT {
 
@@ -54,7 +58,7 @@ class SecretRegistryApiIT extends AbstractIT {
 
   @Test
   void shouldCreateNewSecrets() {
-    String path = "dev.users.postgres.jdbc-sink-connector";
+    String path = "tst.users.postgres.jdbc-sink-connector";
 
     String key = "pg.user";
 
@@ -89,7 +93,7 @@ class SecretRegistryApiIT extends AbstractIT {
   @Test
   @SuppressWarnings("unchecked")
   void shouldGetLatestSecretVersion() {
-    String path = "dev.users.oracle.jdbc-sink-connector";
+    String path = "tst.users.oracle.jdbc-sink-connector";
 
     String key = "oracle.user";
 
@@ -118,6 +122,17 @@ class SecretRegistryApiIT extends AbstractIT {
     Assertions.assertEquals(Response.Status.CREATED.getStatusCode(), createdV2Response.getStatus());
 
     createdV2Response.close();
+
+    Awaitility.await().atMost(1L, TimeUnit.SECONDS).until(() -> {
+      Response version2Response = secretRegistryApi.getSecret(
+        MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions/2"),
+        path,
+        key,
+        "2"
+      );
+
+      return Response.Status.OK.getStatusCode() == version2Response.getStatus();
+    });
 
     Response versionsResponse = secretRegistryApi.listVersionsForKey(
       MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions"),
@@ -160,24 +175,136 @@ class SecretRegistryApiIT extends AbstractIT {
 
   @Test
   @SuppressWarnings("unchecked")
-  void shouldDeleteSecret() {
-    String path = "dev.users.mssql.jdbc-sink-connector";
+  void shouldListSecretsUnderPathOrKey() {
+    String path = "tst.azure.storage.blob-sink-connector";
 
-    String key = "mssql.user";
+    String key = "storage.account";
 
-    CreateSecretDto createSqlServerUserSecret = CreateSecretDto.of("admin");
+    CreateSecretDto createStorageAccountSecretV1 = CreateSecretDto.of("app1");
 
-    Response createdResponse = secretRegistryApi.createSecret(
+    Response createdV1Response = secretRegistryApi.createSecret(
       MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions"),
       path,
       key,
-      createSqlServerUserSecret
+      createStorageAccountSecretV1
     );
 
-    Assertions.assertEquals(Response.Status.CREATED.getStatusCode(), createdResponse.getStatus());
+    Assertions.assertEquals(Response.Status.CREATED.getStatusCode(), createdV1Response.getStatus());
 
-    createdResponse.close();
+    createdV1Response.close();
 
+    CreateSecretDto createStorageAccountSecretV2 = CreateSecretDto.of("app2");
+
+    Response createdV2Response = secretRegistryApi.createSecret(
+      MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions"),
+      path,
+      key,
+      createStorageAccountSecretV2
+    );
+
+    Assertions.assertEquals(Response.Status.CREATED.getStatusCode(), createdV2Response.getStatus());
+
+    createdV2Response.close();
+
+    // check available paths
+    Response pathsResponse = secretRegistryApi.listAllPaths(MockUriInfo.of("/secret/paths"));
+
+    Assertions.assertEquals(Response.Status.OK.getStatusCode(), pathsResponse.getStatus());
+    Assertions.assertInstanceOf(List.class, pathsResponse.getEntity());
+
+    List<String> paths = (List<String>) pathsResponse.getEntity();
+
+    Assertions.assertTrue(paths.contains(path));
+
+    pathsResponse.close();
+
+    // check available keys under path
+    Response keysResponse = secretRegistryApi.listAllKeysForPath(
+      MockUriInfo.of("/secret/paths/" + path + "/keys"),
+      path
+    );
+
+    Assertions.assertEquals(Response.Status.OK.getStatusCode(), keysResponse.getStatus());
+    Assertions.assertInstanceOf(List.class, keysResponse.getEntity());
+
+    List<String> keys = (List<String>) keysResponse.getEntity();
+
+    Assertions.assertTrue(keys.contains(key));
+
+    keysResponse.close();
+
+    // check available secrets under path
+    Response pathSecretsResponse = secretRegistryApi.getAllLatestVersionsForKeysInPath(
+      MockUriInfo.of("/secret/paths/" + path),
+      path
+    );
+
+    Assertions.assertEquals(Response.Status.OK.getStatusCode(), pathSecretsResponse.getStatus());
+    Assertions.assertInstanceOf(List.class, pathSecretsResponse.getEntity());
+
+    Map<String, SecretDto> secretsPerKey = ((List<SecretDto>) pathSecretsResponse.getEntity())
+      .stream()
+      .collect(Collectors.toMap(
+        SecretDto::getKey,
+        Function.identity()
+    ));
+
+    Assertions.assertTrue(secretsPerKey.containsKey(key));
+    Assertions.assertEquals(path, secretsPerKey.get(key).getPath());
+    Assertions.assertEquals(2, secretsPerKey.get(key).getVersion());
+    Assertions.assertEquals("app2", secretsPerKey.get(key).getSecret());
+
+    pathSecretsResponse.close();
+
+    // check available secrets under key
+    Response keySecretsResponse = secretRegistryApi.getAllVersionsForKey(
+      MockUriInfo.of("/secret/paths/" + path + "/keys/" + key),
+      path,
+      key
+    );
+
+    Assertions.assertEquals(Response.Status.OK.getStatusCode(), keySecretsResponse.getStatus());
+    Assertions.assertInstanceOf(List.class, keySecretsResponse.getEntity());
+
+    Map<Integer, SecretDto> secretsPerVersion = ((List<SecretDto>) keySecretsResponse.getEntity())
+      .stream()
+      .collect(Collectors.toMap(
+        SecretDto::getVersion,
+        Function.identity()
+      ));
+
+    Assertions.assertTrue(secretsPerVersion.containsKey(1));
+    Assertions.assertTrue(secretsPerVersion.containsKey(2));
+
+    Assertions.assertEquals("app1", secretsPerVersion.get(1).getSecret());
+    Assertions.assertEquals("app2", secretsPerVersion.get(2).getSecret());
+
+    keySecretsResponse.close();
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  void shouldDeleteSecret() {
+    String path = "tst.users.mssql.jdbc-sink-connector";
+
+    String key = "mssql.user";
+
+    for (int i = 1; i <= 3; i++) {
+      CreateSecretDto createSqlServerUserSecret = CreateSecretDto.of("admin" + i);
+
+      Response createdResponse = secretRegistryApi.createSecret(
+        MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions"),
+        path,
+        key,
+        createSqlServerUserSecret
+      );
+
+      Assertions.assertEquals(Response.Status.CREATED.getStatusCode(), createdResponse.getStatus());
+
+      createdResponse.close();
+    }
+
+    // delete version 1
     Response deletedResponse = secretRegistryApi.deleteSpecificVersionForKey(
       MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions/1"),
       path,
@@ -189,6 +316,18 @@ class SecretRegistryApiIT extends AbstractIT {
 
     deletedResponse.close();
 
+    Awaitility.await().atMost(1L, TimeUnit.SECONDS).until(() -> {
+      Response version1Response = secretRegistryApi.getSecret(
+        MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions/1"),
+        path,
+        key,
+        "1"
+      );
+
+      return Response.Status.NOT_FOUND.getStatusCode() == version1Response.getStatus();
+    });
+
+    // list available versions under key
     Response versionsResponse = secretRegistryApi.listVersionsForKey(
       MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions"),
       path,
@@ -196,19 +335,41 @@ class SecretRegistryApiIT extends AbstractIT {
     );
 
     Assertions.assertEquals(Response.Status.OK.getStatusCode(), versionsResponse.getStatus());
-
     Assertions.assertInstanceOf(List.class, versionsResponse.getEntity());
 
     List<Integer> versions = (List<Integer>) versionsResponse.getEntity();
 
-    Assertions.assertTrue(versions.isEmpty());
+    Assertions.assertFalse(versions.contains(1));
+    Assertions.assertTrue(versions.contains(2));
+    Assertions.assertTrue(versions.contains(3));
 
     versionsResponse.close();
+
+    // delete all secrets under key
+    Response keysRemovalResponse = secretRegistryApi.deleteAllVersionsForKey(
+      MockUriInfo.of("/secret/paths/" + path + "/keys/" + key),
+      path,
+      key
+    );
+
+    Assertions.assertEquals(Response.Status.NO_CONTENT.getStatusCode(), keysRemovalResponse.getStatus());
+
+    keysRemovalResponse.close();
+
+    // delete path
+    Response pathRemovalResponse = secretRegistryApi.deletePath(
+      MockUriInfo.of("/secret/paths/" + path),
+      path
+    );
+
+    Assertions.assertEquals(Response.Status.NO_CONTENT.getStatusCode(), pathRemovalResponse.getStatus());
+
+    pathRemovalResponse.close();
   }
 
   @Test
-  void shouldInjectSecretInConnectorConfiguration() throws InterruptedException {
-    String path = "test-connector";
+  void shouldInjectSecretInConnectorConfiguration() {
+    String path = "tst-connector";
 
     String key = "tasks.max";
 
@@ -225,7 +386,16 @@ class SecretRegistryApiIT extends AbstractIT {
 
     createdResponse.close();
 
-    Thread.sleep(1_000L);
+    Awaitility.await().atMost(1L, TimeUnit.SECONDS).until(() -> {
+      Response latestResponse = secretRegistryApi.getSecret(
+        MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions/latest"),
+        path,
+        key,
+        "latest"
+      );
+
+      return Response.Status.OK.getStatusCode() == latestResponse.getStatus();
+    });
 
     ConfigData configData = SECRET_CONFIG_PROVIDER.get(path, Collections.singleton(key));
 

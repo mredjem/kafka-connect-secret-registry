@@ -13,13 +13,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.kafka.ConfluentKafkaContainer;
 
 import java.util.concurrent.TimeUnit;
 
-@Testcontainers
 abstract class AbstractIT {
 
   protected static final int MOCKSERVER_PORT = SocketUtils.nextAvailablePort();
@@ -31,7 +29,6 @@ abstract class AbstractIT {
 
   protected static final Network NETWORK = Network.newNetwork();
 
-  @Container
   protected static final ConfluentKafkaContainer KAFKA = new ConfluentKafkaContainer("confluentinc/cp-kafka:7.7.0")
     .withNetwork(NETWORK)
     .withNetworkAliases("kafka")
@@ -40,9 +37,9 @@ abstract class AbstractIT {
     .withEnv("KAFKA_NODE_ID", "1")
     .withEnv("KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR", "1")
     .withEnv("KAFKA_AUTO_CREATE_TOPICS_ENABLE", "false")
-    .withEnv("CONFLUENT_METRICS_ENABLE", "false");
+    .withEnv("CONFLUENT_METRICS_ENABLE", "false")
+    .withReuse(true);
 
-  @Container
   protected static final ConfluentKafkaConnectContainer CONNECT = new ConfluentKafkaConnectContainer("confluentinc/cp-kafka-connect-base:7.7.0")
     .withNetwork(NETWORK)
     .withNetworkAliases("connect")
@@ -76,9 +73,20 @@ abstract class AbstractIT {
     .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_SECRET_REGISTRY_GROUP_ID", "secret-registry")
     .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_SUPER_ADMINS", "admin:password:,centreon:password:read")
     .withLogConsumer(outputFrame -> new Slf4jLogConsumer(LoggerFactory.getLogger("connect")).accept(outputFrame))
+    .withReuse(true)
     .dependsOn(KAFKA);
 
   protected static final ConfluentCloudApi CONFLUENT_CLOUD_API = ConfluentCloudApi.create();
+
+  static {
+    KAFKA.start();
+
+    CONNECT.start();
+    CONNECT
+      .waitingFor(Wait.forHealthcheck())
+      .waitingFor(Wait.forHttp("/connector-plugins"))
+      .waitingFor(Wait.forLogMessage("server is started and ready to handle requests", 1));
+  }
 
   @BeforeAll
   static void setup() {

@@ -16,7 +16,7 @@ public class CreateConnectorDto {
     Map<String, String> connectorConfig = new HashMap<>();
 
     connectorConfig.put("connector.class", "org.apache.kafka.connect.mirror.MirrorSourceConnector");
-    connectorConfig.put("tasks.max", "${secret:test-connector:tasks.max}");
+    connectorConfig.put("tasks.max", "${secret:prd-connector:tasks.max}");
     connectorConfig.put("topics", "_connect-secrets");
     connectorConfig.put("source.cluster.alias", "source");
     connectorConfig.put("source.cluster.bootstrap.servers", "kafka:29092");
@@ -26,7 +26,7 @@ public class CreateConnectorDto {
   }
 
   public String getName() {
-    return "test-connector";
+    return "prd-connector";
   }
 
   public Map<String, String> getConfig() {

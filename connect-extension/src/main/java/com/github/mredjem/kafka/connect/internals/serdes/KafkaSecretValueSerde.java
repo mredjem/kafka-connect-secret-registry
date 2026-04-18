@@ -1,10 +1,13 @@
 package com.github.mredjem.kafka.connect.internals.serdes;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.mredjem.kafka.connect.internals.KafkaSecretValue;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serializer;
 
 public class KafkaSecretValueSerde {
+
+  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
   private KafkaSecretValueSerde() {}
 
@@ -17,7 +20,7 @@ public class KafkaSecretValueSerde {
           return null;
         }
 
-        return SharedObjectMapper.INSTANCE.serialize(data);
+        return OBJECT_MAPPER.writeValueAsBytes(data);
 
       } catch (final Exception e) {
         throw new DeSerializationException("serialize", false, e);
@@ -34,7 +37,7 @@ public class KafkaSecretValueSerde {
           return null;
         }
 
-        return SharedObjectMapper.INSTANCE.deserialize(data, KafkaSecretValue.class);
+        return OBJECT_MAPPER.readValue(data, KafkaSecretValue.class);
 
       } catch (final Exception e) {
         throw new DeSerializationException("deserialize", false, e);
