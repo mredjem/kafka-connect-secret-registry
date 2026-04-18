@@ -19,6 +19,8 @@ import java.util.Random;
 
 public final class EncryptionUtils {
 
+  private static final String ENCRYPTION_ALGORITHM = "AES/GCM/NoPadding";
+
   private static final Random RANDOM = new SecureRandom();
 
   private EncryptionUtils() {}
@@ -30,9 +32,9 @@ public final class EncryptionUtils {
 
       Key aesKey = generateAESKey(masterKey, salt);
 
-      GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(128, iv);
+      GCMParameterSpec gcmParameterSpec = generateParameterSpec(iv);
 
-      Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+      Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
       cipher.init(Cipher.ENCRYPT_MODE, aesKey, gcmParameterSpec);
 
       byte[] encrypted = cipher.doFinal(secret.getBytes(StandardCharsets.UTF_8));
@@ -48,9 +50,9 @@ public final class EncryptionUtils {
     try {
       Key aesKey = generateAESKey(masterKey, encryptedSecret.getSalt());
 
-      GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(128, encryptedSecret.getIv());
+      GCMParameterSpec gcmParameterSpec = generateParameterSpec(encryptedSecret.getIv());
 
-      Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+      Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
       cipher.init(Cipher.DECRYPT_MODE, aesKey, gcmParameterSpec);
 
       return cipher.doFinal(encryptedSecret.getSecret());
@@ -85,6 +87,10 @@ public final class EncryptionUtils {
     SecretKey pbeKey = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256").generateSecret(keySpec);
 
     return new SecretKeySpec(pbeKey.getEncoded(), "AES");
+  }
+
+  private static GCMParameterSpec generateParameterSpec(byte[] iv) {
+    return new GCMParameterSpec(128, iv);
   }
 
   private static byte[] generateSalt() {

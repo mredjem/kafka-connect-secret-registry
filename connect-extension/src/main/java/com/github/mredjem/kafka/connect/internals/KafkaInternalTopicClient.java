@@ -184,17 +184,21 @@ public class KafkaInternalTopicClient implements Closeable {
         return true;
       }
 
-      if (LATEST.equals(version)) {
-        KafkaSecretKey latestKey = KafkaSecretKeyMapper.newKey(path, key, LATEST_VERSION);
-
-        int latestVersion = this.kvStore.getLatest(latestKey)
-          .map(KafkaSecretValue::getVersion)
-          .orElse(LATEST_VERSION);
-
-        return secretKey.getVersion() == latestVersion;
-      }
-
-      return Integer.toString(secretKey.getVersion()).equals(version);
+      return this.doesVersionMatch(secretKey, path, key, version);
     };
+  }
+
+  private boolean doesVersionMatch(KafkaSecretKey secretKey, String path, String key, String version) {
+    if (LATEST.equals(version)) {
+      KafkaSecretKey latestKey = KafkaSecretKeyMapper.newKey(path, key, LATEST_VERSION);
+
+      int latestVersion = this.kvStore.getLatest(latestKey)
+        .map(KafkaSecretValue::getVersion)
+        .orElse(LATEST_VERSION);
+
+      return secretKey.getVersion() == latestVersion;
+    }
+
+    return Integer.toString(secretKey.getVersion()).equals(version);
   }
 }
