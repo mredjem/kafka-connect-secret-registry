@@ -35,11 +35,13 @@ public final class RbacRules {
   private static final Map<Operation, List<RequestMatcher>> REQUEST_MATCHERS = new EnumMap<>(Operation.class);
 
   static {
+    String connectorOffsetsPath = "/?connectors/([^/]+)/offsets/?";
+
     REQUEST_MATCHERS.put(Operation.READ_CONFIGURATION, Arrays.asList(
       RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connectors/?")),
       RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connectors/([^/]+)/?")),
       RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connectors/([^/]+)/config/?")),
-      RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connectors/([^/]+)/offsets/?")),
+      RequestMatcher.of(HttpMethod.GET, Pattern.compile(connectorOffsetsPath)),
       RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connectors/([^/]+)/topics/?"))
     ));
 
@@ -70,8 +72,8 @@ public final class RbacRules {
     REQUEST_MATCHERS.put(Operation.CONFIGURE, Arrays.asList(
       RequestMatcher.of(HttpMethod.POST, Pattern.compile("/?connectors/?")),
       RequestMatcher.of(HttpMethod.PUT, Pattern.compile("/?connectors/([^/]+)/config/?")),
-      RequestMatcher.of(HttpMethod.PATCH, Pattern.compile("/?connectors/([^/]+)/offsets/?")),
-      RequestMatcher.of(HttpMethod.DELETE, Pattern.compile("/?connectors/([^/]+)/offsets/?"))
+      RequestMatcher.of(HttpMethod.PATCH, Pattern.compile(connectorOffsetsPath)),
+      RequestMatcher.of(HttpMethod.DELETE, Pattern.compile(connectorOffsetsPath))
     ));
 
     REQUEST_MATCHERS.put(Operation.CONFIGURE_SECRET, Collections.singletonList(

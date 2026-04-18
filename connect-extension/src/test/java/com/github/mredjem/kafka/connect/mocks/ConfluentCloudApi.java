@@ -31,12 +31,6 @@ public class ConfluentCloudApi {
     return this.server != null && this.server.isRunning();
   }
 
-  public void stop() {
-    if (this.isRunning()) {
-      this.server.stop();
-    }
-  }
-
   public void initMocks() {
     this.server.reset();
 

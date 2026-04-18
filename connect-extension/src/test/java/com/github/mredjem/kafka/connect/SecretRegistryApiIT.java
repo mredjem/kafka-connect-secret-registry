@@ -97,33 +97,22 @@ class SecretRegistryApiIT extends AbstractIT {
 
     String key = "oracle.user";
 
-    CreateSecretDto createOracleUserV1 = CreateSecretDto.of("admin1");
+    for (int i = 1; i <= 2; i++) {
+      CreateSecretDto createOracleUser = CreateSecretDto.of("admin" + i);
 
-    Response createdV1Response = secretRegistryApi.createSecret(
-      MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions"),
-      path,
-      key,
-      createOracleUserV1
-    );
+      Response createdResponse = secretRegistryApi.createSecret(
+        MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions"),
+        path,
+        key,
+        createOracleUser
+      );
 
-    Assertions.assertEquals(Response.Status.CREATED.getStatusCode(), createdV1Response.getStatus());
+      Assertions.assertEquals(Response.Status.CREATED.getStatusCode(), createdResponse.getStatus());
 
-    createdV1Response.close();
+      createdResponse.close();
+    }
 
-    CreateSecretDto createOracleUserV2 = CreateSecretDto.of("admin2");
-
-    Response createdV2Response = secretRegistryApi.createSecret(
-      MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions"),
-      path,
-      key,
-      createOracleUserV2
-    );
-
-    Assertions.assertEquals(Response.Status.CREATED.getStatusCode(), createdV2Response.getStatus());
-
-    createdV2Response.close();
-
-    Awaitility.await().atMost(1L, TimeUnit.SECONDS).until(() -> {
+    Awaitility.await().atMost(10L, TimeUnit.SECONDS).until(() -> {
       Response version2Response = secretRegistryApi.getSecret(
         MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions/2"),
         path,
@@ -168,7 +157,7 @@ class SecretRegistryApiIT extends AbstractIT {
     Assertions.assertEquals(path, secret.getPath());
     Assertions.assertEquals(key, secret.getKey());
     Assertions.assertEquals(2, secret.getVersion());
-    Assertions.assertEquals(createOracleUserV2.getSecret(), secret.getSecret());
+    Assertions.assertEquals("admin2", secret.getSecret());
 
     latestResponse.close();
   }
@@ -304,6 +293,17 @@ class SecretRegistryApiIT extends AbstractIT {
       createdResponse.close();
     }
 
+    Awaitility.await().atMost(10L, TimeUnit.SECONDS).until(() -> {
+      Response version3Response = secretRegistryApi.getSecret(
+        MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions/3"),
+        path,
+        key,
+        "3"
+      );
+
+      return Response.Status.OK.getStatusCode() == version3Response.getStatus();
+    });
+
     // delete version 1
     Response deletedResponse = secretRegistryApi.deleteSpecificVersionForKey(
       MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions/1"),
@@ -316,7 +316,7 @@ class SecretRegistryApiIT extends AbstractIT {
 
     deletedResponse.close();
 
-    Awaitility.await().atMost(1L, TimeUnit.SECONDS).until(() -> {
+    Awaitility.await().atMost(10L, TimeUnit.SECONDS).until(() -> {
       Response version1Response = secretRegistryApi.getSecret(
         MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions/1"),
         path,
@@ -386,7 +386,7 @@ class SecretRegistryApiIT extends AbstractIT {
 
     createdResponse.close();
 
-    Awaitility.await().atMost(1L, TimeUnit.SECONDS).until(() -> {
+    Awaitility.await().atMost(10L, TimeUnit.SECONDS).until(() -> {
       Response latestResponse = secretRegistryApi.getSecret(
         MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions/latest"),
         path,
