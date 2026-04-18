@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.0.0...2.0.1) (2026-04-18)
+
+
+### Performance Improvements
+
+* provide some minor code improvements ([55fe9b1](https://github.com/mredjem/kafka-connect-secret-registry/commit/55fe9b1fb99dacc5100e461c0520d9e6a1baf395))
+
 # [2.0.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/1.3.3...2.0.0) (2026-04-18)
 
 
