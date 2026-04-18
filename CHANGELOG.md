@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/mredjem/kafka-connect-secret-registry/compare/1.3.1...1.3.2) (2026-04-18)
+
+
+### Bug Fixes
+
+* improve code quality based on sonar metrics ([5502eb0](https://github.com/mredjem/kafka-connect-secret-registry/commit/5502eb0d605467acb271f3430f71effea8c67684))
+
 ## [1.3.1](https://github.com/mredjem/kafka-connect-secret-registry/compare/1.3.0...1.3.1) (2026-04-16)
 
 
