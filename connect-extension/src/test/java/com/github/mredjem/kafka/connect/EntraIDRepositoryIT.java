@@ -4,11 +4,13 @@ import com.github.mredjem.kafka.connect.oidc.OidcPort;
 import com.github.mredjem.kafka.connect.oidc.azure.EntraIDRepository;
 import com.github.mredjem.kafka.connect.utils.ConfigUtils;
 import com.github.mredjem.kafka.connect.utils.TestUtils;
+import org.apache.kafka.common.config.SaslConfigs;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -37,6 +39,30 @@ class EntraIDRepositoryIT extends AbstractIT {
     AuthenticationCredentials authenticationCredentials = AuthenticationCredentials.of(Credentials.ci());
 
     boolean validCredentials = oidcPort.validateCredentials(authenticationCredentials);
+
+    Assertions.assertFalse(validCredentials);
+  }
+
+  @Test
+  void shouldInvalidateInvalidConfiguration() {
+    AuthenticationCredentials authenticationCredentials = AuthenticationCredentials.of(Credentials.servicePrincipal());
+
+    boolean validCredentials = EntraIDRepository.create(new HashMap<>()).validateCredentials(authenticationCredentials);
+
+    Assertions.assertFalse(validCredentials);
+  }
+
+  @Test
+  void shouldUseTokenToValidateCredentials() {
+    AuthenticationCredentials authenticationCredentials = AuthenticationCredentials.of(Credentials.servicePrincipal());
+
+    Map<String, String> configuration = ConfigUtils.addEntry(
+      new HashMap<>(),
+      SaslConfigs.SASL_JAAS_CONFIG,
+      "<JAAS_CONFIG>"
+    );
+
+    boolean validCredentials = EntraIDRepository.create(configuration).validateCredentials(authenticationCredentials);
 
     Assertions.assertFalse(validCredentials);
   }
