@@ -1,3 +1,10 @@
+## [2.0.3](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.0.2...2.0.3) (2026-04-19)
+
+
+### Bug Fixes
+
+* allow for full git history when running sonar analysis ([c4a285d](https://github.com/mredjem/kafka-connect-secret-registry/commit/c4a285d78802c2d049918b04278a71c2f7662e30))
+
 ## [2.0.2](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.0.1...2.0.2) (2026-04-19)
 
 
