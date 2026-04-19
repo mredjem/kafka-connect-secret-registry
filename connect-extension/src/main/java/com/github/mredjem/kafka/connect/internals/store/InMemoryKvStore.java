@@ -137,7 +137,7 @@ public class InMemoryKvStore implements KvStore<KafkaSecretKey, KafkaSecretValue
         }
       }
 
-    } catch (final InterruptedException e) {
+    } catch (final InterruptedException ignored) {
       Thread.currentThread().interrupt();
     }
   }
