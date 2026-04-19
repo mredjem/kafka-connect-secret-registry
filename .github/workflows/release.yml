@@ -31,6 +31,26 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_TOKEN }}
         run: npx --package @semantic-release/changelog --package @semantic-release/exec --package @semantic-release/git semantic-release
+  
+  sonar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    needs: release
+    if: always() && needs.release.result == 'success'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Maven
+        uses: s4u/setup-maven-action@v1.19.0
+        with:
+          java-version: 11
+          maven-version: 3.9.0
 
       - name: Run Sonar Analysis
         working-directory: ./connect-extension
