@@ -41,9 +41,12 @@ public class KafkaInternalTopicClient implements Closeable {
 
   private final KvStore<KafkaSecretKey, KafkaSecretValue> kvStore;
 
+  private final Producer<KafkaSecretKey, KafkaSecretValue> producer;
+
   private KafkaInternalTopicClient(Map<String, ?> configs) {
     this.configs = new HashMap<>(configs);
     this.kvStore = InMemoryKvStore.create(configs);
+    this.producer = KafkaClients.producer(configs);
   }
 
   public static KafkaInternalTopicClient create(Map<String, ?> configs) {
@@ -87,7 +90,7 @@ public class KafkaInternalTopicClient implements Closeable {
   public int saveNewSecret(String path, String key, int version, String secret) {
     String topicName = ConfigUtils.getOrThrow(KAFKASTORE_TOPIC_CONFIG, this.configs);
 
-    try (Producer<KafkaSecretKey, KafkaSecretValue> producer = KafkaClients.producer(this.configs)) {
+    try {
       KafkaSecretKey kafkaSecretKey = KafkaSecretKeyMapper.newKey(path, key, version);
 
       KafkaSecretValue kafkaSecretValue = this.newValue(
@@ -99,7 +102,8 @@ public class KafkaInternalTopicClient implements Closeable {
 
       ProducerRecord<KafkaSecretKey, KafkaSecretValue> newSecret = new ProducerRecord<>(topicName, kafkaSecretKey, kafkaSecretValue);
 
-      producer.send(newSecret).get(5L, TimeUnit.SECONDS);
+      this.producer.send(newSecret).get(5L, TimeUnit.SECONDS);
+      this.producer.flush();
 
       return kafkaSecretKey.getVersion();
 
@@ -116,12 +120,13 @@ public class KafkaInternalTopicClient implements Closeable {
   public void deleteSecret(String path, String key, int version) {
     String topicName = ConfigUtils.getOrThrow(KAFKASTORE_TOPIC_CONFIG, this.configs);
 
-    try (Producer<KafkaSecretKey, KafkaSecretValue> producer = KafkaClients.producer(this.configs)) {
+    try {
       KafkaSecretKey kafkaSecretKey = KafkaSecretKeyMapper.newKey(path, key, version);
 
       ProducerRecord<KafkaSecretKey, KafkaSecretValue> tombstone = new ProducerRecord<>(topicName, kafkaSecretKey, null);
 
-      producer.send(tombstone).get(5L, TimeUnit.SECONDS);
+      this.producer.send(tombstone).get(5L, TimeUnit.SECONDS);
+      this.producer.flush();
 
     } catch (final InterruptedException e) {
       Thread.currentThread().interrupt();
@@ -151,6 +156,10 @@ public class KafkaInternalTopicClient implements Closeable {
   public void close() throws IOException {
     if (this.kvStore != null) {
       this.kvStore.close();
+    }
+
+    if (this.producer != null) {
+      this.producer.close();
     }
   }
 

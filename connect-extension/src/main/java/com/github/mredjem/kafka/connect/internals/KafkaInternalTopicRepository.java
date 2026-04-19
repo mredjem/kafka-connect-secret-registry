@@ -7,6 +7,7 @@ import com.github.mredjem.kafka.connect.SecretRegistryPort;
 import com.github.mredjem.kafka.connect.Version;
 import com.github.mredjem.kafka.connect.internals.exceptions.ExtensionInitializationException;
 import com.github.mredjem.kafka.connect.internals.mappers.SecretMapper;
+import org.awaitility.Awaitility;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.github.mredjem.kafka.connect.internals.KafkaInternalTopicConstants.ALL;
@@ -94,7 +96,7 @@ public class KafkaInternalTopicRepository implements SecretRegistryPort {
   public Optional<Secret> getSecret(String path, String key, String version) {
     List<KafkaSecretValue> secretValues = this.kafkaInternalTopicClient.searchForSecrets(path, key, version);
 
-    if (secretValues.isEmpty()) {
+    if (secretValues.isEmpty() || (secretValues.size() > 1 && LATEST.equals(version))) {
       return Optional.empty();
     }
 
@@ -110,6 +112,12 @@ public class KafkaInternalTopicRepository implements SecretRegistryPort {
       .orElse(Version.init(path, key));
 
     int newVersion = this.kafkaInternalTopicClient.saveNewSecret(path, key, nextVersion.getValue(), secret);
+
+    Awaitility.await().atMost(5L, TimeUnit.SECONDS).until(() -> {
+      Optional<Secret> newSecret = this.getSecret(path, key, String.valueOf(newVersion));
+
+      return newSecret.isPresent();
+    });
 
     return Secret.of(path, key, newVersion, secret);
   }

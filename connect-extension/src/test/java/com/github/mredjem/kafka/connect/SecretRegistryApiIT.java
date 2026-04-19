@@ -10,11 +10,11 @@ import com.github.mredjem.kafka.connect.providers.InternalSecretConfigs;
 import com.github.mredjem.kafka.connect.utils.ConfigUtils;
 import com.github.mredjem.kafka.connect.utils.TestUtils;
 import org.apache.kafka.common.config.ConfigData;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.shaded.org.awaitility.Awaitility;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -50,7 +49,7 @@ class SecretRegistryApiIT extends AbstractIT {
     secretRegistryPort = KafkaInternalTopicRepository.create(ConfigUtils.addEntry(
       extensionConfiguration,
       InternalSecretConfigs.SECRET_REGISTRY_GROUP_ID_CONFIG,
-      extensionConfiguration.get(InternalSecretConfigs.SECRET_REGISTRY_GROUP_ID_CONFIG) + new Random().nextInt(1_000)
+      extensionConfiguration.get(InternalSecretConfigs.SECRET_REGISTRY_GROUP_ID_CONFIG) + "-rest"
     ));
 
     secretRegistryApi = SecretRegistryApi.create(secretRegistryPort);
@@ -112,17 +111,6 @@ class SecretRegistryApiIT extends AbstractIT {
       createdResponse.close();
     }
 
-    Awaitility.await().atMost(10L, TimeUnit.SECONDS).until(() -> {
-      Response version2Response = secretRegistryApi.getSecret(
-        MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions/2"),
-        path,
-        key,
-        "2"
-      );
-
-      return Response.Status.OK.getStatusCode() == version2Response.getStatus();
-    });
-
     Response versionsResponse = secretRegistryApi.listVersionsForKey(
       MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions"),
       path,
@@ -183,17 +171,6 @@ class SecretRegistryApiIT extends AbstractIT {
 
       createdResponse.close();
     }
-
-    Awaitility.await().atMost(10L, TimeUnit.SECONDS).until(() -> {
-      Response version2Response = secretRegistryApi.getSecret(
-        MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions/2"),
-        path,
-        key,
-        "2"
-      );
-
-      return Response.Status.OK.getStatusCode() == version2Response.getStatus();
-    });
 
     // check available paths
     Response pathsResponse = secretRegistryApi.listAllPaths(MockUriInfo.of("/secret/paths"));
@@ -293,17 +270,6 @@ class SecretRegistryApiIT extends AbstractIT {
       createdResponse.close();
     }
 
-    Awaitility.await().atMost(10L, TimeUnit.SECONDS).until(() -> {
-      Response version3Response = secretRegistryApi.getSecret(
-        MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions/3"),
-        path,
-        key,
-        "3"
-      );
-
-      return Response.Status.OK.getStatusCode() == version3Response.getStatus();
-    });
-
     // delete version 1
     Response deletedResponse = secretRegistryApi.deleteSpecificVersionForKey(
       MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions/1"),
@@ -385,17 +351,6 @@ class SecretRegistryApiIT extends AbstractIT {
     Assertions.assertEquals(Response.Status.CREATED.getStatusCode(), createdResponse.getStatus());
 
     createdResponse.close();
-
-    Awaitility.await().atMost(10L, TimeUnit.SECONDS).until(() -> {
-      Response latestResponse = secretRegistryApi.getSecret(
-        MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions/latest"),
-        path,
-        key,
-        "latest"
-      );
-
-      return Response.Status.OK.getStatusCode() == latestResponse.getStatus();
-    });
 
     ConfigData configData = SECRET_CONFIG_PROVIDER.get(path, Collections.singleton(key));
 
