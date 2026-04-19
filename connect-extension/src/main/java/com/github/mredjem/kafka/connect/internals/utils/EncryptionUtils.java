@@ -14,6 +14,7 @@ import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Random;
 
@@ -32,7 +33,7 @@ public final class EncryptionUtils {
 
       Key aesKey = generateAESKey(masterKey, salt);
 
-      GCMParameterSpec gcmParameterSpec = generateParameterSpec(iv);
+      AlgorithmParameterSpec gcmParameterSpec = generateGCMParameterSpec(iv);
 
       Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
       cipher.init(Cipher.ENCRYPT_MODE, aesKey, gcmParameterSpec);
@@ -50,7 +51,7 @@ public final class EncryptionUtils {
     try {
       Key aesKey = generateAESKey(masterKey, encryptedSecret.getSalt());
 
-      GCMParameterSpec gcmParameterSpec = generateParameterSpec(encryptedSecret.getIv());
+      AlgorithmParameterSpec gcmParameterSpec = generateGCMParameterSpec(encryptedSecret.getIv());
 
       Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
       cipher.init(Cipher.DECRYPT_MODE, aesKey, gcmParameterSpec);
@@ -89,7 +90,7 @@ public final class EncryptionUtils {
     return new SecretKeySpec(pbeKey.getEncoded(), "AES");
   }
 
-  private static GCMParameterSpec generateParameterSpec(byte[] iv) {
+  private static AlgorithmParameterSpec generateGCMParameterSpec(byte[] iv) {
     return new GCMParameterSpec(128, iv);
   }
 
