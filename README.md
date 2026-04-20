@@ -3,11 +3,11 @@
 
 # Kafka Connect Secret Registry Extension
 
-This is a REST extension for Kafka Connect allowing to store connector secrets in an internal Kafka topic.
+This is a REST extension for Kafka Connect allowing you to store your connectors secrets in an internal Kafka topic.
 
-Secrets can be registered by issuing REST requests to the additional Kafka Connect endpoints provider by this extension.
+Secrets can be registered by issuing REST requests to the additional Kafka Connect endpoints provided by the extension.
 
-Connectors can reference those secrets in their configuration without exposing credentials to end users.
+Connectors can reference those secrets in their configuration without risking exposing them in plain text.
 
 > This extension works pretty much in the same way as the [Connect Secret Registry for Confluent Platform](https://docs.confluent.io/platform/current/connect/rbac/connect-rbac-secret-registry.html) but does not require the Confluent Metadata Service.
 
