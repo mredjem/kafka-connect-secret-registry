@@ -306,7 +306,7 @@
               <finalName>${project.build.finalName}</finalName>
               <appendAssemblyId>false</appendAssemblyId>
               <descriptors>
-                <descriptor>src/assembly/confluent.xml</descriptor>
+                <descriptor>confluent.xml</descriptor>
               </descriptors>
             </configuration>
           </execution>
