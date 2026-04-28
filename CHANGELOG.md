@@ -1,3 +1,10 @@
+# [2.2.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.1.0...2.2.0) (2026-04-28)
+
+
+### Features
+
+* fully enforce rbac rules (no more super admins) ([d073e05](https://github.com/mredjem/kafka-connect-secret-registry/commit/d073e058cef1c1f75319412080e5d42e118a50ce))
+
 # [2.1.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.0.3...2.1.0) (2026-04-28)
 
 
