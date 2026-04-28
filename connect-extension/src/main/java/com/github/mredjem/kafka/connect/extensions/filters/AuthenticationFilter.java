@@ -2,7 +2,6 @@ package com.github.mredjem.kafka.connect.extensions.filters;
 
 import com.github.mredjem.kafka.connect.AuthenticationCredentials;
 import com.github.mredjem.kafka.connect.AuthenticationKind;
-import com.github.mredjem.kafka.connect.AuthorizationPort;
 import com.github.mredjem.kafka.connect.extensions.rbac.RbacRules;
 
 import javax.ws.rs.NotAuthorizedException;
@@ -11,23 +10,19 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.Map;
 
 import static com.github.mredjem.kafka.connect.extensions.api.ApiExceptionHandler.toErrorResponse;
 
 public class AuthenticationFilter implements ContainerRequestFilter {
 
-  private final ContainerRequestFilter adminAuthenticationFilter;
+  private final ContainerRequestFilter nextFilter;
 
-  private final ContainerRequestFilter rbacAuthenticationFilter;
-
-  private AuthenticationFilter(Map<String, String> configs, AuthorizationPort authorizationPort) {
-    this.adminAuthenticationFilter = AdminAuthenticationFilter.create(configs);
-    this.rbacAuthenticationFilter = RbacAuthenticationFilter.create(authorizationPort);
+  private AuthenticationFilter(ContainerRequestFilter nextFilter) {
+    this.nextFilter = nextFilter;
   }
 
-  public static AuthenticationFilter create(Map<String, String> configs, AuthorizationPort authorizationPort) {
-    return new AuthenticationFilter(configs, authorizationPort);
+  public static AuthenticationFilter create(ContainerRequestFilter nextFilter) {
+    return new AuthenticationFilter(nextFilter);
   }
 
   @Override
@@ -46,12 +41,6 @@ public class AuthenticationFilter implements ContainerRequestFilter {
       return;
     }
 
-    if (((AdminAuthenticationFilter) this.adminAuthenticationFilter).applicableTo(containerRequestContext)) {
-      this.adminAuthenticationFilter.filter(containerRequestContext);
-
-      return;
-    }
-
-    this.rbacAuthenticationFilter.filter(containerRequestContext);
+    this.nextFilter.filter(containerRequestContext);
   }
 }

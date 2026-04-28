@@ -1,4 +1,4 @@
-package com.github.mredjem.kafka.connect.oidc.azure;
+package com.github.mredjem.kafka.connect.oidc;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

@@ -1,11 +1,11 @@
-package com.github.mredjem.kafka.connect.oidc.azure.ccloud.mappers;
+package com.github.mredjem.kafka.connect.oidc.ccloud.mappers;
 
 import com.github.mredjem.kafka.connect.ResourceScope;
 import com.github.mredjem.kafka.connect.Role;
 import com.github.mredjem.kafka.connect.RoleBinding;
 import com.github.mredjem.kafka.connect.Scope;
 import com.github.mredjem.kafka.connect.oidc.Roles;
-import com.github.mredjem.kafka.connect.oidc.azure.ccloud.dtos.RoleBindingDto;
+import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.RoleBindingDto;
 
 import java.util.Set;
 

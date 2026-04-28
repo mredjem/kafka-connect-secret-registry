@@ -1,4 +1,4 @@
-package com.github.mredjem.kafka.connect.oidc.azure.ccloud;
+package com.github.mredjem.kafka.connect.oidc.ccloud;
 
 import com.github.mredjem.kafka.connect.AuthenticationCredentials;
 import com.github.mredjem.kafka.connect.AuthenticationKind;
@@ -6,10 +6,10 @@ import com.github.mredjem.kafka.connect.ResourceName;
 import com.github.mredjem.kafka.connect.RoleBinding;
 import com.github.mredjem.kafka.connect.oidc.OidcConfigs;
 import com.github.mredjem.kafka.connect.oidc.OidcPort;
-import com.github.mredjem.kafka.connect.oidc.azure.EntraIDToken;
-import com.github.mredjem.kafka.connect.oidc.azure.ccloud.dtos.IdentityPoolDto;
-import com.github.mredjem.kafka.connect.oidc.azure.ccloud.dtos.OwnerDto;
-import com.github.mredjem.kafka.connect.oidc.azure.ccloud.mappers.RoleBindingMapper;
+import com.github.mredjem.kafka.connect.oidc.EntraIDToken;
+import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.IdentityPoolDto;
+import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.OwnerDto;
+import com.github.mredjem.kafka.connect.oidc.ccloud.mappers.RoleBindingMapper;
 import com.github.mredjem.kafka.connect.utils.ConfigUtils;
 
 import java.util.Base64;

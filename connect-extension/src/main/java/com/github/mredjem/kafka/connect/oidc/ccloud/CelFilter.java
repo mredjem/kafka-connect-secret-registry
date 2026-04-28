@@ -1,4 +1,4 @@
-package com.github.mredjem.kafka.connect.oidc.azure.ccloud;
+package com.github.mredjem.kafka.connect.oidc.ccloud;
 
 import dev.cel.common.CelAbstractSyntaxTree;
 import dev.cel.common.CelValidationException;
@@ -13,7 +13,7 @@ import dev.cel.runtime.CelRuntimeFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.github.mredjem.kafka.connect.oidc.azure.ccloud.CelFilterVariables.VARIABLES;
+import static com.github.mredjem.kafka.connect.oidc.ccloud.CelFilterVariables.VARIABLES;
 
 public class CelFilter {
 

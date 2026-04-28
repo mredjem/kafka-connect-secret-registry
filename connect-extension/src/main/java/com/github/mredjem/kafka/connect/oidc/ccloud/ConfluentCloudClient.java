@@ -1,13 +1,13 @@
-package com.github.mredjem.kafka.connect.oidc.azure.ccloud;
+package com.github.mredjem.kafka.connect.oidc.ccloud;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.mredjem.kafka.connect.oidc.HttpClient;
 import com.github.mredjem.kafka.connect.oidc.OidcConfigs;
-import com.github.mredjem.kafka.connect.oidc.azure.ccloud.dtos.APIKeyDto;
-import com.github.mredjem.kafka.connect.oidc.azure.ccloud.dtos.DataResponseDto;
-import com.github.mredjem.kafka.connect.oidc.azure.ccloud.dtos.IdentityPoolDto;
-import com.github.mredjem.kafka.connect.oidc.azure.ccloud.dtos.IdentityProviderDto;
-import com.github.mredjem.kafka.connect.oidc.azure.ccloud.dtos.RoleBindingDto;
+import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.APIKeyDto;
+import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.DataResponseDto;
+import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.IdentityPoolDto;
+import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.IdentityProviderDto;
+import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.RoleBindingDto;
 import com.github.mredjem.kafka.connect.oidc.exceptions.ResourceNotFoundException;
 import com.github.mredjem.kafka.connect.utils.ConfigUtils;
 
@@ -18,15 +18,13 @@ import java.util.function.Predicate;
 
 public class ConfluentCloudClient {
 
-  private static final String CONFLUENT_CLOUD_API_BASE_URL = "https://api.confluent.cloud";
-
   private final HttpClient httpClient;
 
   private final String identityProviderName;
 
   private ConfluentCloudClient(Map<String, String> configs) {
     this.httpClient = HttpClient.create(
-      configs.getOrDefault(OidcConfigs.API_BASE_URL_CONFIG, CONFLUENT_CLOUD_API_BASE_URL),
+      configs.getOrDefault(OidcConfigs.API_BASE_URL_CONFIG, "https://api.confluent.cloud"),
       ConfigUtils.getOrThrow(OidcConfigs.API_KEY_CONFIG, configs),
       ConfigUtils.getOrThrow(OidcConfigs.API_SECRET_CONFIG, configs)
     );

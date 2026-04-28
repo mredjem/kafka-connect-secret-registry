@@ -1,4 +1,4 @@
-package com.github.mredjem.kafka.connect.oidc.azure.ccloud;
+package com.github.mredjem.kafka.connect.oidc.ccloud;
 
 import com.github.mredjem.kafka.connect.ResourceName;
 

@@ -55,32 +55,6 @@ class SecretRegistryExtensionIT extends AbstractIT {
   }
 
   @Test
-  void shouldRespectSuperAdminScope() {
-    given()
-      .header(HttpHeaders.AUTHORIZATION, Credentials.centreon())
-    .when()
-      .get("/connectors")
-    .then()
-      .statusCode(200);
-
-    given()
-      .header(HttpHeaders.AUTHORIZATION, Credentials.centreon())
-      .contentType(ContentType.JSON)
-      .body("{}")
-    .when()
-      .post("/connectors")
-    .then()
-      .statusCode(403);
-
-    given()
-      .header(HttpHeaders.AUTHORIZATION, Credentials.centreon())
-    .when()
-      .get("/secret/paths")
-    .then()
-      .statusCode(403);
-  }
-
-  @Test
   void shouldAllowReadingConfigurationAndStatusWhenDeveloperWrite() {
     given()
       .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
@@ -323,7 +297,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
     CreateSecretDto createPgUserSecret = CreateSecretDto.of("admin");
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, Credentials.admin())
+      .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
       .contentType(ContentType.JSON)
       .pathParam("path", "dev.users.postgres.jdbc-sink-connector")
       .pathParam("key", "pg.user")
@@ -341,7 +315,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
     CreateSecretDto createPgPasswordSecret = CreateSecretDto.of("password");
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, Credentials.admin())
+      .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
       .contentType(ContentType.JSON)
       .pathParam("path", "dev.users.postgres.jdbc-sink-connector")
       .pathParam("key", "pg.password")
@@ -357,7 +331,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
       .body("secret", is(createPgPasswordSecret.getSecret()));
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, Credentials.admin())
+      .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
     .when()
       .get("/secret/paths")
     .then()
@@ -366,7 +340,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
       .body("$", hasItem("dev.users.postgres.jdbc-sink-connector"));
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, Credentials.admin())
+      .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
       .pathParam("path", "dev.users.postgres.jdbc-sink-connector")
     .when()
       .get("/secret/paths/{path}/keys")
@@ -382,7 +356,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
     CreateSecretDto createOracleUserV1 = CreateSecretDto.of("admin1");
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, Credentials.admin())
+      .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
       .contentType(ContentType.JSON)
       .pathParam("path", "dev.users.oracle.jdbc-sink-connector")
       .pathParam("key", "oracle.user")
@@ -400,7 +374,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
     CreateSecretDto createOracleUserV2 = CreateSecretDto.of("admin2");
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, Credentials.admin())
+      .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
       .contentType(ContentType.JSON)
       .pathParam("path", "dev.users.oracle.jdbc-sink-connector")
       .pathParam("key", "oracle.user")
@@ -416,7 +390,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
       .body("secret", is(createOracleUserV2.getSecret()));
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, Credentials.admin())
+      .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
       .pathParam("path", "dev.users.oracle.jdbc-sink-connector")
       .pathParam("key", "oracle.user")
     .when()
@@ -428,7 +402,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
       .body("$", hasItems(1, 2));
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, Credentials.admin())
+      .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
       .pathParam("path", "dev.users.oracle.jdbc-sink-connector")
       .pathParam("key", "oracle.user")
       .pathParam("version", "latest")
@@ -448,7 +422,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
     CreateSecretDto createSqlServerUserSecret = CreateSecretDto.of("admin");
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, Credentials.admin())
+      .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
       .contentType(ContentType.JSON)
       .pathParam("path", "prd.users.mssql.jdbc-sink-connector")
       .pathParam("key", "mssql.user")
@@ -464,7 +438,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
       .body("secret", is(createSqlServerUserSecret.getSecret()));
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, Credentials.admin())
+      .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
       .pathParam("path", "prd.users.mssql.jdbc-sink-connector")
       .pathParam("key", "mssql.user")
       .pathParam("version", "1")
@@ -474,7 +448,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
       .statusCode(204);
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, Credentials.admin())
+      .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
       .pathParam("path", "prd.users.mssql.jdbc-sink-connector")
       .pathParam("key", "mssql.user")
     .when()
@@ -490,7 +464,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
     CreateSecretDto createTestConnectorSecret = CreateSecretDto.of("-1");
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, Credentials.admin())
+      .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
       .contentType(ContentType.JSON)
       .pathParam("path", "prd-connector")
       .pathParam("key", "tasks.max")
@@ -504,7 +478,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
     CreateConnectorDto createTestConnectorDto = CreateConnectorDto.createDummy();
 
     given()
-      .header(HttpHeaders.AUTHORIZATION, Credentials.admin())
+      .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
       .contentType(ContentType.JSON)
       .body(createTestConnectorDto)
     .when()
