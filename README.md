@@ -39,6 +39,8 @@ config.providers.secret.param.super.admins=admin:password,centreon:password:read
 4. (Optional) Enable RBAC when using Confluent Cloud and authenticating through Azure EntraID:
 
 ```properties
+rest.extension.classes=com.github.mredjem.kafka.connect.extensions.RbacAuthorizerExtension,com.github.mredjem.kafka.connect.extensions.SecretRegistryExtension
+
 confluent.cloud.cluster.crn.pattern=crn://confluent.cloud/organization=9bb441c4-edef-46ac-8a41-c49e44a3fd9a/environment=env-456xy/cloud-cluster=lkc-123abc
 confluent.cloud.api.key=ABCDEFGHIJKLMNOP
 confluent.cloud.api.secret=R15hoiDIq8Nxu/lY4mPO3DwAVIfU5W7OI+efsB607mLgHTnVW5XJGVqX2ysDx987

@@ -1,6 +1,7 @@
 package com.github.mredjem.kafka.connect;
 
 import com.github.mredjem.kafka.connect.containers.ConfluentKafkaConnectContainer;
+import com.github.mredjem.kafka.connect.extensions.RbacAuthorizerExtension;
 import com.github.mredjem.kafka.connect.extensions.SecretRegistryExtension;
 import com.github.mredjem.kafka.connect.mocks.ConfluentCloudApi;
 import com.github.mredjem.kafka.connect.providers.InternalSecretConfigProvider;
@@ -56,7 +57,7 @@ abstract class AbstractIT {
     .withEnv("CONNECT_REST_ADVERTISED_HOST_NAME", "connect")
     .withEnv("CONNECT_REST_PORT", "8083")
     .withEnv("CONNECT_PLUGIN_PATH", ConfluentKafkaConnectContainer.PLUGIN_PATH)
-    .withEnv("CONNECT_REST_EXTENSION_CLASSES", SecretRegistryExtension.class.getName())
+    .withEnv("CONNECT_REST_EXTENSION_CLASSES", RbacAuthorizerExtension.class.getName() + "," + SecretRegistryExtension.class.getName())
     .withEnv("CONNECT_CONFLUENT_CLOUD_CLUSTER_CRN_PATTERN", "crn://confluent.cloud/organization=9bb441c4-edef-46ac-8a41-c49e44a3fd9a/environment=env-456xy/cloud-cluster=lkc-123abc")
     .withEnv("CONNECT_CONFLUENT_CLOUD_API_BASE_URL", "http://host.testcontainers.internal:" + MOCKSERVER_PORT)
     .withEnv("CONNECT_CONFLUENT_CLOUD_API_KEY", "ABCDEFGHIJKLMNOP")
