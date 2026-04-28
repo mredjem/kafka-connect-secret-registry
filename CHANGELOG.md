@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.0.3...2.1.0) (2026-04-28)
+
+
+### Features
+
+* extract rbac authorizer to its own extension ([8b6dab4](https://github.com/mredjem/kafka-connect-secret-registry/commit/8b6dab41bd7a2c41621b4b4876af7cc36f7a4612))
+
 ## [2.0.3](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.0.2...2.0.3) (2026-04-19)
 
 
