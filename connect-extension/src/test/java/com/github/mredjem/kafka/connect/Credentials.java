@@ -5,28 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.UncheckedIOException;
 import java.util.Base64;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public final class Credentials {
 
   private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
   private Credentials() {}
-
-  public static String admin() {
-    String credentials = "admin:password";
-
-    return "Basic " + Base64.getEncoder().encodeToString(credentials.getBytes());
-  }
-
-  public static String centreon() {
-    String credentials = "centreon:password";
-
-    return "Basic " + Base64.getEncoder().encodeToString(credentials.getBytes());
-  }
 
   public static String ci() {
     String credentials = "QRSTUVWXYZABCDEF:R15hoiDIq8Nxu/lY4mPO3DwAVIfU5W7OI+efsB607mLgHTnVW5XJGVqX2ysDx987";
@@ -40,17 +26,13 @@ public final class Credentials {
     return "Basic " + Base64.getEncoder().encodeToString(credentials.getBytes());
   }
 
-  public static String servicePrincipal(Set<String> roles) {
+  public static String servicePrincipal() {
     try {
       Map<String, Object> claims = new HashMap<>();
 
       claims.put("iss", "https://login.microsoftonline.com/9bb441c4-edef-46ac-8a41-c49e44a3fd9a/v2.0");
       claims.put("aud", "confluent");
       claims.put("azp", "service_principal");
-
-      if (!roles.isEmpty()) {
-        claims.put("roles", roles);
-      }
 
       String payload = OBJECT_MAPPER.writeValueAsString(claims);
 
@@ -59,9 +41,5 @@ public final class Credentials {
     } catch (final JsonProcessingException e) {
       throw new UncheckedIOException(e);
     }
-  }
-
-  public static String servicePrincipal() {
-    return servicePrincipal(Collections.emptySet());
   }
 }

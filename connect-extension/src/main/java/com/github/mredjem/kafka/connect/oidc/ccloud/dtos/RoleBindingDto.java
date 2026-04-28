@@ -1,4 +1,4 @@
-package com.github.mredjem.kafka.connect.oidc.azure.ccloud.dtos;
+package com.github.mredjem.kafka.connect.oidc.ccloud.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

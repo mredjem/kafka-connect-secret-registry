@@ -2,8 +2,6 @@ package com.github.mredjem.kafka.connect;
 
 public class ResourceScope {
 
-  public static final ResourceScope ALL = new ResourceScope(Scope.CONNECTOR, "*");
-
   private final Scope scope;
 
   private final String resource;

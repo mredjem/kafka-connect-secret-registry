@@ -2,11 +2,12 @@ package com.github.mredjem.kafka.connect;
 
 import com.github.mredjem.kafka.connect.extensions.dtos.ErrorDto;
 import com.github.mredjem.kafka.connect.extensions.filters.AuthenticationFilter;
+import com.github.mredjem.kafka.connect.extensions.filters.RbacAuthenticationFilter;
 import com.github.mredjem.kafka.connect.internals.KafkaAuthorizationRepository;
 import com.github.mredjem.kafka.connect.mocks.MockContainerRequestContext;
 import com.github.mredjem.kafka.connect.oidc.OidcConfigs;
 import com.github.mredjem.kafka.connect.oidc.OidcPort;
-import com.github.mredjem.kafka.connect.oidc.azure.ccloud.ConfluentCloudRepository;
+import com.github.mredjem.kafka.connect.oidc.ccloud.ConfluentCloudRepository;
 import com.github.mredjem.kafka.connect.utils.ConfigUtils;
 import com.github.mredjem.kafka.connect.utils.TestUtils;
 import org.junit.jupiter.api.Assertions;
@@ -30,7 +31,6 @@ class AuthenticationFilterIT extends AbstractIT {
     Map<String, String> configuration = TestUtils.load();
 
     Map<String, String> oidcConfiguration = ConfigUtils.configsForPrefix(OidcConfigs.OIDC_PREFIX, configuration);
-    Map<String, String> extensionConfiguration = ConfigUtils.configsForPrefix("config.providers.secret.param.", configuration);
 
     OidcPort oidcPort = ConfluentCloudRepository.create(ConfigUtils.addEntry(
       oidcConfiguration,
@@ -39,7 +39,7 @@ class AuthenticationFilterIT extends AbstractIT {
 
     AuthorizationPort authorizationPort = KafkaAuthorizationRepository.create(oidcPort);
 
-    authenticationFilter = AuthenticationFilter.create(extensionConfiguration, authorizationPort);
+    authenticationFilter = AuthenticationFilter.create(RbacAuthenticationFilter.create(authorizationPort));
   }
 
   @Test
@@ -108,28 +108,6 @@ class AuthenticationFilterIT extends AbstractIT {
 
       Assertions.assertEquals(expectedStatus.getStatusCode(), response.getStatus());
     });
-  }
-
-  @Test
-  void shouldRespectSuperAdminScope() throws IOException {
-    Map<String, String> headers = ConfigUtils.addEntry(this.defaultHeaders(), HttpHeaders.AUTHORIZATION, Credentials.centreon());
-
-    MockContainerRequestContext connectorsRequest = MockContainerRequestContext.of(HttpMethod.GET, "/connectors", headers);
-
-    connectorsRequest.addAssertion(response -> {
-      Response.Status expectedStatus = Response.Status.FORBIDDEN;
-
-      Assertions.assertEquals(expectedStatus.getStatusCode(), response.getStatus());
-      Assertions.assertInstanceOf(ErrorDto.class, response.getEntity());
-
-      ErrorDto error = (ErrorDto) response.getEntity();
-
-      Assertions.assertEquals(expectedStatus.getStatusCode(), error.getCode());
-      Assertions.assertEquals(expectedStatus.getReasonPhrase(), error.getReason());
-      Assertions.assertEquals("/connectors", error.getPath());
-    });
-
-    authenticationFilter.filter(connectorsRequest);
   }
 
   @Test

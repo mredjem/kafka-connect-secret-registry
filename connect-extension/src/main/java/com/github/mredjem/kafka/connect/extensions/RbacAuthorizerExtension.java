@@ -1,12 +1,11 @@
 package com.github.mredjem.kafka.connect.extensions;
 
+import com.github.mredjem.kafka.connect.AuthorizationPort;
 import com.github.mredjem.kafka.connect.extensions.filters.AuthenticationFilter;
+import com.github.mredjem.kafka.connect.extensions.filters.RbacAuthenticationFilter;
 import com.github.mredjem.kafka.connect.internals.KafkaAuthorizationRepository;
 import com.github.mredjem.kafka.connect.oidc.OidcConfigs;
-import com.github.mredjem.kafka.connect.oidc.OidcPort;
-import com.github.mredjem.kafka.connect.oidc.azure.EntraIDRepository;
-import com.github.mredjem.kafka.connect.oidc.azure.ccloud.ConfluentCloudRepository;
-import com.github.mredjem.kafka.connect.providers.InternalSecretConfigs;
+import com.github.mredjem.kafka.connect.oidc.ccloud.ConfluentCloudRepository;
 import com.github.mredjem.kafka.connect.utils.ConfigUtils;
 import org.apache.kafka.connect.rest.ConnectRestExtension;
 import org.apache.kafka.connect.rest.ConnectRestExtensionContext;
@@ -39,22 +38,12 @@ public class RbacAuthorizerExtension implements ConnectRestExtension {
   }
 
   private void configureAuthenticationFilter(Map<String, ?> configs) {
-    Map<String, String> extensionConfigs = ConfigUtils.configsForPrefix(InternalSecretConfigs.PROVIDER_PREFIX, configs);
-
-    OidcPort oidcPort = this.getOidcImplementation(configs, extensionConfigs);
-
-    this.authenticationFilter = AuthenticationFilter.create(extensionConfigs, KafkaAuthorizationRepository.create(oidcPort));
-  }
-
-  private OidcPort getOidcImplementation(Map<String, ?> configs, Map<String, String> extensionConfigs) {
     Map<String, String> oidcConfigs = ConfigUtils.configsForPrefix(OidcConfigs.OIDC_PREFIX, configs);
 
-    if (oidcConfigs.isEmpty()) {
-      Map<String, String> kafkaStoreConfigs = ConfigUtils.configsForPrefix(InternalSecretConfigs.KAFKASTORE_PREFIX, extensionConfigs);
+    AuthorizationPort authorizationPort = KafkaAuthorizationRepository.create(ConfluentCloudRepository.create(oidcConfigs));
 
-      return EntraIDRepository.create(kafkaStoreConfigs);
-    }
+    ContainerRequestFilter rbacAuthenticationFilter = RbacAuthenticationFilter.create(authorizationPort);
 
-    return ConfluentCloudRepository.create(oidcConfigs);
+    this.authenticationFilter = AuthenticationFilter.create(rbacAuthenticationFilter);
   }
 }
