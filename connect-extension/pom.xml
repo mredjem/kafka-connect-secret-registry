@@ -22,7 +22,7 @@
     <cel.version>0.12.0</cel.version>
     <logback-classic.version>1.2.13</logback-classic.version>
     <junit-jupiter.version>5.10.2</junit-jupiter.version>
-    <testcontainers.version>2.0.4</testcontainers.version>
+    <testcontainers.version>2.0.5</testcontainers.version>
     <assertj-core.version>3.27.7</assertj-core.version>
     <rest-assured.version>5.4.0</rest-assured.version>
     <mockserver.version>5.15.0</mockserver.version>
