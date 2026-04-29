@@ -37,8 +37,7 @@ abstract class AbstractIT {
     .withEnv("KAFKA_NODE_ID", "1")
     .withEnv("KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR", "1")
     .withEnv("KAFKA_AUTO_CREATE_TOPICS_ENABLE", "false")
-    .withEnv("CONFLUENT_METRICS_ENABLE", "false")
-    .withReuse(true);
+    .withEnv("CONFLUENT_METRICS_ENABLE", "false");
 
   protected static final ConfluentKafkaConnectContainer CONNECT = new ConfluentKafkaConnectContainer("confluentinc/cp-kafka-connect-base:7.7.0")
     .withNetwork(NETWORK)
@@ -72,7 +71,6 @@ abstract class AbstractIT {
     .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_MASTER_ENCRYPTION_KEY", "juby895fmddr5hw58839d3myz27zw206ffxiv68m")
     .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_SECRET_REGISTRY_GROUP_ID", "secret-registry")
     .withLogConsumer(outputFrame -> new Slf4jLogConsumer(LoggerFactory.getLogger("connect")).accept(outputFrame))
-    .withReuse(true)
     .dependsOn(KAFKA);
 
   protected static final ConfluentCloudApi CONFLUENT_CLOUD_API = ConfluentCloudApi.create();

@@ -43,6 +43,21 @@ class AuthenticationFilterIT extends AbstractIT {
   }
 
   @Test
+  void shouldAllowInternalRequests() throws IOException {
+    MockContainerRequestContext internalTaskRequest = MockContainerRequestContext.of(HttpMethod.POST, "/connectors/my_datagen_connector/tasks/", new HashMap<>());
+
+    internalTaskRequest.addAssertion(response -> Assertions.fail());
+
+    authenticationFilter.filter(internalTaskRequest);
+
+    MockContainerRequestContext internalFenceRequest = MockContainerRequestContext.of(HttpMethod.PUT, "/connectors/my_datagen_connector/fence/", new HashMap<>());
+
+    internalFenceRequest.addAssertion(response -> Assertions.fail());
+
+    authenticationFilter.filter(internalFenceRequest);
+  }
+
+  @Test
   void shouldRejectUnregisteredPath() throws IOException {
     Map<String, String> headers = ConfigUtils.addEntry(this.defaultHeaders(), HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal());
 

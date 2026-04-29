@@ -24,7 +24,7 @@ public class RbacAuthorizerExtension implements ConnectRestExtension {
 
   @Override
   public void configure(Map<String, ?> configs) {
-    this.configureAuthenticationFilter(configs);
+    this.authenticationFilter = doConfigure(configs);
   }
 
   @Override
@@ -37,13 +37,13 @@ public class RbacAuthorizerExtension implements ConnectRestExtension {
     // noop
   }
 
-  private void configureAuthenticationFilter(Map<String, ?> configs) {
+  private AuthenticationFilter doConfigure(Map<String, ?> configs) {
     Map<String, String> oidcConfigs = ConfigUtils.configsForPrefix(OidcConfigs.OIDC_PREFIX, configs);
 
     AuthorizationPort authorizationPort = KafkaAuthorizationRepository.create(ConfluentCloudRepository.create(oidcConfigs));
 
     ContainerRequestFilter rbacAuthenticationFilter = RbacAuthenticationFilter.create(authorizationPort);
 
-    this.authenticationFilter = AuthenticationFilter.create(rbacAuthenticationFilter);
+    return AuthenticationFilter.create(rbacAuthenticationFilter);
   }
 }

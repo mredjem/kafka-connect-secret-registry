@@ -22,7 +22,7 @@ public class SecretRegistryExtension implements ConnectRestExtension {
 
   @Override
   public void configure(Map<String, ?> configs) {
-    this.configureSecretRegistryPort(configs);
+    this.secretRegistryPort = doConfigure(configs);
   }
 
   @Override
@@ -37,12 +37,12 @@ public class SecretRegistryExtension implements ConnectRestExtension {
     }
   }
 
-  private void configureSecretRegistryPort(Map<String, ?> configs) {
+  private SecretRegistryPort doConfigure(Map<String, ?> configs) {
     Map<String, String> extensionConfigs = ConfigUtils.configsForPrefix(InternalSecretConfigs.PROVIDER_PREFIX, configs);
 
     String registryGroupId = extensionConfigs.get(InternalSecretConfigs.SECRET_REGISTRY_GROUP_ID_CONFIG);
 
-    this.secretRegistryPort = KafkaInternalTopicRepository.create(ConfigUtils.addEntry(
+    return KafkaInternalTopicRepository.create(ConfigUtils.addEntry(
       extensionConfigs,
       InternalSecretConfigs.SECRET_REGISTRY_GROUP_ID_CONFIG,
       String.format("%s-rest", registryGroupId)

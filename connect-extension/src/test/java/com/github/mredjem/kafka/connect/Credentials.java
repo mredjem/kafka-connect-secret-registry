@@ -42,4 +42,21 @@ public final class Credentials {
       throw new UncheckedIOException(e);
     }
   }
+
+  public static String organizationAdmin() {
+    try {
+      Map<String, Object> claims = new HashMap<>();
+
+      claims.put("iss", "https://login.microsoftonline.com/9bb441c4-edef-46ac-8a41-c49e44a3fd9a/v2.0");
+      claims.put("aud", "confluent");
+      claims.put("azp", "admin");
+
+      String payload = OBJECT_MAPPER.writeValueAsString(claims);
+
+      return "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." + Base64.getEncoder().encodeToString(payload.getBytes()) + ".y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM";
+
+    } catch (final JsonProcessingException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
 }

@@ -101,18 +101,6 @@ public final class RbacRules {
     return ANONYMOUS_REQUEST_MATCHERS.stream().anyMatch(matcher -> matcher.test(containerRequestContext));
   }
 
-  public static boolean isWriteAccess(ContainerRequestContext containerRequestContext) {
-    List<RequestMatcher> readConfigurationMatchers = REQUEST_MATCHERS.get(Operation.READ_CONFIGURATION);
-
-    if (readConfigurationMatchers.stream().anyMatch(predicate -> predicate.test(containerRequestContext))) {
-      return false;
-    }
-
-    List<RequestMatcher> readStatusMatchers = REQUEST_MATCHERS.get(Operation.READ_STATUS);
-
-    return readStatusMatchers.stream().noneMatch(predicate -> predicate.test(containerRequestContext));
-  }
-
   public static RequestedAction getActionForRequest(ContainerRequestContext containerRequestContext) {
     for (Map.Entry<Operation, List<RequestMatcher>> e : REQUEST_MATCHERS.entrySet()) {
       Operation operation = e.getKey();
