@@ -6,9 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Base64;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class EntraIDToken {
 
@@ -37,21 +35,5 @@ public class EntraIDToken {
 
   public Map<String, Object> getClaims() {
     return this.claims;
-  }
-
-  public Object getClaim(String claimName) {
-    return this.getClaims().get(claimName);
-  }
-
-  public List<String> getRoles() {
-    Object claim = this.getClaim("roles");
-
-    if (!(claim instanceof List)) {
-      return Collections.emptyList();
-    }
-
-    return ((List<?>) claim).stream()
-      .map(Object::toString)
-      .collect(Collectors.toList());
   }
 }
