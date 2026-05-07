@@ -1,3 +1,10 @@
+## [2.2.1](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.2.0...2.2.1) (2026-05-07)
+
+
+### Bug Fixes
+
+* remove azure references from codebase ([c72992d](https://github.com/mredjem/kafka-connect-secret-registry/commit/c72992d382d2feea5288412e83d5385abf1d0f36))
+
 # [2.2.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.1.0...2.2.0) (2026-04-28)
 
 
