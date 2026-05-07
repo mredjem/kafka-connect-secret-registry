@@ -8,13 +8,13 @@ import java.util.Base64;
 import java.util.Collections;
 import java.util.Map;
 
-public class EntraIDToken {
+public class AccessToken {
 
   private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
   private final Map<String, Object> claims;
 
-  private EntraIDToken(String accessToken) {
+  private AccessToken(String accessToken) {
     try {
       String encodedPayload = accessToken.split("\\.")[1];
 
@@ -29,8 +29,8 @@ public class EntraIDToken {
     }
   }
 
-  public static EntraIDToken parse(String accessToken) {
-    return new EntraIDToken(accessToken);
+  public static AccessToken parse(String accessToken) {
+    return new AccessToken(accessToken);
   }
 
   public Map<String, Object> getClaims() {

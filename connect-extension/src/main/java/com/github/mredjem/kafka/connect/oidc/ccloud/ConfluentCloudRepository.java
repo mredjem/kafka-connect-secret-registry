@@ -6,7 +6,7 @@ import com.github.mredjem.kafka.connect.ResourceName;
 import com.github.mredjem.kafka.connect.RoleBinding;
 import com.github.mredjem.kafka.connect.oidc.OidcConfigs;
 import com.github.mredjem.kafka.connect.oidc.OidcPort;
-import com.github.mredjem.kafka.connect.oidc.EntraIDToken;
+import com.github.mredjem.kafka.connect.oidc.AccessToken;
 import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.IdentityPoolDto;
 import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.OwnerDto;
 import com.github.mredjem.kafka.connect.oidc.ccloud.mappers.RoleBindingMapper;
@@ -71,7 +71,7 @@ public class ConfluentCloudRepository implements OidcPort {
   }
 
   private List<RoleBinding> getRoleBindingsForExternalAccessToken(String externalAccessToken) {
-    Map<String, Object> claims = EntraIDToken.parse(externalAccessToken).getClaims();
+    Map<String, Object> claims = AccessToken.parse(externalAccessToken).getClaims();
 
     Predicate<IdentityPoolDto> identityPoolPredicate = this.identityPoolPredicate(claims);
 

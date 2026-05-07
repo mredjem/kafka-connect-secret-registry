@@ -35,7 +35,7 @@ config.providers.secret.param.master.encryption.key=<encryption key>
 config.providers.secret.param.secret.registry.group.id=secret-registry
 ```
 
-4. (Optional) Enable RBAC when using Confluent Cloud and authenticating through Azure EntraID:
+4. (Optional) Enable RBAC when using Confluent Cloud:
 
 ```properties
 rest.extension.classes=com.github.mredjem.kafka.connect.extensions.RbacAuthorizerExtension,com.github.mredjem.kafka.connect.extensions.SecretRegistryExtension

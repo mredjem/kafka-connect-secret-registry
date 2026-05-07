@@ -69,10 +69,10 @@ public class ConfluentCloudClient {
   }
 
   private List<IdentityPoolDto> listIdentityPools(String identityProviderName) {
-    IdentityProviderDto azureIdentityProvider = this.readIdentityProvider(identityProviderName);
+    IdentityProviderDto identityProvider = this.readIdentityProvider(identityProviderName);
 
     String path = UriBuilder.fromPath("iam/v2/identity-providers/{identityProvider}/identity-pools")
-      .build(azureIdentityProvider.getId())
+      .build(identityProvider.getId())
       .toString();
 
     return this.httpClient.doGET(path, new TypeReference<DataResponseDto<IdentityPoolDto>>() {}).getData();
