@@ -33,7 +33,6 @@ config.providers.secret.param.kafkastore.topic=_connect-secrets
 config.providers.secret.param.kafkastore.topic.replication.factor=1
 config.providers.secret.param.master.encryption.key=<encryption key>
 config.providers.secret.param.secret.registry.group.id=secret-registry
-config.providers.secret.param.super.admins=admin:password,centreon:password:read
 ```
 
 4. (Optional) Enable RBAC when using Confluent Cloud and authenticating through Azure EntraID:
