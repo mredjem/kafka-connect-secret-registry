@@ -1,3 +1,10 @@
+# [2.3.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.2.1...2.3.0) (2026-05-10)
+
+
+### Features
+
+* use lombok to reduce codebase size ([df4b15b](https://github.com/mredjem/kafka-connect-secret-registry/commit/df4b15bfd1b46dc8d5a5fa228e82309da08f7940))
+
 ## [2.2.1](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.2.0...2.2.1) (2026-05-07)
 
 
