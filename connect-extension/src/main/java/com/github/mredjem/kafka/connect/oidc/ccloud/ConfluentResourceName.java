@@ -7,13 +7,10 @@ import java.net.URI;
 public class ConfluentResourceName implements ResourceName {
 
   private static final String CRN_SCHEME = "crn";
-
   private static final String CRN_AUTHORITY = "confluent.cloud";
 
   private final String organization;
-
   private final String environment;
-
   private final String cluster;
 
   private ConfluentResourceName(String crnPattern) {

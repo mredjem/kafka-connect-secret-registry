@@ -6,6 +6,7 @@ import com.github.mredjem.kafka.connect.SecretRegistryPort;
 import com.github.mredjem.kafka.connect.Version;
 import com.github.mredjem.kafka.connect.extensions.dtos.CreateSecretDto;
 import com.github.mredjem.kafka.connect.extensions.dtos.SecretDto;
+import lombok.RequiredArgsConstructor;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -27,17 +28,10 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Path("secret")
+@RequiredArgsConstructor(staticName = "create")
 public class SecretRegistryApi {
 
   private final SecretRegistryPort secretRegistryPort;
-
-  private SecretRegistryApi(SecretRegistryPort secretRegistryPort) {
-    this.secretRegistryPort = secretRegistryPort;
-  }
-
-  public static SecretRegistryApi create(SecretRegistryPort secretRegistryPort) {
-    return new SecretRegistryApi(secretRegistryPort);
-  }
 
   @GET
   @Path("paths")

@@ -1,5 +1,10 @@
 package com.github.mredjem.kafka.connect.extensions.dtos;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class CreateSecretDto {
 
   private String secret;
@@ -14,13 +19,5 @@ public class CreateSecretDto {
     createSecretDto.setSecret(secret);
 
     return createSecretDto;
-  }
-
-  public String getSecret() {
-    return this.secret;
-  }
-
-  public void setSecret(String secret) {
-    this.secret = secret;
   }
 }

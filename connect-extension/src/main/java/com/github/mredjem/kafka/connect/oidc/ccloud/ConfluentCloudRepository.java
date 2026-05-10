@@ -24,7 +24,6 @@ import java.util.stream.Stream;
 public class ConfluentCloudRepository implements OidcPort {
 
   private final ConfluentCloudClient client;
-
   private final ResourceName resourceName;
 
   private ConfluentCloudRepository(Map<String, String> configs) {

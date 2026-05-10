@@ -3,6 +3,7 @@ package com.github.mredjem.kafka.connect.extensions.filters;
 import com.github.mredjem.kafka.connect.AuthenticationCredentials;
 import com.github.mredjem.kafka.connect.AuthenticationKind;
 import com.github.mredjem.kafka.connect.extensions.rbac.RbacRules;
+import lombok.RequiredArgsConstructor;
 
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -13,17 +14,10 @@ import java.io.IOException;
 
 import static com.github.mredjem.kafka.connect.extensions.api.ApiExceptionHandler.toErrorResponse;
 
+@RequiredArgsConstructor(staticName = "create")
 public class AuthenticationFilter implements ContainerRequestFilter {
 
   private final ContainerRequestFilter nextFilter;
-
-  private AuthenticationFilter(ContainerRequestFilter nextFilter) {
-    this.nextFilter = nextFilter;
-  }
-
-  public static AuthenticationFilter create(ContainerRequestFilter nextFilter) {
-    return new AuthenticationFilter(nextFilter);
-  }
 
   @Override
   public void filter(ContainerRequestContext containerRequestContext) throws IOException {

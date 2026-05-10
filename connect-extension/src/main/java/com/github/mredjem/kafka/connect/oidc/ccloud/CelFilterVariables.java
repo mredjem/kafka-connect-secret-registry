@@ -2,13 +2,15 @@ package com.github.mredjem.kafka.connect.oidc.ccloud;
 
 import dev.cel.common.types.CelType;
 import dev.cel.common.types.SimpleType;
+import lombok.experimental.UtilityClass;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public final class CelFilterVariables {
+@UtilityClass
+public class CelFilterVariables {
 
-  static final Map<String, CelType> VARIABLES = new HashMap<>();
+  static Map<String, CelType> VARIABLES = new HashMap<>();
 
   static {
     VARIABLES.put("claims.auth_time", SimpleType.INT);
@@ -27,6 +29,4 @@ public final class CelFilterVariables {
     VARIABLES.put("claims.azp", SimpleType.STRING);
     VARIABLES.put("claims.appid", SimpleType.STRING);
   }
-
-  private CelFilterVariables() {}
 }

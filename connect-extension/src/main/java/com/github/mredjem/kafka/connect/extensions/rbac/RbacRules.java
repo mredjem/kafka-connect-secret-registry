@@ -3,6 +3,7 @@ package com.github.mredjem.kafka.connect.extensions.rbac;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.mredjem.kafka.connect.Operation;
+import lombok.experimental.UtilityClass;
 
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -18,21 +19,22 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
-public final class RbacRules {
+@UtilityClass
+public class RbacRules {
 
-  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+  private final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-  private static final List<RequestMatcher> INTERNAL_REQUEST_MATCHERS = Arrays.asList(
+  private final List<RequestMatcher> INTERNAL_REQUEST_MATCHERS = Arrays.asList(
     RequestMatcher.of(HttpMethod.POST, Pattern.compile("/?connectors/[^/]+/tasks/?")),
     RequestMatcher.of(HttpMethod.PUT, Pattern.compile("/?connectors/[^/]+/fence/?"))
   );
 
-  private static final List<RequestMatcher> ANONYMOUS_REQUEST_MATCHERS = Arrays.asList(
+  private final List<RequestMatcher> ANONYMOUS_REQUEST_MATCHERS = Arrays.asList(
     RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?")),
     RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connector-plugins/?"))
   );
 
-  private static final Map<Operation, List<RequestMatcher>> REQUEST_MATCHERS = new EnumMap<>(Operation.class);
+  private final Map<Operation, List<RequestMatcher>> REQUEST_MATCHERS = new EnumMap<>(Operation.class);
 
   static {
     String connectorOffsetsPath = "/?connectors/([^/]+)/offsets/?";
@@ -91,17 +93,15 @@ public final class RbacRules {
     ));
   }
 
-  private RbacRules() {}
-
-  public static boolean isInternalRequest(ContainerRequestContext containerRequestContext) {
+  public boolean isInternalRequest(ContainerRequestContext containerRequestContext) {
     return INTERNAL_REQUEST_MATCHERS.stream().anyMatch(matcher -> matcher.test(containerRequestContext));
   }
 
-  public static boolean isAllowedAnonymously(ContainerRequestContext containerRequestContext) {
+  public boolean isAllowedAnonymously(ContainerRequestContext containerRequestContext) {
     return ANONYMOUS_REQUEST_MATCHERS.stream().anyMatch(matcher -> matcher.test(containerRequestContext));
   }
 
-  public static RequestedAction getActionForRequest(ContainerRequestContext containerRequestContext) {
+  public RequestedAction getActionForRequest(ContainerRequestContext containerRequestContext) {
     for (Map.Entry<Operation, List<RequestMatcher>> e : REQUEST_MATCHERS.entrySet()) {
       Operation operation = e.getKey();
 
@@ -125,7 +125,7 @@ public final class RbacRules {
     return null;
   }
 
-  private static Function<ContainerRequestContext, String> getResourceName(Operation operation, RequestMatcher matcher) {
+  private Function<ContainerRequestContext, String> getResourceName(Operation operation, RequestMatcher matcher) {
     return containerRequestContext -> {
       String foundResourceName = matcher.getResourceName(containerRequestContext);
 
@@ -147,7 +147,7 @@ public final class RbacRules {
     };
   }
 
-  private static String getConnectorNameFromBody(ContainerRequestContext containerRequestContext) {
+  private String getConnectorNameFromBody(ContainerRequestContext containerRequestContext) {
     try {
       byte[] requestBodyBytes = toByteArray(containerRequestContext.getEntityStream());
 
@@ -162,7 +162,7 @@ public final class RbacRules {
     }
   }
 
-  private static byte[] toByteArray(InputStream inputStream) throws IOException {
+  private byte[] toByteArray(InputStream inputStream) throws IOException {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
     byte[] buffer = new byte[4096];
@@ -177,7 +177,7 @@ public final class RbacRules {
     return outputStream.toByteArray();
   }
 
-  private static void resetEntityStream(ContainerRequestContext containerRequestContext, byte[] requestBodyBytes) {
+  private void resetEntityStream(ContainerRequestContext containerRequestContext, byte[] requestBodyBytes) {
     InputStream entityStreamCopy = new ByteArrayInputStream(requestBodyBytes);
 
     containerRequestContext.setEntityStream(entityStreamCopy);

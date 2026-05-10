@@ -19,7 +19,6 @@ import java.util.function.Predicate;
 public class ConfluentCloudClient {
 
   private final HttpClient httpClient;
-
   private final String identityProviderName;
 
   private ConfluentCloudClient(Map<String, String> configs) {

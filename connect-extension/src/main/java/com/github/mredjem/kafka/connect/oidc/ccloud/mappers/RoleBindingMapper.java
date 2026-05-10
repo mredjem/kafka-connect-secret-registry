@@ -6,14 +6,14 @@ import com.github.mredjem.kafka.connect.RoleBinding;
 import com.github.mredjem.kafka.connect.Scope;
 import com.github.mredjem.kafka.connect.oidc.Roles;
 import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.RoleBindingDto;
+import lombok.experimental.UtilityClass;
 
 import java.util.Set;
 
-public final class RoleBindingMapper {
+@UtilityClass
+public class RoleBindingMapper {
 
-  private RoleBindingMapper() {}
-
-  public static RoleBinding map(RoleBindingDto dto) {
+  public RoleBinding map(RoleBindingDto dto) {
     Role role = Roles.getRoles().get(dto.getRoleName());
 
     if (role == null) {
@@ -33,7 +33,7 @@ public final class RoleBindingMapper {
     return RoleBinding.of(role, ResourceScope.of(scope, "*"));
   }
 
-  private static String getResource(String crnPattern) {
+  private String getResource(String crnPattern) {
     String[] parts = crnPattern.split("/", -1);
 
     String connectorPattern = parts[parts.length - 1];

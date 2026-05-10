@@ -1,14 +1,15 @@
 package com.github.mredjem.kafka.connect.utils;
 
+import lombok.experimental.UtilityClass;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-public final class ConfigUtils {
+@UtilityClass
+public class ConfigUtils {
 
-  private ConfigUtils() {}
-
-  public static Map<String, String> configsForPrefix(String prefix, Map<String, ?> configs) {
+  public Map<String, String> configsForPrefix(String prefix, Map<String, ?> configs) {
     Map<String, String> newConfigs = new HashMap<>();
 
     for (Map.Entry<String, ?> config : configs.entrySet()) {
@@ -22,7 +23,7 @@ public final class ConfigUtils {
     return newConfigs;
   }
 
-  public static String getOrThrow(String key, Map<String, ?> configs) {
+  public String getOrThrow(String key, Map<String, ?> configs) {
     String value = (String) configs.get(key);
 
     if (value == null || value.trim().isEmpty()) {
@@ -32,13 +33,13 @@ public final class ConfigUtils {
     return value;
   }
 
-  public static Integer getInt(String key, Map<String, ?> configs) {
+  public Integer getInt(String key, Map<String, ?> configs) {
     String value = getOrThrow(key, configs);
 
     return Integer.parseInt(value);
   }
 
-  public static Properties toProperties(Map<String, ?> configs) {
+  public Properties toProperties(Map<String, ?> configs) {
     Properties props = new Properties();
 
     for (Map.Entry<String, ?> config : configs.entrySet()) {
@@ -48,7 +49,7 @@ public final class ConfigUtils {
     return props;
   }
 
-  public static Map<String, String> addEntry(Map<String, String> map, String key, String value) {
+  public Map<String, String> addEntry(Map<String, String> map, String key, String value) {
     Map<String, String> resultMap = new HashMap<>(map);
 
     resultMap.put(key, value);

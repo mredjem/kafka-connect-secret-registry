@@ -3,11 +3,13 @@ package com.github.mredjem.kafka.connect.oidc;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
 
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Map;
 
+@Getter
 public class AccessToken {
 
   private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -31,9 +33,5 @@ public class AccessToken {
 
   public static AccessToken parse(String accessToken) {
     return new AccessToken(accessToken);
-  }
-
-  public Map<String, Object> getClaims() {
-    return this.claims;
   }
 }

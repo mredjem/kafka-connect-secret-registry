@@ -4,18 +4,12 @@ import com.github.mredjem.kafka.connect.AuthenticationCredentials;
 import com.github.mredjem.kafka.connect.AuthorizationPort;
 import com.github.mredjem.kafka.connect.Operation;
 import com.github.mredjem.kafka.connect.oidc.OidcPort;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor(staticName = "create")
 public class KafkaAuthorizationRepository implements AuthorizationPort {
 
   private final OidcPort oidcPort;
-
-  private KafkaAuthorizationRepository(OidcPort oidcPort) {
-    this.oidcPort = oidcPort;
-  }
-
-  public static KafkaAuthorizationRepository create(OidcPort oidcPort) {
-    return new KafkaAuthorizationRepository(oidcPort);
-  }
 
   @Override
   public boolean checkAccess(AuthenticationCredentials authenticationCredentials, Operation operation, String resourceName) {
