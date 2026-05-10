@@ -1,9 +1,11 @@
 package com.github.mredjem.kafka.connect;
 
+import lombok.Getter;
+
+@Getter
 public class AuthenticationCredentials {
 
   private final AuthenticationKind kind;
-
   private final String credentials;
 
   private AuthenticationCredentials(String authorization) {
@@ -13,13 +15,5 @@ public class AuthenticationCredentials {
 
   public static AuthenticationCredentials of(String authorization) {
     return new AuthenticationCredentials(authorization);
-  }
-
-  public AuthenticationKind getKind() {
-    return this.kind;
-  }
-
-  public String getCredentials() {
-    return this.credentials;
   }
 }

@@ -38,9 +38,7 @@ import static com.github.mredjem.kafka.connect.providers.InternalSecretConfigs.M
 public class KafkaInternalTopicClient implements Closeable {
 
   private final Map<String, ?> configs;
-
   private final KvStore<KafkaSecretKey, KafkaSecretValue> kvStore;
-
   private final Producer<KafkaSecretKey, KafkaSecretValue> producer;
 
   private KafkaInternalTopicClient(Map<String, ?> configs) {

@@ -2,6 +2,7 @@ package com.github.mredjem.kafka.connect.internals.utils;
 
 import com.github.mredjem.kafka.connect.EncryptedSecret;
 import com.github.mredjem.kafka.connect.internals.exceptions.EncryptionException;
+import lombok.experimental.UtilityClass;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -18,15 +19,14 @@ import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Random;
 
-public final class EncryptionUtils {
+@UtilityClass
+public class EncryptionUtils {
 
-  private static final String ENCRYPTION_ALGORITHM = "AES/GCM/NoPadding";
+  private final String ENCRYPTION_ALGORITHM = "AES/GCM/NoPadding";
 
-  private static final Random RANDOM = new SecureRandom();
+  private final Random RANDOM = new SecureRandom();
 
-  private EncryptionUtils() {}
-
-  public static EncryptedSecret encrypt(String secret, String masterKey) {
+  public EncryptedSecret encrypt(String secret, String masterKey) {
     try {
       byte[] salt = generateSalt();
       byte[] iv = generateIv();
@@ -47,7 +47,7 @@ public final class EncryptionUtils {
     }
   }
 
-  public static byte[] decrypt(EncryptedSecret encryptedSecret, String masterKey) {
+  public byte[] decrypt(EncryptedSecret encryptedSecret, String masterKey) {
     try {
       Key aesKey = generateAESKey(masterKey, encryptedSecret.getSalt());
 
@@ -63,7 +63,7 @@ public final class EncryptionUtils {
     }
   }
 
-  public static String checksum(String secret) {
+  public String checksum(String secret) {
     try {
       MessageDigest md = MessageDigest.getInstance("SHA-256");
 
@@ -82,7 +82,7 @@ public final class EncryptionUtils {
     }
   }
 
-  private static Key generateAESKey(String masterKey, byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
+  private Key generateAESKey(String masterKey, byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
     PBEKeySpec keySpec = new PBEKeySpec(masterKey.toCharArray(), salt, 1_000, 128);
 
     SecretKey pbeKey = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256").generateSecret(keySpec);
@@ -90,11 +90,11 @@ public final class EncryptionUtils {
     return new SecretKeySpec(pbeKey.getEncoded(), "AES");
   }
 
-  private static AlgorithmParameterSpec generateGCMParameterSpec(byte[] iv) {
+  private AlgorithmParameterSpec generateGCMParameterSpec(byte[] iv) {
     return new GCMParameterSpec(128, iv);
   }
 
-  private static byte[] generateSalt() {
+  private byte[] generateSalt() {
     byte[] salt = new byte[100];
 
     RANDOM.nextBytes(salt);
@@ -102,7 +102,7 @@ public final class EncryptionUtils {
     return salt;
   }
 
-  private static byte[] generateIv() {
+  private byte[] generateIv() {
     byte[] iv = new byte[12];
 
     RANDOM.nextBytes(iv);

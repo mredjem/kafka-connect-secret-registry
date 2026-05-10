@@ -1,15 +1,16 @@
 package com.github.mredjem.kafka.connect.extensions.api;
 
 import com.github.mredjem.kafka.connect.extensions.dtos.ErrorDto;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.time.Instant;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ApiExceptionHandler {
-
-  private ApiExceptionHandler() {}
 
   public static Response toErrorResponse(UriInfo uriInfo, Throwable exception) {
     ErrorDto error = toError(uriInfo, exception);

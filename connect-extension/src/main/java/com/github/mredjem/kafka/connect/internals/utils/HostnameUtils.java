@@ -1,13 +1,14 @@
 package com.github.mredjem.kafka.connect.internals.utils;
 
+import lombok.experimental.UtilityClass;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-public final class HostnameUtils {
+@UtilityClass
+public class HostnameUtils {
 
-  private HostnameUtils() {}
-
-  public static String hostname() {
+  public String hostname() {
     String hostname = System.getenv("HOSTNAME");
 
     if (hostname != null && !hostname.isEmpty()) {
@@ -29,7 +30,7 @@ public final class HostnameUtils {
     throw new IllegalStateException("Unable to determine hostname");
   }
 
-  private static String hostnameFromLocalhost() {
+  private String hostnameFromLocalhost() {
     try {
       InetAddress localIpAddress = InetAddress.getLocalHost();
 

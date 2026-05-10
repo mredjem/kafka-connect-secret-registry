@@ -1,15 +1,16 @@
 package com.github.mredjem.kafka.connect.extensions.dtos;
 
 import com.github.mredjem.kafka.connect.Secret;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class SecretDto {
 
   private String path;
-
   private String key;
-
   private int version;
-
   private String secret;
 
   private SecretDto(Secret secret) {
@@ -19,41 +20,7 @@ public class SecretDto {
     this.secret = secret.getValue();
   }
 
-  public SecretDto() {}
-
   public static SecretDto toDto(Secret secret) {
     return new SecretDto(secret);
-  }
-
-  public String getPath() {
-    return this.path;
-  }
-
-  public void setPath(String path) {
-    this.path = path;
-  }
-
-  public String getKey() {
-    return this.key;
-  }
-
-  public void setKey(String key) {
-    this.key = key;
-  }
-
-  public int getVersion() {
-    return this.version;
-  }
-
-  public void setVersion(int version) {
-    this.version = version;
-  }
-
-  public String getSecret() {
-    return this.secret;
-  }
-
-  public void setSecret(String secret) {
-    this.secret = secret;
   }
 }

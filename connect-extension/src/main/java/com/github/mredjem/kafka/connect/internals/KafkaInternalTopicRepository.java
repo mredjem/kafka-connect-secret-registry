@@ -25,7 +25,6 @@ import static com.github.mredjem.kafka.connect.providers.InternalSecretConfigs.M
 public class KafkaInternalTopicRepository implements SecretRegistryPort {
 
   private final KafkaInternalTopicClient kafkaInternalTopicClient;
-
   private final SecretMapper secretMapper;
 
   private KafkaInternalTopicRepository(Map<String, ?> configs) {
@@ -63,7 +62,7 @@ public class KafkaInternalTopicRepository implements SecretRegistryPort {
     return this.kafkaInternalTopicClient.searchForSecrets(path, ALL, ALL)
       .stream()
       .map(KafkaSecretValue::getKey)
-      .map(key -> Key.of(path, key))
+      .map(key -> Key.of(Path.of(path), key))
       .collect(Collectors.toSet());
   }
 
@@ -119,7 +118,7 @@ public class KafkaInternalTopicRepository implements SecretRegistryPort {
       return newSecret.isPresent();
     });
 
-    return Secret.of(path, key, newVersion, secret);
+    return Secret.of(Version.of(path, key, newVersion), secret);
   }
 
   @Override

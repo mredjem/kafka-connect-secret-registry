@@ -1,24 +1,17 @@
 package com.github.mredjem.kafka.connect.extensions.rbac;
 
+import lombok.RequiredArgsConstructor;
+
 import javax.ws.rs.container.ContainerRequestContext;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@RequiredArgsConstructor(staticName = "of")
 public class RequestMatcher implements Predicate<ContainerRequestContext> {
 
   private final String method;
-
   private final Pattern path;
-
-  private RequestMatcher(String method, Pattern path) {
-    this.method = method;
-    this.path = path;
-  }
-
-  public static RequestMatcher of(String method, Pattern path) {
-    return new RequestMatcher(method, path);
-  }
 
   @Override
   public boolean test(ContainerRequestContext containerRequestContext) {

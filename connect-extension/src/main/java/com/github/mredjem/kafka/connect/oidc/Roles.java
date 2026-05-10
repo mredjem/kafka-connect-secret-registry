@@ -9,6 +9,7 @@ import com.github.mredjem.kafka.connect.oidc.roles.EnvironmentAdmin;
 import com.github.mredjem.kafka.connect.oidc.roles.Operator;
 import com.github.mredjem.kafka.connect.oidc.roles.OrganizationAdmin;
 import com.github.mredjem.kafka.connect.oidc.roles.ResourceOwner;
+import lombok.experimental.UtilityClass;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,9 +18,10 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@UtilityClass
 public final class Roles {
 
-  private static final Map<String, Role> ROLES_BY_NAME;
+  private final Map<String, Role> ROLES_BY_NAME;
 
   static {
     List<Role> roles = new ArrayList<>();
@@ -36,9 +38,7 @@ public final class Roles {
     ROLES_BY_NAME = roles.stream().collect(Collectors.toMap(Role::roleName, Function.identity()));
   }
 
-  private Roles() {}
-
-  public static Map<String, Role> getRoles() {
+  public Map<String, Role> getRoles() {
     return Collections.unmodifiableMap(ROLES_BY_NAME);
   }
 }

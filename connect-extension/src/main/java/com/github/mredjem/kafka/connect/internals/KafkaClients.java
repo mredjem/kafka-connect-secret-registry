@@ -4,6 +4,7 @@ import com.github.mredjem.kafka.connect.internals.serdes.KafkaSecretKeySerde;
 import com.github.mredjem.kafka.connect.internals.serdes.KafkaSecretValueSerde;
 import com.github.mredjem.kafka.connect.internals.utils.HostnameUtils;
 import com.github.mredjem.kafka.connect.utils.ConfigUtils;
+import lombok.experimental.UtilityClass;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -18,17 +19,16 @@ import java.util.Properties;
 
 import static com.github.mredjem.kafka.connect.providers.InternalSecretConfigs.SECRET_REGISTRY_GROUP_ID_CONFIG;
 
-public final class KafkaClients {
+@UtilityClass
+public class KafkaClients {
 
-  private KafkaClients() {}
-
-  public static AdminClient adminClient(Map<String, ?> configs) {
+  public AdminClient adminClient(Map<String, ?> configs) {
     Properties properties = kafkaProperties(configs);
 
     return AdminClient.create(properties);
   }
 
-  public static <K, V> Producer<K, V> producer(Map<String, ?> configs) {
+  public <K, V> Producer<K, V> producer(Map<String, ?> configs) {
     Properties properties = kafkaProperties(configs);
 
     properties.put(CommonClientConfigs.CLIENT_ID_CONFIG, "kafka-connect-secret-registry");
@@ -44,7 +44,7 @@ public final class KafkaClients {
     return new KafkaProducer<>(properties);
   }
 
-  public static <K, V> Consumer<K, V> consumer(Map<String, ?> configs) {
+  public <K, V> Consumer<K, V> consumer(Map<String, ?> configs) {
     Properties properties = kafkaProperties(configs);
 
     properties.put(CommonClientConfigs.CLIENT_ID_CONFIG, "kafka-connect-secret-registry");
@@ -58,13 +58,13 @@ public final class KafkaClients {
     return new KafkaConsumer<>(properties);
   }
 
-  private static Properties kafkaProperties(Map<String, ?> configs) {
+  private Properties kafkaProperties(Map<String, ?> configs) {
     Map<String, String> kafkaConfigs = ConfigUtils.configsForPrefix("kafkastore.", configs);
 
     return ConfigUtils.toProperties(kafkaConfigs);
   }
 
-  private static String groupId(Map<String, ?> configs) {
+  private String groupId(Map<String, ?> configs) {
     String secretRegistryGroupId = (String) configs.get(SECRET_REGISTRY_GROUP_ID_CONFIG);
 
     return secretRegistryGroupId + "." + HostnameUtils.hostname();

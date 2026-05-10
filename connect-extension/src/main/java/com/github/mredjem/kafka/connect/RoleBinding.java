@@ -1,27 +1,16 @@
 package com.github.mredjem.kafka.connect;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+
+@Getter
+@ToString
+@RequiredArgsConstructor(staticName = "of")
 public class RoleBinding {
 
   private final Role role;
-
   private final ResourceScope resourceScope;
-
-  private RoleBinding(Role role, ResourceScope resourceScope) {
-    this.role = role;
-    this.resourceScope = resourceScope;
-  }
-
-  public static RoleBinding of(Role role, ResourceScope resourceScope) {
-    return new RoleBinding(role, resourceScope);
-  }
-
-  public Role getRole() {
-    return this.role;
-  }
-
-  public ResourceScope getResourceScope() {
-    return this.resourceScope;
-  }
 
   public boolean allows(Operation operation, String resourceName) {
     if (Operation.READ_CONFIGURATION == operation && "LIST_CONNECTOR_NAMES".equals(resourceName)) {
@@ -33,13 +22,5 @@ public class RoleBinding {
     }
 
     return this.role.allows(operation) && this.resourceScope.matches(resourceName);
-  }
-
-  @Override
-  public String toString() {
-    return "RoleBinding{" +
-      "role=" + this.role +
-      ", resourceScope=" + this.resourceScope +
-      '}';
   }
 }

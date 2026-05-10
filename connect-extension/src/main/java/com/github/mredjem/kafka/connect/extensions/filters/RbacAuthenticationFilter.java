@@ -4,6 +4,7 @@ import com.github.mredjem.kafka.connect.AuthenticationCredentials;
 import com.github.mredjem.kafka.connect.AuthorizationPort;
 import com.github.mredjem.kafka.connect.extensions.rbac.RbacRules;
 import com.github.mredjem.kafka.connect.extensions.rbac.RequestedAction;
+import lombok.RequiredArgsConstructor;
 
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -14,17 +15,10 @@ import java.io.IOException;
 
 import static com.github.mredjem.kafka.connect.extensions.api.ApiExceptionHandler.toErrorResponse;
 
+@RequiredArgsConstructor(staticName = "create")
 public class RbacAuthenticationFilter implements ContainerRequestFilter {
 
   private final AuthorizationPort authorizationPort;
-
-  private RbacAuthenticationFilter(AuthorizationPort authorizationPort) {
-    this.authorizationPort = authorizationPort;
-  }
-
-  public static RbacAuthenticationFilter create(AuthorizationPort authorizationPort) {
-    return new RbacAuthenticationFilter(authorizationPort);
-  }
 
   @Override
   public void filter(ContainerRequestContext containerRequestContext) throws IOException {

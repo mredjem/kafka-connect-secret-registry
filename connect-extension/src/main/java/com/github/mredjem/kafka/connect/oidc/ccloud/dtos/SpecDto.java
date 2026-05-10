@@ -1,14 +1,11 @@
 package com.github.mredjem.kafka.connect.oidc.ccloud.dtos;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class SpecDto {
 
   private OwnerDto owner;
-
-  public OwnerDto getOwner() {
-    return this.owner;
-  }
-
-  public void setOwner(OwnerDto owner) {
-    this.owner = owner;
-  }
 }

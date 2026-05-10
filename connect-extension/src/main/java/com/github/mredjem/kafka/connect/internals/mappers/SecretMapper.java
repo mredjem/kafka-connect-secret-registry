@@ -2,21 +2,16 @@ package com.github.mredjem.kafka.connect.internals.mappers;
 
 import com.github.mredjem.kafka.connect.EncryptedSecret;
 import com.github.mredjem.kafka.connect.Secret;
+import com.github.mredjem.kafka.connect.Version;
 import com.github.mredjem.kafka.connect.internals.KafkaSecretEncrypted;
 import com.github.mredjem.kafka.connect.internals.KafkaSecretValue;
 import com.github.mredjem.kafka.connect.internals.utils.EncryptionUtils;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor(staticName = "create")
 public class SecretMapper {
 
   private final String masterKey;
-
-  private SecretMapper(String masterKey) {
-    this.masterKey = masterKey;
-  }
-
-  public static SecretMapper create(String masterKey) {
-    return new SecretMapper(masterKey);
-  }
 
   public Secret newSecret(KafkaSecretValue kafkaSecretValue) {
     KafkaSecretEncrypted kafkaSecretEncrypted = kafkaSecretValue.getEncrypted();
@@ -29,11 +24,12 @@ public class SecretMapper {
 
     byte[] decrypted = EncryptionUtils.decrypt(encryptedSecret, this.masterKey);
 
-    return Secret.of(
+    Version version = Version.of(
       kafkaSecretValue.getPath(),
       kafkaSecretValue.getKey(),
-      kafkaSecretValue.getVersion(),
-      new String(decrypted)
+      kafkaSecretValue.getVersion()
     );
+
+    return Secret.of(version, new String(decrypted));
   }
 }

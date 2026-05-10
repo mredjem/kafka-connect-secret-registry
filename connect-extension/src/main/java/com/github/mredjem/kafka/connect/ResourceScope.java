@@ -1,19 +1,16 @@
 package com.github.mredjem.kafka.connect;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+
+@Getter
+@ToString
+@RequiredArgsConstructor(staticName = "of")
 public class ResourceScope {
 
   private final Scope scope;
-
   private final String resource;
-
-  private ResourceScope(Scope scope, String resource) {
-    this.scope = scope;
-    this.resource = resource;
-  }
-
-  public static ResourceScope of(Scope scope, String resource) {
-    return new ResourceScope(scope, resource);
-  }
 
   public boolean matches(String resourceName) {
     if (Scope.CONNECTOR != this.scope || "*".equals(this.resource)) {
@@ -25,13 +22,5 @@ public class ResourceScope {
     }
 
     return this.resource.equals(resourceName);
-  }
-
-  @Override
-  public String toString() {
-    return "ResourceScope{" +
-      "scope=" + this.scope +
-      ", resource='" + this.resource + '\'' +
-      '}';
   }
 }

@@ -25,9 +25,7 @@ import java.util.stream.Collectors;
 public class InMemoryKvStore implements KvStore<KafkaSecretKey, KafkaSecretValue> {
 
   private final ExecutorService threadPool = Executors.newFixedThreadPool(1);
-
   private final Map<KafkaSecretKey, KafkaSecretValue> kvStore = new ConcurrentHashMap<>();
-
   private final Consumer<KafkaSecretKey, KafkaSecretValue> kvConsumer;
 
   private volatile boolean running = true;
