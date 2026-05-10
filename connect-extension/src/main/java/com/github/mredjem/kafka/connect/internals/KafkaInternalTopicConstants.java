@@ -1,9 +1,13 @@
 package com.github.mredjem.kafka.connect.internals;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class KafkaInternalTopicConstants {
 
   public static final String ALL = "*";
@@ -11,6 +15,4 @@ public final class KafkaInternalTopicConstants {
   public static final int LATEST_VERSION = -1;
 
   static final Set<String> SEARCH_KEYWORDS = new HashSet<>(Arrays.asList(ALL, LATEST));
-
-  private KafkaInternalTopicConstants() {}
 }

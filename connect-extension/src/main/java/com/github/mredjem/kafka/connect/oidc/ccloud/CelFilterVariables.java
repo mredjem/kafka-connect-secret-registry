@@ -2,15 +2,16 @@ package com.github.mredjem.kafka.connect.oidc.ccloud;
 
 import dev.cel.common.types.CelType;
 import dev.cel.common.types.SimpleType;
-import lombok.experimental.UtilityClass;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@UtilityClass
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CelFilterVariables {
 
-  static Map<String, CelType> VARIABLES = new HashMap<>();
+  static final Map<String, CelType> VARIABLES = new HashMap<>();
 
   static {
     VARIABLES.put("claims.auth_time", SimpleType.INT);
