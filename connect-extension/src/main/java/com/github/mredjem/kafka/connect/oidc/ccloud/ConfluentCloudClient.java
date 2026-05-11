@@ -3,7 +3,7 @@ package com.github.mredjem.kafka.connect.oidc.ccloud;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.mredjem.kafka.connect.oidc.HttpClient;
 import com.github.mredjem.kafka.connect.oidc.OidcConfigs;
-import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.APIKeyDto;
+import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.ApiKeyDto;
 import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.DataResponseDto;
 import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.IdentityPoolDto;
 import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.IdentityProviderDto;
@@ -19,7 +19,9 @@ import java.util.function.Predicate;
 public class ConfluentCloudClient {
 
   private final HttpClient httpClient;
-  private final String identityProviderName;
+
+  private final AsyncCache<List<ApiKeyDto>> apiKeysCache;
+  private final AsyncCache<List<IdentityPoolDto>> identityPoolsCache;
 
   private ConfluentCloudClient(Map<String, String> configs) {
     this.httpClient = HttpClient.create(
@@ -27,11 +29,23 @@ public class ConfluentCloudClient {
       ConfigUtils.getOrThrow(OidcConfigs.API_KEY_CONFIG, configs),
       ConfigUtils.getOrThrow(OidcConfigs.API_SECRET_CONFIG, configs)
     );
-    this.identityProviderName = ConfigUtils.getOrThrow(OidcConfigs.IDENTITY_PROVIDER_NAME_CONFIG, configs);
+
+    this.apiKeysCache = AsyncCache.create(this::listApiKeys);
+
+    this.identityPoolsCache = AsyncCache.create(() -> {
+      String identityProviderName = ConfigUtils.getOrThrow(OidcConfigs.IDENTITY_PROVIDER_NAME_CONFIG, configs);
+
+      return this.listIdentityPools(identityProviderName);
+    });
   }
 
   public static ConfluentCloudClient create(Map<String, String> configs) {
-    return new ConfluentCloudClient(configs);
+    ConfluentCloudClient confluentCloudClient = new ConfluentCloudClient(configs);
+
+    confluentCloudClient.apiKeysCache.init();
+    confluentCloudClient.identityPoolsCache.init();
+
+    return confluentCloudClient;
   }
 
   public List<RoleBindingDto> listRoleBindings(String crnPattern, String principal) {
@@ -45,21 +59,27 @@ public class ConfluentCloudClient {
   }
 
   public List<RoleBindingDto> listRoleBindings(String crnPattern, Predicate<IdentityPoolDto> identityPoolPredicate) {
-    IdentityPoolDto appIdentityPool = this.readIdentityPool(this.identityProviderName, identityPoolPredicate);
+    IdentityPoolDto appIdentityPool = this.readIdentityPool(identityPoolPredicate);
 
     return this.listRoleBindings(crnPattern, appIdentityPool.getId());
   }
 
-  public APIKeyDto readAPIKey(String apiKeyId) {
-    String path = UriBuilder.fromPath("iam/v2/api-keys/{apiKeyId}")
-      .build(apiKeyId)
-      .toString();
-
-    return this.httpClient.doGET(path, new TypeReference<APIKeyDto>() {});
+  public ApiKeyDto readAPIKey(String apiKeyId) {
+    return this.apiKeysCache.getAll()
+      .stream()
+      .filter(apiKey -> apiKey.getId().equals(apiKeyId))
+      .findFirst()
+      .orElseThrow(() -> new ResourceNotFoundException(apiKeyId));
   }
 
-  private IdentityPoolDto readIdentityPool(String identityProviderName, Predicate<IdentityPoolDto> identityPoolDtoPredicate) {
-    return this.listIdentityPools(identityProviderName)
+  public List<ApiKeyDto> listApiKeys() {
+    DataResponseDto<ApiKeyDto> data = this.httpClient.doGET("iam/v2/api-keys", new TypeReference<DataResponseDto<ApiKeyDto>>() {});
+
+    return data.getData();
+  }
+
+  private IdentityPoolDto readIdentityPool(Predicate<IdentityPoolDto> identityPoolDtoPredicate) {
+    return this.identityPoolsCache.getAll()
       .stream()
       .filter(identityPool -> "ENABLED".equalsIgnoreCase(identityPool.getState()))
       .filter(identityPoolDtoPredicate)

@@ -38,14 +38,14 @@ public class ConfluentCloudApi {
       .when(
         request()
           .withMethod("GET")
-          .withPath("/iam/v2/api-keys/QRSTUVWXYZABCDEF")
+          .withPath("/iam/v2/api-keys")
           .withHeader(HttpHeaders.AUTHORIZATION, Credentials.confluentCloud())
       )
       .respond(
         response()
           .withStatusCode(200)
           .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-          .withBody(this.loadResource("mocks/api.key.json"))
+          .withBody(this.loadResource("mocks/api.keys.json"))
       );
 
     this.server

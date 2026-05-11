@@ -5,7 +5,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class APIKeyDto {
+public class ApiKeyDto {
 
+  private String id;
   private SpecDto spec;
 }
