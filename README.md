@@ -46,6 +46,8 @@ confluent.cloud.api.secret=R15hoiDIq8Nxu/lY4mPO3DwAVIfU5W7OI+efsB607mLgHTnVW5XJG
 confluent.cloud.identity.provider.name=azure
 ```
 
+Check configuration files under the [examples](./examples) folder to show you how to set up this extension.
+
 ## REST endpoints
 
 **List all paths**
