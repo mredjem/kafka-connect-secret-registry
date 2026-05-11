@@ -8,23 +8,17 @@ import lombok.ToString;
 @Getter
 @ToString
 @EqualsAndHashCode
-@RequiredArgsConstructor
+@RequiredArgsConstructor(staticName = "of")
 public class Version {
-
-  private static final int INIT_VERSION = 1;
 
   private final Key key;
   private final int value;
 
-  public static Version of(String path, String key, int value) {
-    return new Version(Key.of(Path.of(path), key), value);
-  }
-
-  public static Version init(String path, String key) {
-    return Version.of(path, key, INIT_VERSION);
+  public Secret secret(String secret) {
+    return Secret.of(this, secret);
   }
 
   public Version nextVersion() {
-    return Version.of(this.key.getPath().getValue(), this.key.getValue(), this.value + 1);
+    return Version.of(this.key, this.value + 1);
   }
 }

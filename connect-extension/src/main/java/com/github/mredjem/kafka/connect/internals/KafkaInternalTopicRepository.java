@@ -71,7 +71,7 @@ public class KafkaInternalTopicRepository implements SecretRegistryPort {
     return this.kafkaInternalTopicClient.searchForSecrets(path, key, ALL)
       .stream()
       .map(KafkaSecretValue::getVersion)
-      .map(version -> Version.of(path, key, version))
+      .map(version -> Path.of(path).key(key).version(version))
       .collect(Collectors.toSet());
   }
 
@@ -108,7 +108,7 @@ public class KafkaInternalTopicRepository implements SecretRegistryPort {
   public synchronized Secret createSecret(String path, String key, String secret) {
     Version nextVersion = this.getSecret(path, key, LATEST)
       .map(e -> e.getVersion().nextVersion())
-      .orElse(Version.init(path, key));
+      .orElse(Path.of(path).key(key).version(1));
 
     int newVersion = this.kafkaInternalTopicClient.saveNewSecret(path, key, nextVersion.getValue(), secret);
 
@@ -118,7 +118,10 @@ public class KafkaInternalTopicRepository implements SecretRegistryPort {
       return newSecret.isPresent();
     });
 
-    return Secret.of(Version.of(path, key, newVersion), secret);
+    return Path.of(path)
+      .key(key)
+      .version(newVersion)
+      .secret(secret);
   }
 
   @Override

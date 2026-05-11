@@ -13,4 +13,8 @@ public class Key {
 
   private final Path path;
   private final String value;
+
+  public Version version(int version) {
+    return Version.of(this, version);
+  }
 }
