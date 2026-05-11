@@ -1,3 +1,15 @@
+# [2.4.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.3.0...2.4.0) (2026-05-11)
+
+
+### Bug Fixes
+
+* minor rework of value objects ([a127c11](https://github.com/mredjem/kafka-connect-secret-registry/commit/a127c11ceea6e9621d74f7a34a1108b94e1bf09b))
+
+
+### Features
+
+* provide more configuration examples ([0b334e2](https://github.com/mredjem/kafka-connect-secret-registry/commit/0b334e236a2aaa149de940ae88f6c3abbd36c002))
+
 # [2.3.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.2.1...2.3.0) (2026-05-10)
 
 
