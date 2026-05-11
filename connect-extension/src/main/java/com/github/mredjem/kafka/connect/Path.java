@@ -12,4 +12,8 @@ import lombok.ToString;
 public class Path {
 
   private final String value;
+
+  public Key key(String key) {
+    return Key.of(this, key);
+  }
 }
