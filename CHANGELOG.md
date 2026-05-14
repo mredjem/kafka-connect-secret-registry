@@ -1,3 +1,10 @@
+## [2.5.1](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.5.0...2.5.1) (2026-05-14)
+
+
+### Bug Fixes
+
+* solve issue with cache being called when not initialized yet ([961528a](https://github.com/mredjem/kafka-connect-secret-registry/commit/961528ad36de6e72c6de4e2179b7ce51ade466af))
+
 # [2.5.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.4.0...2.5.0) (2026-05-14)
 
 
