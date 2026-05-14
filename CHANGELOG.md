@@ -1,3 +1,10 @@
+# [2.5.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.4.0...2.5.0) (2026-05-14)
+
+
+### Features
+
+* improve performances by running requests asynchronously and caching results ([2248b7f](https://github.com/mredjem/kafka-connect-secret-registry/commit/2248b7fc7dc65d35d90ec3190108d3964be8821f))
+
 # [2.4.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.3.0...2.4.0) (2026-05-11)
 
 
