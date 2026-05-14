@@ -20,8 +20,8 @@ public class ConfluentCloudClient {
 
   private final HttpClient httpClient;
 
-  private final AsyncCache<List<ApiKeyDto>> apiKeysCache;
-  private final AsyncCache<List<IdentityPoolDto>> identityPoolsCache;
+  private final AsyncCache<ApiKeyDto> apiKeysCache;
+  private final AsyncCache<IdentityPoolDto> identityPoolsCache;
 
   private ConfluentCloudClient(Map<String, String> configs) {
     this.httpClient = HttpClient.create(
