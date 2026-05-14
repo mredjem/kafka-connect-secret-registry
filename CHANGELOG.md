@@ -1,3 +1,10 @@
+## [2.5.2](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.5.1...2.5.2) (2026-05-14)
+
+
+### Bug Fixes
+
+* properly initialize caching ([47153c0](https://github.com/mredjem/kafka-connect-secret-registry/commit/47153c0e8c6713b90e577d9a1328c238975a5d37))
+
 ## [2.5.1](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.5.0...2.5.1) (2026-05-14)
 
 
