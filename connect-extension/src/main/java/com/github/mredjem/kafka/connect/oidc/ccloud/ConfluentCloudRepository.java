@@ -9,17 +9,18 @@ import com.github.mredjem.kafka.connect.oidc.OidcPort;
 import com.github.mredjem.kafka.connect.oidc.AccessToken;
 import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.IdentityPoolDto;
 import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.OwnerDto;
+import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.RoleBindingDto;
 import com.github.mredjem.kafka.connect.oidc.ccloud.mappers.RoleBindingMapper;
+import com.github.mredjem.kafka.connect.oidc.ccloud.utils.ListUtils;
 import com.github.mredjem.kafka.connect.utils.ConfigUtils;
 
 import java.util.Base64;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ConfluentCloudRepository implements OidcPort {
 
@@ -58,12 +59,14 @@ public class ConfluentCloudRepository implements OidcPort {
   private List<RoleBinding> getRoleBindingsForAPIKey(String apiKeyId) {
     OwnerDto serviceAccount = this.client.readAPIKey(apiKeyId).getSpec().getOwner();
 
-    return Stream.of(
-        this.client.listRoleBindings(this.resourceName.organizationUrn() + "/*", serviceAccount.getId()),
-        this.client.listRoleBindings(this.resourceName.environmentUrn() + "/*", serviceAccount.getId()),
-        this.client.listRoleBindings(this.resourceName.clusterUrn() + "/connector=*", serviceAccount.getId())
-      )
-      .flatMap(Collection::stream)
+    CompletableFuture<List<RoleBindingDto>> organizationCf = CompletableFuture.supplyAsync(() -> this.client.listRoleBindings(this.resourceName.organizationUrn() + "/*", serviceAccount.getId()));
+    CompletableFuture<List<RoleBindingDto>> environmentCf  = CompletableFuture.supplyAsync(() -> this.client.listRoleBindings(this.resourceName.environmentUrn() + "/*", serviceAccount.getId()));
+    CompletableFuture<List<RoleBindingDto>> cloudClusterCf = CompletableFuture.supplyAsync(() -> this.client.listRoleBindings(this.resourceName.clusterUrn() + "/connector=*", serviceAccount.getId()));
+
+    return CompletableFuture.allOf(organizationCf, environmentCf, cloudClusterCf)
+      .thenApplyAsync(aVoid -> ListUtils.merge(organizationCf.join(), environmentCf.join(), cloudClusterCf.join()))
+      .join()
+      .stream()
       .map(RoleBindingMapper::map)
       .filter(Objects::nonNull)
       .collect(Collectors.toList());
@@ -74,12 +77,14 @@ public class ConfluentCloudRepository implements OidcPort {
 
     Predicate<IdentityPoolDto> identityPoolPredicate = this.identityPoolPredicate(claims);
 
-    return Stream.of(
-        this.client.listRoleBindings(this.resourceName.organizationUrn() + "/*", identityPoolPredicate),
-        this.client.listRoleBindings(this.resourceName.environmentUrn() + "/*", identityPoolPredicate),
-        this.client.listRoleBindings(this.resourceName.clusterUrn() + "/connector=*", identityPoolPredicate)
-      )
-      .flatMap(Collection::stream)
+    CompletableFuture<List<RoleBindingDto>> organizationCf = CompletableFuture.supplyAsync(() -> this.client.listRoleBindings(this.resourceName.organizationUrn() + "/*", identityPoolPredicate));
+    CompletableFuture<List<RoleBindingDto>> environmentCf  = CompletableFuture.supplyAsync(() -> this.client.listRoleBindings(this.resourceName.environmentUrn() + "/*", identityPoolPredicate));
+    CompletableFuture<List<RoleBindingDto>> cloudClusterCf = CompletableFuture.supplyAsync(() -> this.client.listRoleBindings(this.resourceName.clusterUrn() + "/connector=*", identityPoolPredicate));
+
+    return CompletableFuture.allOf(organizationCf, environmentCf, cloudClusterCf)
+      .thenApplyAsync(aVoid -> ListUtils.merge(organizationCf.join(), environmentCf.join(), cloudClusterCf.join()))
+      .join()
+      .stream()
       .map(RoleBindingMapper::map)
       .filter(Objects::nonNull)
       .collect(Collectors.toList());
