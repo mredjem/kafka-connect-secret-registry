@@ -1,5 +1,6 @@
 package com.github.mredjem.kafka.connect.oidc.ccloud;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
@@ -10,16 +11,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
-@RequiredArgsConstructor(staticName = "create")
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class AsyncCache<T> {
 
   private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
   private final AtomicReference<List<T>> cache = new AtomicReference<>();
 
-  private final Supplier<List<T>> supplierFn;
+  private final Supplier<List<T>> refreshFn;
 
-  public void init() {
-    this.executor.scheduleWithFixedDelay(this::refreshCache, 0L, 5L, TimeUnit.MINUTES);
+  public static <T> AsyncCache<T> create(Supplier<List<T>> refreshFn) {
+    return new AsyncCache<>(refreshFn).init();
   }
 
   public List<T> getAll() {
@@ -34,8 +35,14 @@ public class AsyncCache<T> {
     return this.cache.get();
   }
 
+  public AsyncCache<T> init() {
+    this.executor.scheduleWithFixedDelay(this::refreshCache, 0L, 5L, TimeUnit.MINUTES);
+
+    return this;
+  }
+
   private void refreshCache() {
-    List<T> value = this.supplierFn.get();
+    List<T> value = this.refreshFn.get();
 
     if (value != null) {
       this.cache.set(new ArrayList<>(value));

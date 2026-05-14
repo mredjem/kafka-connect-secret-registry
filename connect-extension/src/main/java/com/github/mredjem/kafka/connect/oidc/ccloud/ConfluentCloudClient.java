@@ -40,12 +40,7 @@ public class ConfluentCloudClient {
   }
 
   public static ConfluentCloudClient create(Map<String, String> configs) {
-    ConfluentCloudClient confluentCloudClient = new ConfluentCloudClient(configs);
-
-    confluentCloudClient.apiKeysCache.init();
-    confluentCloudClient.identityPoolsCache.init();
-
-    return confluentCloudClient;
+    return new ConfluentCloudClient(configs);
   }
 
   public List<RoleBindingDto> listRoleBindings(String crnPattern, String principal) {
