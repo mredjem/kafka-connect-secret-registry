@@ -1,3 +1,10 @@
+# [2.6.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.5.3...2.6.0) (2026-05-15)
+
+
+### Features
+
+* grant all operations to resource owner role ([7658ea1](https://github.com/mredjem/kafka-connect-secret-registry/commit/7658ea1e3c9bc7933d0608d89f058f3397f029c0))
+
 ## [2.5.3](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.5.2...2.5.3) (2026-05-15)
 
 
