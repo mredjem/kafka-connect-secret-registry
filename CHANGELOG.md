@@ -1,3 +1,10 @@
+## [2.5.3](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.5.2...2.5.3) (2026-05-15)
+
+
+### Bug Fixes
+
+* manage pagination when loading api keys and identity pools ([b339c7a](https://github.com/mredjem/kafka-connect-secret-registry/commit/b339c7ae85cecd34ea75a683cf0d3866e3ce2f5c))
+
 ## [2.5.2](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.5.1...2.5.2) (2026-05-14)
 
 
