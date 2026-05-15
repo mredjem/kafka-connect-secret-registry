@@ -68,13 +68,31 @@ public class ConfluentCloudApi {
           .withMethod("GET")
           .withPath("/iam/v2/identity-providers/{identityProvider}/identity-pools")
           .withPathParameter("identityProvider", "dlz-f3a90de")
+          .withQueryStringParameter("page_size", "100")
+          .withQueryStringParameter("page_token", "2")
           .withHeader(HttpHeaders.AUTHORIZATION, Credentials.confluentCloud())
       )
       .respond(
         response()
           .withStatusCode(200)
           .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-          .withBody(this.loadResource("mocks/identity.pools.json"))
+          .withBody(this.loadResource("mocks/identity.pools.2.json"))
+      );
+
+    this.server
+      .when(
+        request()
+          .withMethod("GET")
+          .withPath("/iam/v2/identity-providers/{identityProvider}/identity-pools")
+          .withPathParameter("identityProvider", "dlz-f3a90de")
+          .withQueryStringParameter("page_size", "100")
+          .withHeader(HttpHeaders.AUTHORIZATION, Credentials.confluentCloud())
+      )
+      .respond(
+        response()
+          .withStatusCode(200)
+          .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+          .withBody(this.loadResource("mocks/identity.pools.1.json"))
       );
 
     this.server
