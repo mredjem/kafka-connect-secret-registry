@@ -16,6 +16,6 @@ public class ResourceOwner implements Role {
 
   @Override
   public Set<Operation> allowedOperations() {
-    return EnumSet.of(Operation.CONFIGURE, Operation.DELETE, Operation.PAUSE_RESUME_RESTART, Operation.READ_CONFIGURATION, Operation.READ_STATUS);
+    return EnumSet.allOf(Operation.class);
   }
 }
