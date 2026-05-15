@@ -3,12 +3,12 @@ package com.github.mredjem.kafka.connect.oidc.ccloud.dtos;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
-public class DataResponseDto<T> {
+public class MetadataDto {
 
-  private MetadataDto metadata;
-  private List<T> data;
+  private String first;
+  private String last;
+  private String prev;
+  private String next;
 }

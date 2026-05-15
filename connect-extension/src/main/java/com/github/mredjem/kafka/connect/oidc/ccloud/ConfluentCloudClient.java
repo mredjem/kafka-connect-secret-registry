@@ -12,11 +12,14 @@ import com.github.mredjem.kafka.connect.oidc.exceptions.ResourceNotFoundExceptio
 import com.github.mredjem.kafka.connect.utils.ConfigUtils;
 
 import javax.ws.rs.core.UriBuilder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
 public class ConfluentCloudClient {
+
+  private static final String CONFLUENT_CLOUD_API = "https://api.confluent.cloud";
 
   private final HttpClient httpClient;
 
@@ -25,7 +28,7 @@ public class ConfluentCloudClient {
 
   private ConfluentCloudClient(Map<String, String> configs) {
     this.httpClient = HttpClient.create(
-      configs.getOrDefault(OidcConfigs.API_BASE_URL_CONFIG, "https://api.confluent.cloud"),
+      configs.getOrDefault(OidcConfigs.API_BASE_URL_CONFIG, CONFLUENT_CLOUD_API),
       ConfigUtils.getOrThrow(OidcConfigs.API_KEY_CONFIG, configs),
       ConfigUtils.getOrThrow(OidcConfigs.API_SECRET_CONFIG, configs)
     );
@@ -64,13 +67,11 @@ public class ConfluentCloudClient {
       .stream()
       .filter(apiKey -> apiKey.getId().equals(apiKeyId))
       .findFirst()
-      .orElseThrow(() -> new ResourceNotFoundException(apiKeyId));
+      .orElseThrow(() -> new ResourceNotFoundException("Api key", apiKeyId));
   }
 
   public List<ApiKeyDto> listApiKeys() {
-    DataResponseDto<ApiKeyDto> data = this.httpClient.doGET("iam/v2/api-keys", new TypeReference<DataResponseDto<ApiKeyDto>>() {});
-
-    return data.getData();
+    return this.listAll("iam/v2/api-keys", new TypeReference<DataResponseDto<ApiKeyDto>>() {});
   }
 
   private IdentityPoolDto readIdentityPool(Predicate<IdentityPoolDto> identityPoolDtoPredicate) {
@@ -89,7 +90,7 @@ public class ConfluentCloudClient {
       .build(identityProvider.getId())
       .toString();
 
-    return this.httpClient.doGET(path, new TypeReference<DataResponseDto<IdentityPoolDto>>() {}).getData();
+    return this.listAll(path, new TypeReference<DataResponseDto<IdentityPoolDto>>() {});
   }
 
   private IdentityProviderDto readIdentityProvider(String identityProviderName) {
@@ -107,5 +108,37 @@ public class ConfluentCloudClient {
     DataResponseDto<IdentityProviderDto> data = this.httpClient.doGET("iam/v2/identity-providers", new TypeReference<DataResponseDto<IdentityProviderDto>>() {});
 
     return data.getData();
+  }
+
+  private <T> List<T> listAll(String initialPath, TypeReference<DataResponseDto<T>> typeReference) {
+    DataResponseDto<T> initialDataResponse = this.httpClient.doGET(initialPath + "?page_size=100", typeReference);
+
+    List<T> results = new ArrayList<>(initialDataResponse.getData());
+
+    String previous = normalizePath(initialDataResponse.getMetadata().getFirst());
+    String next     = normalizePath(initialDataResponse.getMetadata().getNext());
+
+    int iteration = 0;
+
+    while (next != null && !next.equals(previous) && ++iteration < 10) {
+      String path = next + "&page_size=100";
+
+      DataResponseDto<T> dataResponse = this.httpClient.doGET(path, typeReference);
+
+      results.addAll(dataResponse.getData());
+
+      previous = normalizePath(next);
+      next     = normalizePath(dataResponse.getMetadata().getNext());
+    }
+
+    return results;
+  }
+
+  private static String normalizePath(String path) {
+    if (path == null || path.isEmpty()) {
+      return null;
+    }
+
+    return path.replace(CONFLUENT_CLOUD_API + "/", "");
   }
 }
