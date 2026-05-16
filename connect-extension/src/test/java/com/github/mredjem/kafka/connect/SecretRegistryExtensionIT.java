@@ -35,6 +35,16 @@ class SecretRegistryExtensionIT extends AbstractIT {
   }
 
   @Test
+  void shouldBeRejectedIfAPIKeyDoesNotExist() {
+    given()
+      .header(HttpHeaders.AUTHORIZATION, Credentials.notFound())
+    .when()
+      .get("/secret/paths")
+    .then()
+      .statusCode(403);
+  }
+
+  @Test
   void shouldAllowGettingStateWhenUnauthenticated() {
     given()
       .header(HttpHeaders.ACCEPT, "application/json")

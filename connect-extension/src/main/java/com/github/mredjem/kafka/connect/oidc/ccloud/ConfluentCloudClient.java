@@ -15,6 +15,7 @@ import javax.ws.rs.core.UriBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 public class ConfluentCloudClient {
@@ -63,11 +64,20 @@ public class ConfluentCloudClient {
   }
 
   public ApiKeyDto readAPIKey(String apiKeyId) {
-    return this.apiKeysCache.getAll()
+    Optional<ApiKeyDto> cachedApiKey = this.apiKeysCache.getAll()
       .stream()
       .filter(apiKey -> apiKey.getId().equals(apiKeyId))
-      .findFirst()
-      .orElseThrow(() -> new ResourceNotFoundException("Api key", apiKeyId));
+      .findFirst();
+
+    if (cachedApiKey.isPresent()) {
+      return cachedApiKey.get();
+    }
+
+    String path = UriBuilder.fromPath("iam/v2/api-keys/{apiKeyId}")
+      .build(apiKeyId)
+      .toString();
+
+    return this.httpClient.doGET(path, new TypeReference<ApiKeyDto>() {});
   }
 
   public List<ApiKeyDto> listApiKeys() {
@@ -120,7 +130,7 @@ public class ConfluentCloudClient {
 
     int iteration = 0;
 
-    while (next != null && !next.equals(previous) && ++iteration < 10) {
+    while (next != null && !next.equals(previous) && ++iteration <= 10) {
       String path = next + "&page_size=100";
 
       DataResponseDto<T> dataResponse = this.httpClient.doGET(path, typeReference);

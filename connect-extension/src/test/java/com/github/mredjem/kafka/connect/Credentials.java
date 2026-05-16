@@ -26,6 +26,12 @@ public final class Credentials {
     return "Basic " + Base64.getEncoder().encodeToString(credentials.getBytes());
   }
 
+  public static String notFound() {
+    String credentials = "APIKEYISNOTFOUND:R15hoiDIq8Nxu/lY4mPO3DwAVIfU5W7OI+efsB607mLgHTnVW5XJGVqX2ysDx987";
+
+    return "Basic " + Base64.getEncoder().encodeToString(credentials.getBytes());
+  }
+
   public static String servicePrincipal() {
     try {
       Map<String, Object> claims = new HashMap<>();

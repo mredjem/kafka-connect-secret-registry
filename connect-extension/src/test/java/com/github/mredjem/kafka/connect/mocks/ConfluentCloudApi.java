@@ -50,6 +50,20 @@ public class ConfluentCloudApi {
 
     this.server
       .when(
+        request()
+          .withMethod("GET")
+          .withPath("/iam/v2/api-keys/APIKEYISNOTFOUND")
+          .withHeader(HttpHeaders.AUTHORIZATION, Credentials.confluentCloud())
+      )
+      .respond(
+        response()
+          .withStatusCode(403)
+          .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+          .withBody(this.loadResource("mocks/api.key.not.found.json"))
+      );
+
+    this.server
+      .when(
           request()
             .withMethod("GET")
             .withPath("/iam/v2/identity-providers")

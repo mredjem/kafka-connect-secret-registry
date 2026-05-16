@@ -103,9 +103,17 @@ class AuthenticationFilterIT extends AbstractIT {
   void shouldAllowGettingStateWhenUnauthenticated() {
     Map<String, String> headers = this.defaultHeaders();
 
-    MockContainerRequestContext nodeRequest = MockContainerRequestContext.of(HttpMethod.GET, "/", headers);
+    MockContainerRequestContext nodeRequest = MockContainerRequestContext.of(HttpMethod.GET, "", headers);
 
     nodeRequest.addAssertion(response -> {
+      Response.Status expectedStatus = Response.Status.OK;
+
+      Assertions.assertEquals(expectedStatus.getStatusCode(), response.getStatus());
+    });
+
+    MockContainerRequestContext sameNodeRequest = MockContainerRequestContext.of(HttpMethod.GET, "/", headers);
+
+    sameNodeRequest.addAssertion(response -> {
       Response.Status expectedStatus = Response.Status.OK;
 
       Assertions.assertEquals(expectedStatus.getStatusCode(), response.getStatus());
@@ -119,6 +127,14 @@ class AuthenticationFilterIT extends AbstractIT {
     MockContainerRequestContext pluginsRequest = MockContainerRequestContext.of(HttpMethod.GET, "/connector-plugins", headers);
 
     pluginsRequest.addAssertion(response -> {
+      Response.Status expectedStatus = Response.Status.OK;
+
+      Assertions.assertEquals(expectedStatus.getStatusCode(), response.getStatus());
+    });
+
+    MockContainerRequestContext samePluginsRequest = MockContainerRequestContext.of(HttpMethod.GET, "/connector-plugins/", headers);
+
+    samePluginsRequest.addAssertion(response -> {
       Response.Status expectedStatus = Response.Status.OK;
 
       Assertions.assertEquals(expectedStatus.getStatusCode(), response.getStatus());

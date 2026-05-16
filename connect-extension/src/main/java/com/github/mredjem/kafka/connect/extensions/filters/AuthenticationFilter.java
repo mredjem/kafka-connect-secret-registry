@@ -35,6 +35,13 @@ public class AuthenticationFilter implements ContainerRequestFilter {
       return;
     }
 
-    this.nextFilter.filter(containerRequestContext);
+    try {
+      this.nextFilter.filter(containerRequestContext);
+
+    } catch (final Exception e) {
+      Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), e);
+
+      containerRequestContext.abortWith(errorResponse);
+    }
   }
 }

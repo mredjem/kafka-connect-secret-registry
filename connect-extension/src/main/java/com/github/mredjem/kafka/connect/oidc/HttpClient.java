@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 import java.io.BufferedReader;
@@ -43,6 +44,12 @@ public class HttpClient {
       connection.setConnectTimeout(5_000);
       connection.setReadTimeout(5_000);
       connection.setDoOutput(true);
+
+      int responseCode = connection.getResponseCode();
+
+      if (HttpURLConnection.HTTP_OK != responseCode) {
+        throw new ClientErrorException(responseCode);
+      }
 
       try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
         StringBuilder response = new StringBuilder();

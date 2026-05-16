@@ -8,6 +8,44 @@
       "api_version": "iam/v2",
       "kind": "IdentityProvider",
       "metadata": {
+        "self": "https://api.confluent.cloud/iam/v2/identity-providers/dlz-f3a90dc",
+        "resource_name": "crn://confluent.cloud/organization=9bb441c4-edef-46ac-8a41-c49e44a3fd9a/identity-provider=dlz-f3a90dc",
+        "created_at": "2026-01-01T00:00:00.000000Z",
+        "updated_at": "2026-01-01T00:00:00.000000Z"
+      },
+      "id": "dlz-f3a90dc",
+      "display_name": "azure",
+      "description": "Confluent Azure Identity Provider",
+      "identity_claim": "claims.sub",
+      "state": "DISABLED",
+      "issuer": "https://login.microsoftonline.com/9bb441c4-edef-46ac-8a41-c49e44a3fd9a/v2.0",
+      "jwks_uri": "https://login.microsoftonline.com/9bb441c4-edef-46ac-8a41-c49e44a3fd9a/discovery/v2.0/keys",
+      "jwks_status": "OK",
+      "keys": []
+    },
+    {
+      "api_version": "iam/v2",
+      "kind": "IdentityProvider",
+      "metadata": {
+        "self": "https://api.confluent.cloud/iam/v2/identity-providers/dlz-f3a90dd",
+        "resource_name": "crn://confluent.cloud/organization=9bb441c4-edef-46ac-8a41-c49e44a3fd9a/identity-provider=dlz-f3a90dd",
+        "created_at": "2026-01-01T00:00:00.000000Z",
+        "updated_at": "2026-01-01T00:00:00.000000Z"
+      },
+      "id": "dlz-f3a90dd",
+      "display_name": "azure",
+      "description": "Confluent Azure Identity Provider",
+      "identity_claim": "claims.sub",
+      "state": "ENABLED",
+      "issuer": "https://login.microsoftonline.com/9bb441c4-edef-46ac-8a41-c49e44a3fd9a/v2.0",
+      "jwks_uri": "https://login.microsoftonline.com/9bb441c4-edef-46ac-8a41-c49e44a3fd9a/discovery/v2.0/keys",
+      "jwks_status": "KO",
+      "keys": []
+    },
+    {
+      "api_version": "iam/v2",
+      "kind": "IdentityProvider",
+      "metadata": {
         "self": "https://api.confluent.cloud/iam/v2/identity-providers/dlz-f3a90de",
         "resource_name": "crn://confluent.cloud/organization=9bb441c4-edef-46ac-8a41-c49e44a3fd9a/identity-provider=dlz-f3a90de",
         "created_at": "2026-01-01T00:00:00.000000Z",

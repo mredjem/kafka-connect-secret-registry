@@ -2,6 +2,7 @@ package com.github.mredjem.kafka.connect.oidc.ccloud;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
+@Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class AsyncCache<T> {
 
@@ -24,32 +26,39 @@ public class AsyncCache<T> {
   }
 
   public List<T> getAll() {
-    List<T> value = this.cache.get();
+    List<T> actual = cache.get();
 
-    if (value != null) {
-      return value;
+    if (actual != null) {
+      return actual;
     }
 
     this.refreshCache();
 
-    return this.cache.get();
+    List<T> fetched = cache.get();
+
+    return fetched != null ? fetched : new ArrayList<>();
   }
 
-  public AsyncCache<T> init() {
+  private AsyncCache<T> init() {
     this.executor.scheduleWithFixedDelay(this::refreshCache, 0L, 5L, TimeUnit.MINUTES);
 
     return this;
   }
 
   private void refreshCache() {
-    List<T> value = this.refreshFn.get();
+    try {
+      List<T> value = this.refreshFn.get();
 
-    if (value != null) {
-      this.cache.set(new ArrayList<>(value));
+      if (value != null) {
+        this.cache.set(new ArrayList<>(value));
 
-      return;
+        return;
+      }
+
+      this.cache.set(new ArrayList<>());
+
+    } catch (final Exception e) {
+      log.warn("Failed to refresh cache", e);
     }
-
-    this.cache.set(new ArrayList<>());
   }
 }
