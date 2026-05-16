@@ -1,3 +1,10 @@
+## [2.6.1](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.6.0...2.6.1) (2026-05-16)
+
+
+### Bug Fixes
+
+* handle exception when refreshing cache and manage cache miss for api keys ([c96f22d](https://github.com/mredjem/kafka-connect-secret-registry/commit/c96f22d54e663487f5a6a267eb81d6e9f160ef0b))
+
 # [2.6.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.5.3...2.6.0) (2026-05-15)
 
 
