@@ -31,7 +31,8 @@ public class RbacRules {
 
   private final List<RequestMatcher> ANONYMOUS_REQUEST_MATCHERS = Arrays.asList(
     RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?")),
-    RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connector-plugins/?"))
+    RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?connector-plugins/?")),
+    RequestMatcher.of(HttpMethod.PUT, Pattern.compile("/?connector-plugins/[^/]+/config/validate/?"))
   );
 
   private final Map<Operation, List<RequestMatcher>> REQUEST_MATCHERS = new EnumMap<>(Operation.class);
