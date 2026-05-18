@@ -142,6 +142,27 @@ class AuthenticationFilterIT extends AbstractIT {
   }
 
   @Test
+  void shouldAllowValidatingConfigWhenUnauthenticated() {
+    Map<String, String> headers = this.defaultHeaders();
+
+    MockContainerRequestContext validateConfigRequest = MockContainerRequestContext.of(HttpMethod.PUT, "/connector-plugins/FileStreamSinkConnector/config/validate", headers);
+
+    validateConfigRequest.addAssertion(response -> {
+      Response.Status expectedStatus = Response.Status.OK;
+
+      Assertions.assertEquals(expectedStatus.getStatusCode(), response.getStatus());
+    });
+
+    MockContainerRequestContext sameValidateConfigRequest = MockContainerRequestContext.of(HttpMethod.PUT, "/connector-plugins/FileStreamSinkConnector/config/validate/", headers);
+
+    sameValidateConfigRequest.addAssertion(response -> {
+      Response.Status expectedStatus = Response.Status.OK;
+
+      Assertions.assertEquals(expectedStatus.getStatusCode(), response.getStatus());
+    });
+  }
+
+  @Test
   void shouldAllowReadingConfigurationAndStatusWhenDeveloperWrite() throws IOException {
     Map<String, String> headers = ConfigUtils.addEntry(this.defaultHeaders(), HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal());
 
