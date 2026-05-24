@@ -13,6 +13,10 @@ public class RoleBinding {
   private final ResourceScope resourceScope;
 
   public boolean allows(Operation operation, String resourceName) {
+    if (!this.role.allows(operation)) {
+      return false;
+    }
+
     if (Operation.READ_CONFIGURATION == operation && "LIST_CONNECTOR_NAMES".equals(resourceName)) {
       return true;
     }
@@ -21,6 +25,6 @@ public class RoleBinding {
       return true;
     }
 
-    return this.role.allows(operation) && this.resourceScope.matches(resourceName);
+    return this.resourceScope.matches(resourceName);
   }
 }
