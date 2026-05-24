@@ -1,3 +1,11 @@
+## [2.6.2](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.6.1...2.6.2) (2026-05-24)
+
+
+### Bug Fixes
+
+* allow access to config validation endpoint anonymously ([47ec0b5](https://github.com/mredjem/kafka-connect-secret-registry/commit/47ec0b5f454fe4ad9ed9137d709cac24261ecc93))
+* prevent connectors/secrets listing if not allowed ([5a57ac4](https://github.com/mredjem/kafka-connect-secret-registry/commit/5a57ac4dde21cc55dd66c7d11f1bf3d1928eb2f2))
+
 ## [2.6.1](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.6.0...2.6.1) (2026-05-16)
 
 
