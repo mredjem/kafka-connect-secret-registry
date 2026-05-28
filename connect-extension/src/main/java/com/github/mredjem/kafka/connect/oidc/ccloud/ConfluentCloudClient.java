@@ -1,18 +1,21 @@
 package com.github.mredjem.kafka.connect.oidc.ccloud;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.github.mredjem.kafka.connect.AuthenticationCredentials;
 import com.github.mredjem.kafka.connect.oidc.HttpClient;
 import com.github.mredjem.kafka.connect.oidc.OidcConfigs;
 import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.ApiKeyDto;
 import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.DataResponseDto;
 import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.IdentityPoolDto;
 import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.IdentityProviderDto;
+import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.OAuthTokenDto;
 import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.RoleBindingDto;
 import com.github.mredjem.kafka.connect.oidc.exceptions.ResourceNotFoundException;
 import com.github.mredjem.kafka.connect.utils.ConfigUtils;
 
 import javax.ws.rs.core.UriBuilder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -28,10 +31,14 @@ public class ConfluentCloudClient {
   private final AsyncCache<IdentityPoolDto> identityPoolsCache;
 
   private ConfluentCloudClient(Map<String, String> configs) {
-    this.httpClient = HttpClient.create(
-      configs.getOrDefault(OidcConfigs.API_BASE_URL_CONFIG, CONFLUENT_CLOUD_API),
+    AuthenticationCredentials basicCredentials = AuthenticationCredentials.of(
       ConfigUtils.getOrThrow(OidcConfigs.API_KEY_CONFIG, configs),
       ConfigUtils.getOrThrow(OidcConfigs.API_SECRET_CONFIG, configs)
+    );
+
+    this.httpClient = HttpClient.create(
+      configs.getOrDefault(OidcConfigs.API_BASE_URL_CONFIG, CONFLUENT_CLOUD_API),
+      basicCredentials
     );
 
     this.apiKeysCache = AsyncCache.create(this::listApiKeys);
@@ -45,6 +52,30 @@ public class ConfluentCloudClient {
 
   public static ConfluentCloudClient create(Map<String, String> configs) {
     return new ConfluentCloudClient(configs);
+  }
+
+  public List<String> listConnectors(String environmentId, String clusterId, AuthenticationCredentials authenticationCredentials) {
+    HttpClient connectHttpClient = HttpClient.create(this.httpClient.getBaseUrl(), authenticationCredentials);
+
+    String path = UriBuilder.fromPath("connect/v1/environments/{environmentId}/clusters/{clusterId}/connectors")
+      .build(environmentId, clusterId)
+      .toString();
+
+    return connectHttpClient.doGET(path, new TypeReference<List<String>>() {});
+  }
+
+  public List<String> listConnectors(String environmentId, String clusterId, AuthenticationCredentials authenticationCredentials, Predicate<IdentityPoolDto> identityPoolPredicate) {
+    IdentityPoolDto identityPool = this.readIdentityPool(identityPoolPredicate);
+
+    OAuthTokenDto oAuthToken = this.exchangeOAuthToken(identityPool.getId(), authenticationCredentials);
+
+    HttpClient connectHttpClient = HttpClient.create(this.httpClient.getBaseUrl(), AuthenticationCredentials.of(oAuthToken.getAccessToken()));
+
+    String path = UriBuilder.fromPath("connect/v1/environments/{environmentId}/clusters/{clusterId}/connectors")
+      .build(environmentId, clusterId)
+      .toString();
+
+    return connectHttpClient.doGET(path, new TypeReference<List<String>>() {});
   }
 
   public List<RoleBindingDto> listRoleBindings(String crnPattern, String principal) {
@@ -118,6 +149,18 @@ public class ConfluentCloudClient {
     DataResponseDto<IdentityProviderDto> data = this.httpClient.doGET("iam/v2/identity-providers", new TypeReference<DataResponseDto<IdentityProviderDto>>() {});
 
     return data.getData();
+  }
+
+  private OAuthTokenDto exchangeOAuthToken(String identityPoolId, AuthenticationCredentials authenticationCredentials) {
+    Map<String, String> parameters = new HashMap<>();
+
+    parameters.put("grant_type", "urn:ietf:params:oauth:grant-type:token-exchange");
+    parameters.put("subject_token", authenticationCredentials.getCredentials());
+    parameters.put("subject_token_type", "urn:ietf:params:oauth:token-type:jwt");
+    parameters.put("requested_token_type", "urn:ietf:params:oauth:token-type:access_token");
+    parameters.put("identity_pool_id", identityPoolId);
+
+    return this.httpClient.doPOST("sts/v1/oauth2/token", parameters, new TypeReference<OAuthTokenDto>() {});
   }
 
   private <T> List<T> listAll(String initialPath, TypeReference<DataResponseDto<T>> typeReference) {
