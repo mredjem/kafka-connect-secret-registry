@@ -1,16 +1,16 @@
 {
   "kind": "IdentityPoolList",
   "metadata": {
-    "self": "https://api.confluent.cloud/iam/v2/identity-providers/dlz-f3a90de/identity-pools",
-    "first": "https://api.confluent.cloud/iam/v2/identity-providers/dlz-f3a90de/identity-pools?page_token=1",
-    "next": "https://api.confluent.cloud/iam/v2/identity-providers/dlz-f3a90de/identity-pools?page_token=2"
+    "self": "https://confluent.cloud/api/iam/v2/identity-providers/dlz-f3a90de/identity-pools",
+    "first": "https://confluent.cloud/api/iam/v2/identity-providers/dlz-f3a90de/identity-pools?page_token=1",
+    "next": "https://confluent.cloud/api/iam/v2/identity-providers/dlz-f3a90de/identity-pools?page_token=2"
   },
   "data": [
     {
       "api_version": "iam/v2",
       "kind": "IdentityPool",
       "metadata": {
-        "self": "https://api.confluent.cloud/iam/v2/identity-providers/dlz-f3a90de/identity-pools/pool-abc",
+        "self": "https://confluent.cloud/api/iam/v2/identity-providers/dlz-f3a90de/identity-pools/pool-abc",
         "resource_name": "crn://confluent.cloud/organization=9bb441c4-edef-46ac-8a41-c49e44a3fd9a/identity-provider=dlz-f3a90de/identity-pool=pool-abc",
         "created_at": "2026-01-01T00:00:00.000000Z",
         "updated_at": "2026-01-01T00:00:00.000000Z"
@@ -27,7 +27,7 @@
       "api_version": "iam/v2",
       "kind": "IdentityPool",
       "metadata": {
-        "self": "https://api.confluent.cloud/iam/v2/identity-providers/dlz-f3a90de/identity-pools/pool-abc",
+        "self": "https://confluent.cloud/api/iam/v2/identity-providers/dlz-f3a90de/identity-pools/pool-abc",
         "resource_name": "crn://confluent.cloud/organization=9bb441c4-edef-46ac-8a41-c49e44a3fd9a/identity-provider=dlz-f3a90de/identity-pool=pool-abc",
         "created_at": "2026-01-01T00:00:00.000000Z",
         "updated_at": "2026-01-01T00:00:00.000000Z"

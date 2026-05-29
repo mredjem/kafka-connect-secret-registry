@@ -23,7 +23,7 @@ import java.util.function.Predicate;
 
 public class ConfluentCloudClient {
 
-  private static final String CONFLUENT_CLOUD_API = "https://api.confluent.cloud";
+  private static final String CONFLUENT_CLOUD_API = "https://confluent.cloud";
 
   private final HttpClient httpClient;
 
@@ -57,7 +57,7 @@ public class ConfluentCloudClient {
   public List<String> listConnectors(String environmentId, String clusterId, AuthenticationCredentials authenticationCredentials) {
     HttpClient connectHttpClient = HttpClient.create(this.httpClient.getBaseUrl(), authenticationCredentials);
 
-    String path = UriBuilder.fromPath("connect/v1/environments/{environmentId}/clusters/{clusterId}/connectors")
+    String path = UriBuilder.fromPath("api/connect/v1/environments/{environmentId}/clusters/{clusterId}/connectors")
       .build(environmentId, clusterId)
       .toString();
 
@@ -71,7 +71,7 @@ public class ConfluentCloudClient {
 
     HttpClient connectHttpClient = HttpClient.create(this.httpClient.getBaseUrl(), AuthenticationCredentials.of(oAuthToken.getAccessToken()));
 
-    String path = UriBuilder.fromPath("connect/v1/environments/{environmentId}/clusters/{clusterId}/connectors")
+    String path = UriBuilder.fromPath("api/connect/v1/environments/{environmentId}/clusters/{clusterId}/connectors")
       .build(environmentId, clusterId)
       .toString();
 
@@ -79,7 +79,7 @@ public class ConfluentCloudClient {
   }
 
   public List<RoleBindingDto> listRoleBindings(String crnPattern, String principal) {
-    String path = UriBuilder.fromPath("iam/v2/role-bindings")
+    String path = UriBuilder.fromPath("api/iam/v2/role-bindings")
       .queryParam("principal", "User:" + principal)
       .queryParam("crn_pattern", crnPattern)
       .build()
@@ -104,7 +104,7 @@ public class ConfluentCloudClient {
       return cachedApiKey.get();
     }
 
-    String path = UriBuilder.fromPath("iam/v2/api-keys/{apiKeyId}")
+    String path = UriBuilder.fromPath("api/iam/v2/api-keys/{apiKeyId}")
       .build(apiKeyId)
       .toString();
 
@@ -112,7 +112,7 @@ public class ConfluentCloudClient {
   }
 
   public List<ApiKeyDto> listApiKeys() {
-    return this.listAll("iam/v2/api-keys", new TypeReference<DataResponseDto<ApiKeyDto>>() {});
+    return this.listAll("api/iam/v2/api-keys", new TypeReference<DataResponseDto<ApiKeyDto>>() {});
   }
 
   private IdentityPoolDto readIdentityPool(Predicate<IdentityPoolDto> identityPoolDtoPredicate) {
@@ -127,7 +127,7 @@ public class ConfluentCloudClient {
   private List<IdentityPoolDto> listIdentityPools(String identityProviderName) {
     IdentityProviderDto identityProvider = this.readIdentityProvider(identityProviderName);
 
-    String path = UriBuilder.fromPath("iam/v2/identity-providers/{identityProvider}/identity-pools")
+    String path = UriBuilder.fromPath("api/iam/v2/identity-providers/{identityProvider}/identity-pools")
       .build(identityProvider.getId())
       .toString();
 
@@ -146,7 +146,7 @@ public class ConfluentCloudClient {
   }
 
   private List<IdentityProviderDto> listIdentityProviders() {
-    DataResponseDto<IdentityProviderDto> data = this.httpClient.doGET("iam/v2/identity-providers", new TypeReference<DataResponseDto<IdentityProviderDto>>() {});
+    DataResponseDto<IdentityProviderDto> data = this.httpClient.doGET("api/iam/v2/identity-providers", new TypeReference<DataResponseDto<IdentityProviderDto>>() {});
 
     return data.getData();
   }
@@ -160,7 +160,7 @@ public class ConfluentCloudClient {
     parameters.put("requested_token_type", "urn:ietf:params:oauth:token-type:access_token");
     parameters.put("identity_pool_id", identityPoolId);
 
-    return this.httpClient.doPOST("sts/v1/oauth2/token", parameters, new TypeReference<OAuthTokenDto>() {});
+    return this.httpClient.doPOST("api/sts/v1/oauth2/token", parameters, new TypeReference<OAuthTokenDto>() {});
   }
 
   private <T> List<T> listAll(String initialPath, TypeReference<DataResponseDto<T>> typeReference) {

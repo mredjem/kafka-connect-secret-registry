@@ -39,7 +39,7 @@ public class ConfluentCloudApi {
       .when(
         request()
           .withMethod("POST")
-          .withPath("/sts/v1/oauth2/token")
+          .withPath("/api/sts/v1/oauth2/token")
           .withContentType(MediaType.APPLICATION_FORM_URLENCODED)
           .withBody(params(
             param("grant_type", "urn:ietf:params:oauth:grant-type:token-exchange"),
@@ -60,7 +60,7 @@ public class ConfluentCloudApi {
       .when(
         request()
           .withMethod("GET")
-          .withPath("/connect/v1/environments/env-456xy/clusters/lkc-123abc/connectors")
+          .withPath("/api/connect/v1/environments/env-456xy/clusters/lkc-123abc/connectors")
       )
       .respond(
         response()
@@ -73,7 +73,7 @@ public class ConfluentCloudApi {
       .when(
         request()
           .withMethod("GET")
-          .withPath("/iam/v2/api-keys")
+          .withPath("/api/iam/v2/api-keys")
           .withHeader(HttpHeaders.AUTHORIZATION, Credentials.confluentCloud())
           .withQueryStringParameter("page_size", "100")
       )
@@ -88,7 +88,7 @@ public class ConfluentCloudApi {
       .when(
         request()
           .withMethod("GET")
-          .withPath("/iam/v2/api-keys/APIKEYISNOTFOUND")
+          .withPath("/api/iam/v2/api-keys/APIKEYISNOTFOUND")
           .withHeader(HttpHeaders.AUTHORIZATION, Credentials.confluentCloud())
       )
       .respond(
@@ -102,7 +102,7 @@ public class ConfluentCloudApi {
       .when(
           request()
             .withMethod("GET")
-            .withPath("/iam/v2/identity-providers")
+            .withPath("/api/iam/v2/identity-providers")
             .withHeader(HttpHeaders.AUTHORIZATION, Credentials.confluentCloud())
         )
       .respond(
@@ -116,7 +116,7 @@ public class ConfluentCloudApi {
       .when(
         request()
           .withMethod("GET")
-          .withPath("/iam/v2/identity-providers/{identityProvider}/identity-pools")
+          .withPath("/api/iam/v2/identity-providers/{identityProvider}/identity-pools")
           .withPathParameter("identityProvider", "dlz-f3a90de")
           .withQueryStringParameter("page_size", "100")
           .withQueryStringParameter("page_token", "2")
@@ -133,7 +133,7 @@ public class ConfluentCloudApi {
       .when(
         request()
           .withMethod("GET")
-          .withPath("/iam/v2/identity-providers/{identityProvider}/identity-pools")
+          .withPath("/api/iam/v2/identity-providers/{identityProvider}/identity-pools")
           .withPathParameter("identityProvider", "dlz-f3a90de")
           .withQueryStringParameter("page_size", "100")
           .withHeader(HttpHeaders.AUTHORIZATION, Credentials.confluentCloud())
@@ -149,7 +149,7 @@ public class ConfluentCloudApi {
       .when(
         request()
           .withMethod("GET")
-          .withPath("/iam/v2/role-bindings")
+          .withPath("/api/iam/v2/role-bindings")
           .withHeader(HttpHeaders.AUTHORIZATION, Credentials.confluentCloud())
           .withQueryStringParameter("principal", "User:pool-abc")
           .withQueryStringParameter("crn_pattern", "crn://confluent.cloud/organization=9bb441c4-edef-46ac-8a41-c49e44a3fd9a/*")
@@ -165,7 +165,7 @@ public class ConfluentCloudApi {
       .when(
         request()
           .withMethod("GET")
-          .withPath("/iam/v2/role-bindings")
+          .withPath("/api/iam/v2/role-bindings")
           .withHeader(HttpHeaders.AUTHORIZATION, Credentials.confluentCloud())
           .withQueryStringParameter("principal", "User:pool-bca")
           .withQueryStringParameter("crn_pattern", "crn://confluent.cloud/organization=9bb441c4-edef-46ac-8a41-c49e44a3fd9a/*")
@@ -181,7 +181,7 @@ public class ConfluentCloudApi {
       .when(
         request()
           .withMethod("GET")
-          .withPath("/iam/v2/role-bindings")
+          .withPath("/api/iam/v2/role-bindings")
           .withHeader(HttpHeaders.AUTHORIZATION, Credentials.confluentCloud())
           .withQueryStringParameter("principal", "User:sa-12345")
           .withQueryStringParameter("crn_pattern", "crn://confluent.cloud/organization=9bb441c4-edef-46ac-8a41-c49e44a3fd9a/*")
@@ -197,7 +197,7 @@ public class ConfluentCloudApi {
       .when(
         request()
           .withMethod("GET")
-          .withPath("/iam/v2/role-bindings")
+          .withPath("/api/iam/v2/role-bindings")
           .withHeader(HttpHeaders.AUTHORIZATION, Credentials.confluentCloud())
           .withQueryStringParameter("principal", "User:pool-abc")
           .withQueryStringParameter("crn_pattern", "crn://confluent.cloud/organization=9bb441c4-edef-46ac-8a41-c49e44a3fd9a/environment=env-456xy/*")
@@ -213,7 +213,7 @@ public class ConfluentCloudApi {
       .when(
         request()
           .withMethod("GET")
-          .withPath("/iam/v2/role-bindings")
+          .withPath("/api/iam/v2/role-bindings")
           .withHeader(HttpHeaders.AUTHORIZATION, Credentials.confluentCloud())
           .withQueryStringParameter("principal", "User:pool-bca")
           .withQueryStringParameter("crn_pattern", "crn://confluent.cloud/organization=9bb441c4-edef-46ac-8a41-c49e44a3fd9a/environment=env-456xy/*")
@@ -229,7 +229,7 @@ public class ConfluentCloudApi {
       .when(
         request()
           .withMethod("GET")
-          .withPath("/iam/v2/role-bindings")
+          .withPath("/api/iam/v2/role-bindings")
           .withHeader(HttpHeaders.AUTHORIZATION, Credentials.confluentCloud())
           .withQueryStringParameter("principal", "User:sa-12345")
           .withQueryStringParameter("crn_pattern", "crn://confluent.cloud/organization=9bb441c4-edef-46ac-8a41-c49e44a3fd9a/environment=env-456xy/*")
@@ -245,7 +245,7 @@ public class ConfluentCloudApi {
       .when(
         request()
           .withMethod("GET")
-          .withPath("/iam/v2/role-bindings")
+          .withPath("/api/iam/v2/role-bindings")
           .withHeader(HttpHeaders.AUTHORIZATION, Credentials.confluentCloud())
           .withQueryStringParameter("principal", "User:pool-abc")
           .withQueryStringParameter("crn_pattern", "crn://confluent.cloud/organization=9bb441c4-edef-46ac-8a41-c49e44a3fd9a/environment=env-456xy/cloud-cluster=lkc-123abc/connector=*")
@@ -261,7 +261,7 @@ public class ConfluentCloudApi {
       .when(
         request()
           .withMethod("GET")
-          .withPath("/iam/v2/role-bindings")
+          .withPath("/api/iam/v2/role-bindings")
           .withHeader(HttpHeaders.AUTHORIZATION, Credentials.confluentCloud())
           .withQueryStringParameter("principal", "User:pool-bca")
           .withQueryStringParameter("crn_pattern", "crn://confluent.cloud/organization=9bb441c4-edef-46ac-8a41-c49e44a3fd9a/environment=env-456xy/cloud-cluster=lkc-123abc/connector=*")
@@ -277,7 +277,7 @@ public class ConfluentCloudApi {
       .when(
         request()
           .withMethod("GET")
-          .withPath("/iam/v2/role-bindings")
+          .withPath("/api/iam/v2/role-bindings")
           .withHeader(HttpHeaders.AUTHORIZATION, Credentials.confluentCloud())
           .withQueryStringParameter("principal", "User:sa-12345")
           .withQueryStringParameter("crn_pattern", "crn://confluent.cloud/organization=9bb441c4-edef-46ac-8a41-c49e44a3fd9a/environment=env-456xy/cloud-cluster=lkc-123abc/connector=*")

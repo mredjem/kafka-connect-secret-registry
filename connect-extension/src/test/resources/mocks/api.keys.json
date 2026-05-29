@@ -1,7 +1,7 @@
 {
   "kind": "ApiKeyList",
   "metadata": {
-    "self": "https://api.confluent.cloud/iam/v2/api-keys"
+    "self": "https://confluent.cloud/api/iam/v2/api-keys"
   },
   "data": [
     {
@@ -9,7 +9,7 @@
       "api_version": "iam/v2",
       "kind": "ApiKey",
       "metadata": {
-        "self": "https://api.confluent.cloud/iam/v2/api-keys/QRSTUVWXYZABCDEF",
+        "self": "https://confluent.cloud/api/iam/v2/api-keys/QRSTUVWXYZABCDEF",
         "resource_name": "crn://confluent.cloud/organization=9bb441c4-edef-46ac-8a41-c49e44a3fd9a/service-account=sa-12345/api-key=QRSTUVWXYZABCDEF",
         "created_at": "2026-01-01T00:00:00.000000Z",
         "updated_at": "2026-01-01T00:00:00.000000Z"
@@ -21,7 +21,7 @@
           "id": "sa-12345",
           "api_version": "iam/v2",
           "kind": "ServiceAccount",
-          "related": "https://api.confluent.cloud/iam/v2/service-accounts/sa-12345",
+          "related": "https://confluent.cloud/api/iam/v2/service-accounts/sa-12345",
           "resource_name": "crn://confluent.cloud/service-account=sa-12345"
         },
         "resource": {
@@ -29,8 +29,8 @@
           "api_version": "cmk/v2",
           "kind": "Cluster",
           "environment": "env-abc123",
-          "related": "https://api.confluent.cloud/cmk/v2/clusters/lkc-c29js0",
-          "resource_name": "https://api.confluent.cloud/organization=9bb441c4-edef-46ac-8a41-c49e44a3fd9a/environment=env-abc123/cloud-cluster=lkc-c29js0"
+          "related": "https://confluent.cloud/api/cmk/v2/clusters/lkc-c29js0",
+          "resource_name": "https://confluent.cloud/api/organization=9bb441c4-edef-46ac-8a41-c49e44a3fd9a/environment=env-abc123/cloud-cluster=lkc-c29js0"
         }
       }
     }
