@@ -1,3 +1,10 @@
+## [2.6.3](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.6.2...2.6.3) (2026-05-29)
+
+
+### Bug Fixes
+
+* check that credentials are valid for confluent cloud ([973f247](https://github.com/mredjem/kafka-connect-secret-registry/commit/973f247e641ea8b25302bab53660d92a0cb8770b))
+
 ## [2.6.2](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.6.1...2.6.2) (2026-05-24)
 
 
