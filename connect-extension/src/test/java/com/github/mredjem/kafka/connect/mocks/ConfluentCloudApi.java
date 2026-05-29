@@ -35,8 +35,6 @@ public class ConfluentCloudApi {
   }
 
   public void initMocks() {
-    this.server.reset();
-
     this.server
       .when(
         request()
@@ -45,9 +43,10 @@ public class ConfluentCloudApi {
           .withContentType(MediaType.APPLICATION_FORM_URLENCODED)
           .withBody(params(
             param("grant_type", "urn:ietf:params:oauth:grant-type:token-exchange"),
+            param("subject_token"),
             param("subject_token_type", "urn:ietf:params:oauth:token-type:jwt"),
             param("requested_token_type", "urn:ietf:params:oauth:token-type:access_token"),
-            param("identity_pool_id", "pool-abc")
+            param("identity_pool_id")
           ))
       )
       .respond(

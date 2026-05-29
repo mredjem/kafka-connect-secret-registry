@@ -9,20 +9,24 @@ import com.github.mredjem.kafka.connect.utils.SocketUtils;
 import io.restassured.RestAssured;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.kafka.ConfluentKafkaContainer;
 
-import java.util.concurrent.TimeUnit;
-
 abstract class AbstractIT {
 
   protected static final int MOCKSERVER_PORT = SocketUtils.nextAvailablePort();
 
+  protected static final ConfluentCloudApi CONFLUENT_CLOUD_API = ConfluentCloudApi.create();
+
   static {
+    CONFLUENT_CLOUD_API.start(MOCKSERVER_PORT);
+    CONFLUENT_CLOUD_API.initMocks();
+
+    Awaitility.await().forever().until(CONFLUENT_CLOUD_API::isRunning);
+
     // must be called before containers are started
     org.testcontainers.Testcontainers.exposeHostPorts(MOCKSERVER_PORT);
   }
@@ -73,8 +77,6 @@ abstract class AbstractIT {
     .withLogConsumer(outputFrame -> new Slf4jLogConsumer(LoggerFactory.getLogger("connect")).accept(outputFrame))
     .dependsOn(KAFKA);
 
-  protected static final ConfluentCloudApi CONFLUENT_CLOUD_API = ConfluentCloudApi.create();
-
   static {
     KAFKA.start();
 
@@ -83,19 +85,10 @@ abstract class AbstractIT {
       .waitingFor(Wait.forHealthcheck())
       .waitingFor(Wait.forHttp("/connector-plugins"))
       .waitingFor(Wait.forLogMessage("server is started and ready to handle requests", 1));
-
-    CONFLUENT_CLOUD_API.start(MOCKSERVER_PORT);
-
-    Awaitility.await().atMost(5L, TimeUnit.SECONDS).until(CONFLUENT_CLOUD_API::isRunning);
   }
 
   @BeforeAll
   static void setup() {
     RestAssured.baseURI = "http://localhost:" + CONNECT.getMappedPort(8083);
-  }
-
-  @BeforeEach
-  void beforeEach() {
-    CONFLUENT_CLOUD_API.initMocks();
   }
 }
