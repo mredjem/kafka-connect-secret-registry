@@ -1,3 +1,10 @@
+## [2.6.4](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.6.3...2.6.4) (2026-05-29)
+
+
+### Bug Fixes
+
+* adapt breaking change to confluent cloud base api url ([b687a9c](https://github.com/mredjem/kafka-connect-secret-registry/commit/b687a9c3dc063b08ff40003c214b38479f836c4f))
+
 ## [2.6.3](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.6.2...2.6.3) (2026-05-29)
 
 
