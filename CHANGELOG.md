@@ -1,3 +1,10 @@
+## [2.6.5](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.6.4...2.6.5) (2026-05-29)
+
+
+### Bug Fixes
+
+* set token type when calling connect endpoint ([1d2d015](https://github.com/mredjem/kafka-connect-secret-registry/commit/1d2d015c6a4f06408058c52996b2a4913113944f))
+
 ## [2.6.4](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.6.3...2.6.4) (2026-05-29)
 
 
