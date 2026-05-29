@@ -8,6 +8,13 @@ import lombok.Setter;
 @Setter
 public class OAuthTokenDto {
 
+  @JsonProperty("token_type")
+  private String tokenType;
+
   @JsonProperty("access_token")
   private String accessToken;
+
+  public String getAuthorization() {
+    return this.tokenType + " " + this.accessToken;
+  }
 }

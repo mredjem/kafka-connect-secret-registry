@@ -69,7 +69,7 @@ public class ConfluentCloudClient {
 
     OAuthTokenDto oAuthToken = this.exchangeOAuthToken(identityPool.getId(), authenticationCredentials);
 
-    HttpClient connectHttpClient = HttpClient.create(this.httpClient.getBaseUrl(), AuthenticationCredentials.of(oAuthToken.getAccessToken()));
+    HttpClient connectHttpClient = HttpClient.create(this.httpClient.getBaseUrl(), AuthenticationCredentials.of(oAuthToken.getAuthorization()));
 
     String path = UriBuilder.fromPath("api/connect/v1/environments/{environmentId}/clusters/{clusterId}/connectors")
       .build(environmentId, clusterId)
