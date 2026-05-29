@@ -3,6 +3,7 @@ package com.github.mredjem.kafka.connect.mocks;
 import com.github.mredjem.kafka.connect.Credentials;
 import org.apache.commons.io.IOUtils;
 import org.mockserver.integration.ClientAndServer;
+import org.mockserver.model.MediaType;
 
 import javax.ws.rs.core.HttpHeaders;
 import java.io.IOException;
@@ -33,6 +34,37 @@ public class ConfluentCloudApi {
 
   public void initMocks() {
     this.server.reset();
+
+    this.server
+      .when(
+        request()
+          .withMethod("POST")
+          .withPath("/sts/v1/oauth2/token")
+          .withContentType(MediaType.APPLICATION_FORM_URLENCODED)
+          .withQueryStringParameter("grant_type", "urn:ietf:params:oauth:grant-type:token-exchange")
+          .withQueryStringParameter("subject_token_type", "urn:ietf:params:oauth:token-type:jwt")
+          .withQueryStringParameter("requested_token_type", "urn:ietf:params:oauth:token-type:access_token")
+          .withQueryStringParameter("identity_pool_id", "pool-abc")
+      )
+      .respond(
+        response()
+          .withStatusCode(200)
+          .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+          .withBody(this.loadResource("mocks/oauth.token.json"))
+      );
+
+    this.server
+      .when(
+        request()
+          .withMethod("GET")
+          .withPath("/connect/v1/environments/env-456xy/clusters/lkc-123abc/connectors")
+      )
+      .respond(
+        response()
+          .withStatusCode(200)
+          .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+          .withBody(this.loadResource("mocks/connectors.json"))
+      );
 
     this.server
       .when(

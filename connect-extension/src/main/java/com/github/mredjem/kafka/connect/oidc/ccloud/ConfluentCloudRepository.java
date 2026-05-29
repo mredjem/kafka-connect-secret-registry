@@ -38,9 +38,20 @@ public class ConfluentCloudRepository implements OidcPort {
 
   @Override
   public boolean validateCredentials(AuthenticationCredentials authenticationCredentials) {
-    AuthenticationKind kind = authenticationCredentials.getKind();
+    try {
+      ConfluentResourceName crn = (ConfluentResourceName) this.resourceName;
 
-    return AuthenticationKind.BASIC == kind || AuthenticationKind.BEARER == kind;
+      if (AuthenticationKind.BASIC == authenticationCredentials.getKind()) {
+        return this.client.listConnectors(crn.getEnvironment(), crn.getCluster(), authenticationCredentials) != null;
+      }
+
+      Map<String, Object> claims = AccessToken.parse(authenticationCredentials.getCredentials()).getClaims();
+
+      return this.client.listConnectors(crn.getEnvironment(), crn.getCluster(), authenticationCredentials, this.identityPoolPredicate(claims)) != null;
+
+    } catch (final Exception e) {
+      return false;
+    }
   }
 
   @Override
@@ -48,15 +59,15 @@ public class ConfluentCloudRepository implements OidcPort {
     AuthenticationKind kind = authenticationCredentials.getKind();
 
     if (AuthenticationKind.BASIC == kind) {
-      String apiKeyId = this.getAPIKeyId(authenticationCredentials);
+      String apiKeyId = this.getApiKeyId(authenticationCredentials);
 
-      return this.getRoleBindingsForAPIKey(apiKeyId);
+      return this.getRoleBindingsForApiKey(apiKeyId);
     }
 
     return this.getRoleBindingsForExternalAccessToken(authenticationCredentials.getCredentials());
   }
 
-  private List<RoleBinding> getRoleBindingsForAPIKey(String apiKeyId) {
+  private List<RoleBinding> getRoleBindingsForApiKey(String apiKeyId) {
     OwnerDto serviceAccount = this.client.readAPIKey(apiKeyId).getSpec().getOwner();
 
     CompletableFuture<List<RoleBindingDto>> organizationCf = CompletableFuture.supplyAsync(() -> this.client.listRoleBindings(this.resourceName.organizationUrn() + "/*", serviceAccount.getId()));
@@ -98,7 +109,7 @@ public class ConfluentCloudRepository implements OidcPort {
     };
   }
 
-  private String getAPIKeyId(AuthenticationCredentials authenticationCredentials) {
+  private String getApiKeyId(AuthenticationCredentials authenticationCredentials) {
     String decodedCredentials = new String(Base64.getDecoder().decode(authenticationCredentials.getCredentials()));
 
     String[] usernameAndPassword = decodedCredentials.split(":");

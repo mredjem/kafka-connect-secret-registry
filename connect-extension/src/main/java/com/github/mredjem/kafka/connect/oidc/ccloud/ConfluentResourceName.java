@@ -1,9 +1,11 @@
 package com.github.mredjem.kafka.connect.oidc.ccloud;
 
 import com.github.mredjem.kafka.connect.ResourceName;
+import lombok.Getter;
 
 import java.net.URI;
 
+@Getter
 public class ConfluentResourceName implements ResourceName {
 
   private static final String CRN_SCHEME = "crn";
