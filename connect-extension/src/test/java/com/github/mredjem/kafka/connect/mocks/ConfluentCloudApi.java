@@ -13,6 +13,8 @@ import java.nio.charset.StandardCharsets;
 
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
+import static org.mockserver.model.Parameter.param;
+import static org.mockserver.model.ParameterBody.params;
 
 public class ConfluentCloudApi {
 
@@ -41,10 +43,12 @@ public class ConfluentCloudApi {
           .withMethod("POST")
           .withPath("/sts/v1/oauth2/token")
           .withContentType(MediaType.APPLICATION_FORM_URLENCODED)
-          .withQueryStringParameter("grant_type", "urn:ietf:params:oauth:grant-type:token-exchange")
-          .withQueryStringParameter("subject_token_type", "urn:ietf:params:oauth:token-type:jwt")
-          .withQueryStringParameter("requested_token_type", "urn:ietf:params:oauth:token-type:access_token")
-          .withQueryStringParameter("identity_pool_id", "pool-abc")
+          .withBody(params(
+            param("grant_type", "urn:ietf:params:oauth:grant-type:token-exchange"),
+            param("subject_token_type", "urn:ietf:params:oauth:token-type:jwt"),
+            param("requested_token_type", "urn:ietf:params:oauth:token-type:access_token"),
+            param("identity_pool_id", "pool-abc")
+          ))
       )
       .respond(
         response()
@@ -72,6 +76,7 @@ public class ConfluentCloudApi {
           .withMethod("GET")
           .withPath("/iam/v2/api-keys")
           .withHeader(HttpHeaders.AUTHORIZATION, Credentials.confluentCloud())
+          .withQueryStringParameter("page_size", "100")
       )
       .respond(
         response()
