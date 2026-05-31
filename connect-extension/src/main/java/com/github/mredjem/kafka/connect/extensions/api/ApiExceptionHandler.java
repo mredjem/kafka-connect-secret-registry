@@ -3,16 +3,21 @@ package com.github.mredjem.kafka.connect.extensions.api;
 import com.github.mredjem.kafka.connect.extensions.dtos.ErrorDto;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.time.Instant;
 
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ApiExceptionHandler {
 
   public static Response toErrorResponse(UriInfo uriInfo, Throwable exception) {
+    log.warn("Caught from {}: {}", path(uriInfo), ExceptionUtils.getStackTrace(exception));
+
     ErrorDto error = toError(uriInfo, exception);
 
     return Response.status(error.getCode())
@@ -30,11 +35,11 @@ public final class ApiExceptionHandler {
     ErrorDto error = new ErrorDto();
 
     error.setTimestamp(Instant.now().toEpochMilli());
-    error.setPath(uriInfo.getPath());
+    error.setPath(path(uriInfo));
     error.setCode(status.getStatusCode());
     error.setReason(status.getReasonPhrase());
     error.setException(exception.getClass().getName());
-    error.setMessage(exception.getMessage());
+    error.setMessage(ExceptionUtils.getRootCauseMessage(exception));
 
     return error;
   }
@@ -45,5 +50,11 @@ public final class ApiExceptionHandler {
     }
 
     return Response.Status.INTERNAL_SERVER_ERROR;
+  }
+
+  private static String path(UriInfo uriInfo) {
+    String path = uriInfo.getPath();
+
+    return path.startsWith("/") ? path : "/" + path;
   }
 }
