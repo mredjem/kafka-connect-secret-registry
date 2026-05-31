@@ -10,7 +10,6 @@ public class OAuthTokenDto {
 
   @JsonProperty("token_type")
   private String tokenType;
-
   @JsonProperty("access_token")
   private String accessToken;
 
