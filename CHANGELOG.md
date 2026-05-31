@@ -1,3 +1,10 @@
+# [2.7.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.6.5...2.7.0) (2026-05-31)
+
+
+### Features
+
+* improve logging of errors to help debugging ([8366b9c](https://github.com/mredjem/kafka-connect-secret-registry/commit/8366b9c14e571cf99434059b0c88c420af2515e3))
+
 ## [2.6.5](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.6.4...2.6.5) (2026-05-29)
 
 
