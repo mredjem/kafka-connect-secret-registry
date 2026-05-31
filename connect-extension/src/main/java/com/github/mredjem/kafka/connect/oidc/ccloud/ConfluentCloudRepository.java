@@ -42,12 +42,16 @@ public class ConfluentCloudRepository implements OidcPort {
       ConfluentResourceName crn = (ConfluentResourceName) this.resourceName;
 
       if (AuthenticationKind.BASIC == authenticationCredentials.getKind()) {
-        return this.client.listConnectors(crn.getEnvironment(), crn.getCluster(), authenticationCredentials) != null;
+        List<String> connectorNames = this.client.listConnectors(crn.getEnvironment(), crn.getCluster(), authenticationCredentials);
+
+        return connectorNames != null;
       }
 
       Map<String, Object> claims = AccessToken.parse(authenticationCredentials.getCredentials()).getClaims();
 
-      return this.client.listConnectors(crn.getEnvironment(), crn.getCluster(), authenticationCredentials, this.identityPoolPredicate(claims)) != null;
+      List<String> connectorNames = this.client.listConnectors(crn.getEnvironment(), crn.getCluster(), authenticationCredentials, this.identityPoolPredicate(claims));
+
+      return connectorNames != null;
 
     } catch (final Exception e) {
       return false;

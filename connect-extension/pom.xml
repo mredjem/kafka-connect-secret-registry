@@ -18,6 +18,7 @@
     <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
     <slf4j-api.version>1.7.36</slf4j-api.version>
     <jackson-databind.version>2.21.3</jackson-databind.version>
+    <commons-lang3.version>3.20.0</commons-lang3.version>
     <awaitility.version>4.3.0</awaitility.version>
     <lombok.version>1.18.46</lombok.version>
     <cel.version>0.13.0</cel.version>
@@ -91,6 +92,11 @@
     <!-- End of Jackson dependencies -->
 
     <!-- Utilities dependencies -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${commons-lang3.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.awaitility</groupId>
       <artifactId>awaitility</artifactId>
