@@ -1,3 +1,15 @@
+# [2.7.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.6.5...2.7.0) (2026-06-11)
+
+
+### Bug Fixes
+
+* solve pagination issue when refreshing cache ([a16c55a](https://github.com/mredjem/kafka-connect-secret-registry/commit/a16c55a3d246f184de50036548f747b46c4570c8))
+
+
+### Features
+
+* improve logging of errors to help debugging ([8366b9c](https://github.com/mredjem/kafka-connect-secret-registry/commit/8366b9c14e571cf99434059b0c88c420af2515e3))
+
 ## [2.6.5](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.6.4...2.6.5) (2026-05-29)
 
 
