@@ -1,0 +1,10 @@
+{
+  "kind": "Organization",
+  "metadata": {
+    "self": "https://confluent.cloud/api/org/v2/organizations/9bb441c4-edef-46ac-8a41-c49e44a3fd9a"
+  },
+  "api_version": "org/v2",
+  "id": "9bb441c4-edef-46ac-8a41-c49e44a3fd9a",
+  "display_name": "Finance Org"
+}
+

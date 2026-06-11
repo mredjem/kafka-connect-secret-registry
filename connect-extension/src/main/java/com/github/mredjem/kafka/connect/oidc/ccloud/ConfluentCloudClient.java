@@ -9,6 +9,7 @@ import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.DataResponseDto;
 import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.IdentityPoolDto;
 import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.IdentityProviderDto;
 import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.OAuthTokenDto;
+import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.OrganizationDto;
 import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.RoleBindingDto;
 import com.github.mredjem.kafka.connect.oidc.exceptions.ResourceNotFoundException;
 import com.github.mredjem.kafka.connect.utils.ConfigUtils;
@@ -23,7 +24,8 @@ import java.util.function.Predicate;
 
 public class ConfluentCloudClient {
 
-  private static final String CONFLUENT_CLOUD_API = "https://confluent.cloud";
+  private static final String CONFLUENT_CLOUD_V1 = "https://api.confluent.cloud";
+  private static final String CONFLUENT_CLOUD_V2 = "https://confluent.cloud/api";
 
   private final HttpClient httpClient;
 
@@ -37,7 +39,7 @@ public class ConfluentCloudClient {
     );
 
     this.httpClient = HttpClient.create(
-      configs.getOrDefault(OidcConfigs.API_BASE_URL_CONFIG, CONFLUENT_CLOUD_API),
+      configs.getOrDefault(OidcConfigs.API_BASE_URL_CONFIG, CONFLUENT_CLOUD_V2),
       basicCredentials
     );
 
@@ -54,32 +56,26 @@ public class ConfluentCloudClient {
     return new ConfluentCloudClient(configs);
   }
 
-  public List<String> listConnectors(String environmentId, String clusterId, AuthenticationCredentials authenticationCredentials) {
-    HttpClient connectHttpClient = HttpClient.create(this.httpClient.getBaseUrl(), authenticationCredentials);
+  public OrganizationDto readOrganization(String organizationId, AuthenticationCredentials authenticationCredentials) {
+    HttpClient orgtHttpClient = HttpClient.create(this.httpClient.getBaseUrl(), authenticationCredentials);
 
-    String path = UriBuilder.fromPath("api/connect/v1/environments/{environmentId}/clusters/{clusterId}/connectors")
-      .build(environmentId, clusterId)
+    String path = UriBuilder.fromPath("/org/v2/organizations/{organizationId}")
+      .build(organizationId)
       .toString();
 
-    return connectHttpClient.doGET(path, new TypeReference<List<String>>() {});
+    return orgtHttpClient.doGET(path, new TypeReference<OrganizationDto>() {});
   }
 
-  public List<String> listConnectors(String environmentId, String clusterId, AuthenticationCredentials authenticationCredentials, Predicate<IdentityPoolDto> identityPoolPredicate) {
+  public OrganizationDto readOrganization(String organizationId, AuthenticationCredentials authenticationCredentials, Predicate<IdentityPoolDto> identityPoolPredicate) {
     IdentityPoolDto identityPool = this.readIdentityPool(identityPoolPredicate);
 
     OAuthTokenDto oAuthToken = this.exchangeOAuthToken(identityPool.getId(), authenticationCredentials);
 
-    HttpClient connectHttpClient = HttpClient.create(this.httpClient.getBaseUrl(), AuthenticationCredentials.of(oAuthToken.getAuthorization()));
-
-    String path = UriBuilder.fromPath("api/connect/v1/environments/{environmentId}/clusters/{clusterId}/connectors")
-      .build(environmentId, clusterId)
-      .toString();
-
-    return connectHttpClient.doGET(path, new TypeReference<List<String>>() {});
+    return this.readOrganization(organizationId, AuthenticationCredentials.of(oAuthToken.getAuthorization()));
   }
 
   public List<RoleBindingDto> listRoleBindings(String crnPattern, String principal) {
-    String path = UriBuilder.fromPath("api/iam/v2/role-bindings")
+    String path = UriBuilder.fromPath("/iam/v2/role-bindings")
       .queryParam("principal", "User:" + principal)
       .queryParam("crn_pattern", crnPattern)
       .build()
@@ -104,7 +100,7 @@ public class ConfluentCloudClient {
       return cachedApiKey.get();
     }
 
-    String path = UriBuilder.fromPath("api/iam/v2/api-keys/{apiKeyId}")
+    String path = UriBuilder.fromPath("/iam/v2/api-keys/{apiKeyId}")
       .build(apiKeyId)
       .toString();
 
@@ -112,7 +108,7 @@ public class ConfluentCloudClient {
   }
 
   public List<ApiKeyDto> listApiKeys() {
-    return this.listAll("api/iam/v2/api-keys", new TypeReference<DataResponseDto<ApiKeyDto>>() {});
+    return this.listAll("/iam/v2/api-keys", new TypeReference<DataResponseDto<ApiKeyDto>>() {});
   }
 
   private IdentityPoolDto readIdentityPool(Predicate<IdentityPoolDto> identityPoolDtoPredicate) {
@@ -127,7 +123,7 @@ public class ConfluentCloudClient {
   private List<IdentityPoolDto> listIdentityPools(String identityProviderName) {
     IdentityProviderDto identityProvider = this.readIdentityProvider(identityProviderName);
 
-    String path = UriBuilder.fromPath("api/iam/v2/identity-providers/{identityProvider}/identity-pools")
+    String path = UriBuilder.fromPath("/iam/v2/identity-providers/{identityProvider}/identity-pools")
       .build(identityProvider.getId())
       .toString();
 
@@ -146,7 +142,7 @@ public class ConfluentCloudClient {
   }
 
   private List<IdentityProviderDto> listIdentityProviders() {
-    DataResponseDto<IdentityProviderDto> data = this.httpClient.doGET("api/iam/v2/identity-providers", new TypeReference<DataResponseDto<IdentityProviderDto>>() {});
+    DataResponseDto<IdentityProviderDto> data = this.httpClient.doGET("/iam/v2/identity-providers", new TypeReference<DataResponseDto<IdentityProviderDto>>() {});
 
     return data.getData();
   }
@@ -160,7 +156,7 @@ public class ConfluentCloudClient {
     parameters.put("requested_token_type", "urn:ietf:params:oauth:token-type:access_token");
     parameters.put("identity_pool_id", identityPoolId);
 
-    return this.httpClient.doPOST("api/sts/v1/oauth2/token", parameters, new TypeReference<OAuthTokenDto>() {});
+    return this.httpClient.doPOST("/sts/v1/oauth2/token", parameters, new TypeReference<OAuthTokenDto>() {});
   }
 
   private <T> List<T> listAll(String initialPath, TypeReference<DataResponseDto<T>> typeReference) {
@@ -192,6 +188,8 @@ public class ConfluentCloudClient {
       return null;
     }
 
-    return path.replace(CONFLUENT_CLOUD_API + "/", "");
+    return path
+      .replace(CONFLUENT_CLOUD_V1, "")
+      .replace(CONFLUENT_CLOUD_V2, "");
   }
 }
