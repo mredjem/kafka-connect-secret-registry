@@ -54,7 +54,7 @@ public class HttpClient {
 
   private <T> T doCall(String path, String method, String contentType, String urlParameters, TypeReference<T> typeReference) {
     try {
-      URL url = URI.create(String.format("%s/%s", this.baseUrl, path)).toURL();
+      URL url = URI.create(this.baseUrl + path).toURL();
 
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 

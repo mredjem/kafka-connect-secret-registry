@@ -8,6 +8,7 @@ import com.github.mredjem.kafka.connect.oidc.OidcConfigs;
 import com.github.mredjem.kafka.connect.oidc.OidcPort;
 import com.github.mredjem.kafka.connect.oidc.AccessToken;
 import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.IdentityPoolDto;
+import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.OrganizationDto;
 import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.OwnerDto;
 import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.RoleBindingDto;
 import com.github.mredjem.kafka.connect.oidc.ccloud.mappers.RoleBindingMapper;
@@ -42,16 +43,16 @@ public class ConfluentCloudRepository implements OidcPort {
       ConfluentResourceName crn = (ConfluentResourceName) this.resourceName;
 
       if (AuthenticationKind.BASIC == authenticationCredentials.getKind()) {
-        List<String> connectorNames = this.client.listConnectors(crn.getEnvironment(), crn.getCluster(), authenticationCredentials);
+        OrganizationDto organization = this.client.readOrganization(crn.getOrganization(), authenticationCredentials);
 
-        return connectorNames != null;
+        return organization.getId() != null;
       }
 
       Map<String, Object> claims = AccessToken.parse(authenticationCredentials.getCredentials()).getClaims();
 
-      List<String> connectorNames = this.client.listConnectors(crn.getEnvironment(), crn.getCluster(), authenticationCredentials, this.identityPoolPredicate(claims));
+      OrganizationDto organization = this.client.readOrganization(crn.getOrganization(), authenticationCredentials, this.identityPoolPredicate(claims));
 
-      return connectorNames != null;
+      return organization.getId() != null;
 
     } catch (final Exception e) {
       return false;

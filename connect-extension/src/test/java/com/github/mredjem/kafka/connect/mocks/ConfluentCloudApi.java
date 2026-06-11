@@ -60,13 +60,13 @@ public class ConfluentCloudApi {
       .when(
         request()
           .withMethod("GET")
-          .withPath("/api/connect/v1/environments/env-456xy/clusters/lkc-123abc/connectors")
+          .withPath("/api/org/v2/organizations/9bb441c4-edef-46ac-8a41-c49e44a3fd9a")
       )
       .respond(
         response()
           .withStatusCode(200)
           .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-          .withBody(this.loadResource("mocks/connectors.json"))
+          .withBody(this.loadResource("mocks/organization.json"))
       );
 
     this.server
