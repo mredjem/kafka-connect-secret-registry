@@ -27,7 +27,7 @@
     <testcontainers.version>2.0.5</testcontainers.version>
     <assertj-core.version>3.27.7</assertj-core.version>
     <rest-assured.version>5.4.0</rest-assured.version>
-    <mockserver.version>5.15.0</mockserver.version>
+    <mockserver.version>7.1.0</mockserver.version>
     <jersey-common.version>2.34</jersey-common.version>
     <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
     <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
