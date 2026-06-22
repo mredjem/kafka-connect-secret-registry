@@ -1,45 +1,29 @@
 package com.github.mredjem.kafka.connect.oidc.ccloud;
 
-import dev.cel.common.CelAbstractSyntaxTree;
-import dev.cel.common.CelValidationException;
-import dev.cel.common.types.SimpleType;
-import dev.cel.compiler.CelCompiler;
-import dev.cel.compiler.CelCompilerBuilder;
-import dev.cel.compiler.CelCompilerFactory;
-import dev.cel.runtime.CelEvaluationException;
-import dev.cel.runtime.CelRuntime;
-import dev.cel.runtime.CelRuntimeFactory;
+import org.projectnessie.cel.tools.Script;
+import org.projectnessie.cel.tools.ScriptCreateException;
+import org.projectnessie.cel.tools.ScriptException;
+import org.projectnessie.cel.tools.ScriptHost;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.github.mredjem.kafka.connect.oidc.ccloud.CelFilterVariables.VARIABLES;
+import static com.github.mredjem.kafka.connect.oidc.ccloud.CelFilterVariables.VARIABLE_NAMES;
 
 public class CelFilter {
 
-  private static final CelCompiler CEL_COMPILER;
+  private static final ScriptHost SCRIPT_HOST = ScriptHost.newBuilder().build();
 
-  static {
-    CelCompilerBuilder celCompilerBuilder = CelCompilerFactory.standardCelCompilerBuilder();
-
-    VARIABLES.forEach(celCompilerBuilder::addVar);
-
-    CEL_COMPILER = celCompilerBuilder
-      .setResultType(SimpleType.BOOL)
-      .build();
-  }
-
-  private static final CelRuntime CEL_RUNTIME = CelRuntimeFactory.standardCelRuntimeBuilder().build();
-
-  private final CelRuntime.Program program;
+  private final Script script;
 
   private CelFilter(String celFilter) {
     try {
-      CelAbstractSyntaxTree ast = CEL_COMPILER.compile(celFilter).getAst();
+      this.script = SCRIPT_HOST.buildScript(celFilter)
+        .withDeclarations(VARIABLES)
+        .build();
 
-      this.program = CEL_RUNTIME.createProgram(ast);
-
-    } catch (final CelValidationException | CelEvaluationException e) {
+    } catch (final ScriptCreateException e) {
       throw new IllegalArgumentException("Invalid CEL filter: " + celFilter, e);
     }
   }
@@ -50,11 +34,11 @@ public class CelFilter {
 
   public boolean evaluate(Map<String, Object> variables) {
     try {
-      Map<String, Object> filtered = this.filterVariables(variables);
+      Map<String, Object> arguments = this.filterVariables(variables);
 
-      return (boolean) this.program.eval(filtered);
+      return this.script.execute(Boolean.class, arguments);
 
-    } catch (final CelEvaluationException ignored) {
+    } catch (final ScriptException ignored) {
       return false;
     }
   }
@@ -65,7 +49,7 @@ public class CelFilter {
     variables.forEach((name, value) -> {
       String variableName = "claims." + name;
 
-      if (VARIABLES.containsKey(variableName)) {
+      if (VARIABLE_NAMES.contains(variableName)) {
         filtered.put(variableName, value);
       }
     });

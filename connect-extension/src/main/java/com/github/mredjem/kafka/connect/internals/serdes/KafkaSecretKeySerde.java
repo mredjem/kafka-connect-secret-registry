@@ -1,7 +1,7 @@
 package com.github.mredjem.kafka.connect.internals.serdes;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.mredjem.kafka.connect.internals.KafkaSecretKey;
+import com.google.gson.Gson;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serializer;
 
@@ -9,7 +9,7 @@ import java.util.Objects;
 
 public class KafkaSecretKeySerde {
 
-  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+  private static final Gson GSON = new Gson();
 
   private KafkaSecretKeySerde() {}
 
@@ -20,7 +20,7 @@ public class KafkaSecretKeySerde {
       try {
         Objects.requireNonNull(data);
 
-        return OBJECT_MAPPER.writeValueAsBytes(data);
+        return GSON.toJson(data).getBytes();
 
       } catch (final Exception e) {
         throw new DeSerializationException("serialize", true, e);
@@ -35,7 +35,7 @@ public class KafkaSecretKeySerde {
       try {
         Objects.requireNonNull(data);
 
-        return OBJECT_MAPPER.readValue(data, KafkaSecretKey.class);
+        return GSON.fromJson(new String(data), KafkaSecretKey.class);
 
       } catch (final Exception e) {
         throw new DeSerializationException("deserialize", true, e);

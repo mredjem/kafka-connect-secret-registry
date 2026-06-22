@@ -4,7 +4,6 @@ import com.github.mredjem.kafka.connect.extensions.dtos.ErrorDto;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.core.Response;
@@ -16,7 +15,7 @@ import java.time.Instant;
 public final class ApiExceptionHandler {
 
   public static Response toErrorResponse(UriInfo uriInfo, Throwable exception) {
-    log.warn("Caught from {}: {}", path(uriInfo), ExceptionUtils.getStackTrace(exception));
+    log.warn("Error caught when calling {}", path(uriInfo), exception);
 
     ErrorDto error = toError(uriInfo, exception);
 
@@ -39,7 +38,7 @@ public final class ApiExceptionHandler {
     error.setCode(status.getStatusCode());
     error.setReason(status.getReasonPhrase());
     error.setException(exception.getClass().getName());
-    error.setMessage(ExceptionUtils.getRootCauseMessage(exception));
+    error.setMessage(getRootCauseMessage(exception));
 
     return error;
   }
@@ -56,5 +55,15 @@ public final class ApiExceptionHandler {
     String path = uriInfo.getPath();
 
     return path.startsWith("/") ? path : "/" + path;
+  }
+
+  private static String getRootCauseMessage(Throwable exception) {
+    Throwable cause = exception.getCause();
+
+    if (cause != null) {
+      return cause.getClass().getSimpleName() + ": " + cause.getMessage();
+    }
+
+    return exception.getClass().getSimpleName() + ": " + exception.getMessage();
   }
 }

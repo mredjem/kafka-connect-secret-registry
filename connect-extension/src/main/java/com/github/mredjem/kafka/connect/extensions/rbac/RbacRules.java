@@ -1,8 +1,8 @@
 package com.github.mredjem.kafka.connect.extensions.rbac;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.mredjem.kafka.connect.Operation;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import lombok.experimental.UtilityClass;
 
 import javax.ws.rs.HttpMethod;
@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -22,7 +23,7 @@ import java.util.regex.Pattern;
 @UtilityClass
 public class RbacRules {
 
-  private final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+  private static final Gson GSON = new Gson();
 
   private final List<RequestMatcher> INTERNAL_REQUEST_MATCHERS = Arrays.asList(
     RequestMatcher.of(HttpMethod.POST, Pattern.compile("/?connectors/[^/]+/tasks/?")),
@@ -154,7 +155,7 @@ public class RbacRules {
 
       resetEntityStream(containerRequestContext, requestBodyBytes);
 
-      Map<String, Object> requestBody = OBJECT_MAPPER.readValue(requestBodyBytes, new TypeReference<Map<String, Object>>() {});
+      Map<String, Object> requestBody = GSON.fromJson(new String(requestBodyBytes), new TypeToken<HashMap<String, Object>>(){}.getType());
 
       return (String) requestBody.get("name");
 

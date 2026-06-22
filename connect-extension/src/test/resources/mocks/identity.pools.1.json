@@ -3,7 +3,7 @@
   "metadata": {
     "self": "https://confluent.cloud/api/iam/v2/identity-providers/dlz-f3a90de/identity-pools",
     "first": "https://confluent.cloud/api/iam/v2/identity-providers/dlz-f3a90de/identity-pools?page_token=1",
-    "next": "https://confluent.cloud/api/iam/v2/identity-providers/dlz-f3a90de/identity-pools?page_token=2"
+    "next": "/iam/v2/identity-providers/dlz-f3a90de/identity-pools?page_token=2"
   },
   "data": [
     {
