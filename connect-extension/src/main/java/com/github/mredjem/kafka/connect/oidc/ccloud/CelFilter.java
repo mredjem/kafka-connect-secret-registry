@@ -1,29 +1,20 @@
 package com.github.mredjem.kafka.connect.oidc.ccloud;
 
-import org.projectnessie.cel.tools.Script;
-import org.projectnessie.cel.tools.ScriptCreateException;
-import org.projectnessie.cel.tools.ScriptException;
-import org.projectnessie.cel.tools.ScriptHost;
+import com.github.mredjem.kafka.connect.cel.Evaluator;
+import com.github.mredjem.kafka.connect.cel.expressions.Expr;
+import com.github.mredjem.kafka.connect.cel.Parser;
 
-import java.util.HashMap;
 import java.util.Map;
-
-import static com.github.mredjem.kafka.connect.oidc.ccloud.CelFilterVariables.VARIABLES;
-import static com.github.mredjem.kafka.connect.oidc.ccloud.CelFilterVariables.VARIABLE_NAMES;
 
 public class CelFilter {
 
-  private static final ScriptHost SCRIPT_HOST = ScriptHost.newBuilder().build();
-
-  private final Script script;
+  private final Expr ast;
 
   private CelFilter(String celFilter) {
     try {
-      this.script = SCRIPT_HOST.buildScript(celFilter)
-        .withDeclarations(VARIABLES)
-        .build();
+      this.ast = new Parser(celFilter).parse();
 
-    } catch (final ScriptCreateException e) {
+    } catch (final Exception e) {
       throw new IllegalArgumentException("Invalid CEL filter: " + celFilter, e);
     }
   }
@@ -32,28 +23,12 @@ public class CelFilter {
     return new CelFilter(celFilter);
   }
 
-  public boolean evaluate(Map<String, Object> variables) {
+  public boolean evaluate(Map<String, Object> args) {
     try {
-      Map<String, Object> arguments = this.filterVariables(variables);
+      return (boolean) new Evaluator().evaluate(this.ast, args);
 
-      return this.script.execute(Boolean.class, arguments);
-
-    } catch (final ScriptException ignored) {
+    } catch (final Exception ignored) {
       return false;
     }
-  }
-
-  private Map<String, Object> filterVariables(Map<String, Object> variables) {
-    Map<String, Object> filtered = new HashMap<>();
-
-    variables.forEach((name, value) -> {
-      String variableName = "claims." + name;
-
-      if (VARIABLE_NAMES.contains(variableName)) {
-        filtered.put(variableName, value);
-      }
-    });
-
-    return filtered;
   }
 }
