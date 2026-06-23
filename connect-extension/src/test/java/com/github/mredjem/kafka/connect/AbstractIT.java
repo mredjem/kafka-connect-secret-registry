@@ -33,7 +33,7 @@ abstract class AbstractIT {
 
   protected static final Network NETWORK = Network.newNetwork();
 
-  protected static final ConfluentKafkaContainer KAFKA = new ConfluentKafkaContainer("confluentinc/cp-kafka:7.7.0")
+  protected static final ConfluentKafkaContainer KAFKA = new ConfluentKafkaContainer("confluentinc/cp-kafka:8.2.0")
     .withNetwork(NETWORK)
     .withNetworkAliases("kafka")
     .withExposedPorts(9092, 9093, 29092)
@@ -43,7 +43,7 @@ abstract class AbstractIT {
     .withEnv("KAFKA_AUTO_CREATE_TOPICS_ENABLE", "false")
     .withEnv("CONFLUENT_METRICS_ENABLE", "false");
 
-  protected static final ConfluentKafkaConnectContainer CONNECT = new ConfluentKafkaConnectContainer("confluentinc/cp-kafka-connect-base:7.7.0")
+  protected static final ConfluentKafkaConnectContainer CONNECT = new ConfluentKafkaConnectContainer("confluentinc/cp-kafka-connect-base:8.0.4")
     .withNetwork(NETWORK)
     .withNetworkAliases("connect")
     .withExposedPorts(8083)

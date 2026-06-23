@@ -3,9 +3,8 @@ package com.github.mredjem.kafka.connect;
 import com.github.mredjem.kafka.connect.dtos.CreateConnectorDto;
 import com.github.mredjem.kafka.connect.extensions.dtos.CreateSecretDto;
 import io.restassured.http.ContentType;
+import jakarta.ws.rs.core.HttpHeaders;
 import org.junit.jupiter.api.Test;
-
-import javax.ws.rs.core.HttpHeaders;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsString;

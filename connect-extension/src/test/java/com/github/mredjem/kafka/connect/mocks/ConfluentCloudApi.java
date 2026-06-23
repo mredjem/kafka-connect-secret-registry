@@ -1,11 +1,11 @@
 package com.github.mredjem.kafka.connect.mocks;
 
 import com.github.mredjem.kafka.connect.Credentials;
+import jakarta.ws.rs.core.HttpHeaders;
 import org.apache.commons.io.IOUtils;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.model.MediaType;
 
-import javax.ws.rs.core.HttpHeaders;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;

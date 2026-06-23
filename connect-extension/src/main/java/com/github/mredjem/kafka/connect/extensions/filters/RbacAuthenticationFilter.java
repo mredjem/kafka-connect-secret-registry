@@ -4,13 +4,13 @@ import com.github.mredjem.kafka.connect.AuthenticationCredentials;
 import com.github.mredjem.kafka.connect.AuthorizationPort;
 import com.github.mredjem.kafka.connect.extensions.rbac.RbacRules;
 import com.github.mredjem.kafka.connect.extensions.rbac.RequestedAction;
+import jakarta.ws.rs.ForbiddenException;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 
-import javax.ws.rs.ForbiddenException;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 
 import static com.github.mredjem.kafka.connect.extensions.api.ApiExceptionHandler.toErrorResponse;
