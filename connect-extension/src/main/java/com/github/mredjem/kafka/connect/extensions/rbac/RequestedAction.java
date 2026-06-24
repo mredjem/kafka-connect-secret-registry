@@ -3,8 +3,10 @@ package com.github.mredjem.kafka.connect.extensions.rbac;
 import com.github.mredjem.kafka.connect.Operation;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 @Getter
+@ToString
 @RequiredArgsConstructor(staticName = "of")
 public class RequestedAction {
 

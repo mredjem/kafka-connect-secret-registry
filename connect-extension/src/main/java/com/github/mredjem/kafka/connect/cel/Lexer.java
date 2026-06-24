@@ -21,85 +21,85 @@ public class Lexer {
 
       if (Character.isWhitespace(c)) {
         this.pos++;
-        continue;
-      }
-
-      if (Character.isLetter(c)) {
+      } else if (Character.isLetter(c)) {
         tokens.add(readIdentifier());
-        continue;
-      }
-
-      if (Character.isDigit(c)) {
+      } else if (Character.isDigit(c)) {
         tokens.add(readNumber());
-        continue;
-      }
-
-      if (c == '\'') {
+      } else if (c == '\'') {
         tokens.add(readString());
         this.pos += 2;
-        continue;
-      }
-
-      switch (c) {
-        case '.' -> {
-          tokens.add(Token.of(TokenType.DOT, "."));
-          this.pos++;
-        }
-        case '&' -> {
-          if (peek('&')) {
-            tokens.add(Token.of(TokenType.AND, "&&"));
-            this.pos += 2;
-          }
-        }
-        case '|' -> {
-          if (peek('|')) {
-            tokens.add(Token.of(TokenType.OR, "||"));
-            this.pos += 2;
-          }
-        }
-        case '=' -> {
-          if (peek('=')) {
-            tokens.add(Token.of(TokenType.EQ, "=="));
-            this.pos += 2;
-          }
-        }
-        case '!' -> {
-          if (peek('=')) {
-            tokens.add(Token.of(TokenType.NE, "!="));
-            this.pos += 2;
-          }
-        }
-        case '<' -> {
-          if (peek('=')) {
-            tokens.add(Token.of(TokenType.LTE, "<="));
-            this.pos += 2;
-          } else {
-            tokens.add(Token.of(TokenType.LT, "<"));
-            this.pos++;
-          }
-        }
-        case '>' -> {
-          if (peek('=')) {
-            tokens.add(Token.of(TokenType.GTE, ">="));
-            this.pos += 2;
-          } else {
-            tokens.add(Token.of(TokenType.GT, ">"));
-            this.pos++;
-          }
-        }
-        case '(' -> {
-          tokens.add(Token.of(TokenType.LPAREN, "("));
-          this.pos++;
-        }
-        case ')' -> {
-          tokens.add(Token.of(TokenType.RPAREN, ")"));
-          this.pos++;
-        }
-        default -> throw new ParseException("Unexpected character '" + c + "' at position " + this.pos);
+      } else {
+        tokens.add(readOperator());
       }
     }
 
     return tokens;
+  }
+
+  private Token readOperator() throws ParseException {
+    char c = this.sequence.charAt(this.pos);
+
+    return switch (c) {
+      case '.' -> {
+        this.pos++;
+        yield Token.of(TokenType.DOT, ".");
+      }
+      case '&' -> {
+        if (peek('&')) {
+          this.pos += 2;
+          yield Token.of(TokenType.AND, "&");
+        }
+        throw new ParseException("Unexpected character '" + c + "' at position " + this.pos);
+      }
+      case '|' -> {
+        if (peek('|')) {
+          this.pos += 2;
+          yield Token.of(TokenType.OR, "|");
+        }
+        throw new ParseException("Unexpected character '" + c + "' at position " + this.pos);
+      }
+      case '=' -> {
+        if (peek('=')) {
+          this.pos += 2;
+          yield Token.of(TokenType.EQ, "==");
+        }
+        throw new ParseException("Unexpected character '" + c + "' at position " + this.pos);
+      }
+      case '!' -> {
+        if (peek('=')) {
+          this.pos += 2;
+          yield Token.of(TokenType.NE, "!=");
+        }
+        throw new ParseException("Unexpected character '" + c + "' at position " + this.pos);
+      }
+      case '<' -> {
+        if (peek('=')) {
+          this.pos += 2;
+          yield Token.of(TokenType.LTE, "<=");
+        } else {
+          this.pos++;
+          yield Token.of(TokenType.LT, "<");
+        }
+      }
+      case '>' -> {
+        if (peek('=')) {
+          this.pos += 2;
+          yield Token.of(TokenType.GTE, ">=");
+        } else {
+          this.pos++;
+          yield Token.of(TokenType.GT, ">");
+        }
+      }
+      case '(' -> {
+        this.pos++;
+        yield Token.of(TokenType.LPAREN, "(");
+      }
+      case ')' -> {
+        this.pos++;
+        yield Token.of(TokenType.RPAREN, ")");
+      }
+      default -> throw new ParseException("Unexpected character '" + c + "' at position " + this.pos);
+    };
   }
 
   private Token readIdentifier() {

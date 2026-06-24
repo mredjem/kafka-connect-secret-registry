@@ -37,7 +37,7 @@ public class RbacAuthenticationFilter implements ContainerRequestFilter {
     boolean hasAccess = this.authorizationPort.checkAccess(authenticationCredentials, requestedAction.getOperation(), requestedAction.getResourceName());
 
     if (!hasAccess) {
-      Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new ForbiddenException("User is not allowed to access resource"));
+      Response errorResponse = toErrorResponse(containerRequestContext.getUriInfo(), new ForbiddenException("User is not allowed to request " + requestedAction));
 
       containerRequestContext.abortWith(errorResponse);
     }
