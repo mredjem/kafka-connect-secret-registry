@@ -10,7 +10,7 @@
 
 ### BREAKING CHANGES
 
-* upgrade to java 11
+* upgrade to java 17
 
 # [2.7.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.6.5...2.7.0) (2026-06-11)
 
