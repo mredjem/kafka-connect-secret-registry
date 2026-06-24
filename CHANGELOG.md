@@ -1,3 +1,10 @@
+## [3.0.1](https://github.com/mredjem/kafka-connect-secret-registry/compare/3.0.0...3.0.1) (2026-06-24)
+
+
+### Bug Fixes
+
+* typo in changelog.md ([18c76de](https://github.com/mredjem/kafka-connect-secret-registry/commit/18c76deb3a6cf77125748679edffdc81562b6894))
+
 # [3.0.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.7.0...3.0.0) (2026-06-24)
 
 
