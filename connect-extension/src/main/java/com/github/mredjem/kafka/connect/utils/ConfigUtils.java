@@ -9,7 +9,7 @@ import java.util.Properties;
 @UtilityClass
 public class ConfigUtils {
 
-  public Map<String, ?> resolveSecrets(Map<String, ?> configs) {
+  public Map<String, String> resolveSecrets(Map<String, ?> configs) {
     Map<String, String> newConfigs = new HashMap<>();
 
     for (Map.Entry<String, ?> config : configs.entrySet()) {

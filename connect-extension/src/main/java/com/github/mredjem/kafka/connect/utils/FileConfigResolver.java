@@ -12,17 +12,19 @@ import java.util.regex.Pattern;
 @UtilityClass
 public class FileConfigResolver {
 
-  private final Pattern SECRETS_PATTERN = Pattern.compile("\\$\\{file:(.+?):(.+?)}");
+  private final Pattern SECRETS_PATTERN = Pattern.compile("\\$\\{file:(.+?)}");
 
   public String resolve(String value) {
     return SECRETS_PATTERN.matcher(value)
       .replaceAll(matchResult -> {
-        String filename = matchResult.group(1);
+        String[] fileAndSecret = matchResult.group(1).split(":");
 
-        String secret = matchResult.group(2);
+        if (fileAndSecret.length != 2) {
+          return matchResult.group();
+        }
 
-        return loadSecretsFile(filename)
-          .getOrDefault(secret, matchResult.group())
+        return loadSecretsFile(fileAndSecret[0])
+          .getOrDefault(fileAndSecret[1], matchResult.group())
           .toString();
       });
   }
