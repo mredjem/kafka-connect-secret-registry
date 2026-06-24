@@ -1,3 +1,17 @@
+# [3.0.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.7.0...3.0.0) (2026-06-24)
+
+
+### Features
+
+* implement custom lightweight cel parser ([da7404a](https://github.com/mredjem/kafka-connect-secret-registry/commit/da7404adff1f4bbe6f6e655d233f8fc1ca0ba8ee))
+* make extension compatible with kafka connect 8 ([73f262c](https://github.com/mredjem/kafka-connect-secret-registry/commit/73f262c2f05c749d344d2b0766031b27c614857c))
+* reduce artifact size ([0b52edc](https://github.com/mredjem/kafka-connect-secret-registry/commit/0b52edc7596fdbfd943b56db0a0296bb200c2226))
+
+
+### BREAKING CHANGES
+
+* upgrade to java 11
+
 # [2.7.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/2.6.5...2.7.0) (2026-06-11)
 
 
