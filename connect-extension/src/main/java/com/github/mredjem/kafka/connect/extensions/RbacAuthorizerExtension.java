@@ -24,7 +24,7 @@ public class RbacAuthorizerExtension implements ConnectRestExtension {
 
   @Override
   public void configure(Map<String, ?> configs) {
-    this.authenticationFilter = doConfigure(configs);
+    this.authenticationFilter = doConfigure(ConfigUtils.resolveSecrets(configs));
   }
 
   @Override

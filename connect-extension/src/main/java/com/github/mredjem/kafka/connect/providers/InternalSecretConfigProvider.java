@@ -3,6 +3,7 @@ package com.github.mredjem.kafka.connect.providers;
 import com.github.mredjem.kafka.connect.Secret;
 import com.github.mredjem.kafka.connect.SecretRegistryPort;
 import com.github.mredjem.kafka.connect.internals.KafkaInternalTopicRepository;
+import com.github.mredjem.kafka.connect.utils.ConfigUtils;
 import org.apache.kafka.common.config.ConfigData;
 import org.apache.kafka.common.config.provider.ConfigProvider;
 
@@ -17,7 +18,7 @@ public class InternalSecretConfigProvider implements ConfigProvider {
 
   @Override
   public void configure(Map<String, ?> configs) {
-    this.secretRegistryPort = KafkaInternalTopicRepository.create(configs);
+    this.secretRegistryPort = KafkaInternalTopicRepository.create(ConfigUtils.resolveSecrets(configs));
   }
 
   @Override

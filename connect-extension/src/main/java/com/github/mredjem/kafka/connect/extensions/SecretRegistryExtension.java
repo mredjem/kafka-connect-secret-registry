@@ -22,7 +22,7 @@ public class SecretRegistryExtension implements ConnectRestExtension {
 
   @Override
   public void configure(Map<String, ?> configs) {
-    this.secretRegistryPort = doConfigure(configs);
+    this.secretRegistryPort = doConfigure(ConfigUtils.resolveSecrets(configs));
   }
 
   @Override

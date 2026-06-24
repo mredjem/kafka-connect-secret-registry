@@ -9,6 +9,16 @@ import java.util.Properties;
 @UtilityClass
 public class ConfigUtils {
 
+  public Map<String, ?> resolveSecrets(Map<String, ?> configs) {
+    Map<String, String> newConfigs = new HashMap<>();
+
+    for (Map.Entry<String, ?> config : configs.entrySet()) {
+      newConfigs.put(config.getKey(), FileConfigResolver.resolve(config.getValue().toString()));
+    }
+
+    return newConfigs;
+  }
+
   public Map<String, String> configsForPrefix(String prefix, Map<String, ?> configs) {
     Map<String, String> newConfigs = new HashMap<>();
 
