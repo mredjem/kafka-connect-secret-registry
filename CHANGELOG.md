@@ -1,3 +1,10 @@
+## [3.1.1](https://github.com/mredjem/kafka-connect-secret-registry/compare/3.1.0...3.1.1) (2026-06-24)
+
+
+### Bug Fixes
+
+* avoid regular expression backtracking ([20eb16d](https://github.com/mredjem/kafka-connect-secret-registry/commit/20eb16d736c9cba464496f0e10884c775c2e2e0e))
+
 # [3.1.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/3.0.1...3.1.0) (2026-06-24)
 
 
