@@ -1,3 +1,10 @@
+# [3.1.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/3.0.1...3.1.0) (2026-06-24)
+
+
+### Features
+
+* resolve secrets from mounted files in extension and provider configuration ([82cb320](https://github.com/mredjem/kafka-connect-secret-registry/commit/82cb32093f3ab81b0a8960a20f175061679318db))
+
 ## [3.0.1](https://github.com/mredjem/kafka-connect-secret-registry/compare/3.0.0...3.0.1) (2026-06-24)
 
 
