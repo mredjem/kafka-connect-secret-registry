@@ -110,7 +110,7 @@ public class ConfluentCloudRepository implements OidcPort {
     return identityPool -> {
       CelFilter celFilter = CelFilter.parse(identityPool.getFilter());
 
-      return celFilter.evaluate(claims);
+      return celFilter.evaluate(Map.of("claims", claims));
     };
   }
 

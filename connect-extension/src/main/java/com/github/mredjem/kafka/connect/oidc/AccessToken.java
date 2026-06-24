@@ -1,18 +1,18 @@
 package com.github.mredjem.kafka.connect.oidc;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import lombok.Getter;
 
 import java.util.Base64;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 @Getter
 public class AccessToken {
 
-  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+  private static final Gson GSON = new Gson();
 
   private final Map<String, Object> claims;
 
@@ -22,11 +22,11 @@ public class AccessToken {
 
       String payload = new String(Base64.getDecoder().decode(encodedPayload));
 
-      Map<String, Object> tokenClaims = OBJECT_MAPPER.readValue(payload, new TypeReference<Map<String, Object>>() {});
+      Map<String, Object> tokenClaims = GSON.fromJson(payload, new TypeToken<HashMap<String, Object>>() {}.getType());
 
       this.claims = Collections.unmodifiableMap(tokenClaims);
 
-    } catch (final JsonProcessingException e) {
+    } catch (final Exception e) {
       throw new IllegalArgumentException("Failed to parse token", e);
     }
   }

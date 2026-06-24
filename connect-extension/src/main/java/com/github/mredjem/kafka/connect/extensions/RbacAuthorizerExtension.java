@@ -7,10 +7,10 @@ import com.github.mredjem.kafka.connect.internals.KafkaAuthorizationRepository;
 import com.github.mredjem.kafka.connect.oidc.OidcConfigs;
 import com.github.mredjem.kafka.connect.oidc.ccloud.ConfluentCloudRepository;
 import com.github.mredjem.kafka.connect.utils.ConfigUtils;
+import jakarta.ws.rs.container.ContainerRequestFilter;
 import org.apache.kafka.connect.rest.ConnectRestExtension;
 import org.apache.kafka.connect.rest.ConnectRestExtensionContext;
 
-import javax.ws.rs.container.ContainerRequestFilter;
 import java.util.Map;
 
 public class RbacAuthorizerExtension implements ConnectRestExtension {

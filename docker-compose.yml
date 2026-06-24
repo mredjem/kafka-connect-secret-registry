@@ -1,6 +1,6 @@
 services:
   kafka:
-    image: confluentinc/cp-kafka:7.7.0
+    image: confluentinc/cp-kafka:8.2.2
     container_name: kafka
     environment:
       CLUSTER_ID: "MnSKKJdLRwq0j3vTIbud0g"
@@ -19,7 +19,7 @@ services:
       - "9092:9092"
 
   kafka-connect:
-    image: confluentinc/cp-kafka-connect:7.7.0
+    image: confluentinc/cp-kafka-connect:8.0.4
     container_name: kafka-connect
     environment:
       CONNECT_BOOTSTRAP_SERVERS: "kafka:9092"
@@ -44,9 +44,16 @@ services:
       CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_KAFKASTORE_TOPIC_REPLICATION_FACTOR: 1
       CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_MASTER_ENCRYPTION_KEY: "juby895fmddr5hw58839d3myz27zw206ffxiv68m"
       CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_SECRET_REGISTRY_GROUP_ID: secret-registry
+    env_file:
+      - .env
     volumes:
       - ./etc/kafka-connect/jars:/etc/kafka-connect/jars
     ports:
       - "8083:8083"
     depends_on:
       - kafka
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8083/" ]
+      interval: 5s
+      timeout: 1s
+      retries: 3

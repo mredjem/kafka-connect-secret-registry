@@ -9,6 +9,8 @@ import com.github.mredjem.kafka.connect.providers.InternalSecretConfigProvider;
 import com.github.mredjem.kafka.connect.providers.InternalSecretConfigs;
 import com.github.mredjem.kafka.connect.utils.ConfigUtils;
 import com.github.mredjem.kafka.connect.utils.TestUtils;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.Response;
 import org.apache.kafka.common.config.ConfigData;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterAll;
@@ -16,8 +18,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;

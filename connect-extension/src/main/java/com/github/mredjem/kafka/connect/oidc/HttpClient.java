@@ -1,15 +1,16 @@
 package com.github.mredjem.kafka.connect.oidc;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.mredjem.kafka.connect.AuthenticationCredentials;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import jakarta.ws.rs.ClientErrorException;
+import jakarta.ws.rs.HttpMethod;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
 import lombok.Getter;
 
-import javax.ws.rs.ClientErrorException;
-import javax.ws.rs.HttpMethod;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -24,7 +25,9 @@ import java.util.stream.Collectors;
 
 public class HttpClient {
 
-  private static final ObjectMapper OM = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+  private static final Gson GSON = new GsonBuilder()
+    .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+    .create();
 
   @Getter
   private final String baseUrl;
@@ -39,11 +42,11 @@ public class HttpClient {
     return new HttpClient(baseUrl, authenticationCredentials);
   }
 
-  public <T> T doGET(String path, TypeReference<T> typeReference) {
+  public <T> T doGET(String path, TypeToken<T> typeReference) {
     return this.doCall(path, HttpMethod.GET, MediaType.APPLICATION_JSON, "", typeReference);
   }
 
-  public <T> T doPOST(String path, Map<String, String> parameters, TypeReference<T> typeReference) {
+  public <T> T doPOST(String path, Map<String, String> parameters, TypeToken<T> typeReference) {
     String urlParameters = parameters.entrySet()
       .stream()
       .map(parameter -> parameter.getKey() + "=" + parameter.getValue())
@@ -52,7 +55,7 @@ public class HttpClient {
     return this.doCall(path, HttpMethod.POST, MediaType.APPLICATION_FORM_URLENCODED, urlParameters, typeReference);
   }
 
-  private <T> T doCall(String path, String method, String contentType, String urlParameters, TypeReference<T> typeReference) {
+  private <T> T doCall(String path, String method, String contentType, String urlParameters, TypeToken<T> typeReference) {
     try {
       URL url = URI.create(this.baseUrl + path).toURL();
 
@@ -89,7 +92,7 @@ public class HttpClient {
           response.append(line);
         }
 
-        return OM.readValue(response.toString(), typeReference);
+        return GSON.fromJson(response.toString(), typeReference.getType());
       }
     } catch (final IOException e) {
       throw new UncheckedIOException(e);

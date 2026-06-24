@@ -20,7 +20,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class InMemoryKvStore implements KvStore<KafkaSecretKey, KafkaSecretValue> {
 
@@ -115,7 +114,7 @@ public class InMemoryKvStore implements KvStore<KafkaSecretKey, KafkaSecretValue
       .stream()
       .filter(e -> filter.test(e.getKey()))
       .map(Map.Entry::getValue)
-      .collect(Collectors.toList());
+      .toList();
   }
 
   @Override

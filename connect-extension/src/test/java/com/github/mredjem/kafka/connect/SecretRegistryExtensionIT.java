@@ -1,11 +1,11 @@
 package com.github.mredjem.kafka.connect;
 
-import com.github.mredjem.kafka.connect.dtos.CreateConnectorDto;
 import com.github.mredjem.kafka.connect.extensions.dtos.CreateSecretDto;
 import io.restassured.http.ContentType;
+import jakarta.ws.rs.core.HttpHeaders;
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.core.HttpHeaders;
+import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsString;
@@ -485,12 +485,20 @@ class SecretRegistryExtensionIT extends AbstractIT {
       .statusCode(201)
       .contentType(ContentType.JSON);
 
-    CreateConnectorDto createTestConnectorDto = CreateConnectorDto.createDummy();
-
     given()
       .header(HttpHeaders.AUTHORIZATION, Credentials.organizationAdmin())
       .contentType(ContentType.JSON)
-      .body(createTestConnectorDto)
+      .body(Map.of(
+        "name", "prd-connector",
+        "config", Map.of(
+          "connector.class", "org.apache.kafka.connect.mirror.MirrorSourceConnector",
+          "tasks.max", "${secret:prd-connector:tasks.max}",
+          "topics", "_connect-secrets",
+          "source.cluster.alias", "source",
+          "source.cluster.bootstrap.servers", "kafka:29092",
+          "target.cluster.bootstrap.servers", "kafka:29092"
+        )
+      ))
     .when()
       .post("/connectors")
     .then()

@@ -1,6 +1,5 @@
 package com.github.mredjem.kafka.connect.oidc.ccloud;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.mredjem.kafka.connect.AuthenticationCredentials;
 import com.github.mredjem.kafka.connect.oidc.HttpClient;
 import com.github.mredjem.kafka.connect.oidc.OidcConfigs;
@@ -13,8 +12,9 @@ import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.OrganizationDto;
 import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.RoleBindingDto;
 import com.github.mredjem.kafka.connect.oidc.exceptions.ResourceNotFoundException;
 import com.github.mredjem.kafka.connect.utils.ConfigUtils;
+import com.google.gson.reflect.TypeToken;
+import jakarta.ws.rs.core.UriBuilder;
 
-import javax.ws.rs.core.UriBuilder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,7 +63,7 @@ public class ConfluentCloudClient {
       .build(organizationId)
       .toString();
 
-    return orgtHttpClient.doGET(path, new TypeReference<OrganizationDto>() {});
+    return orgtHttpClient.doGET(path, new TypeToken<OrganizationDto>(){});
   }
 
   public OrganizationDto readOrganization(String organizationId, AuthenticationCredentials authenticationCredentials, Predicate<IdentityPoolDto> identityPoolPredicate) {
@@ -81,7 +81,7 @@ public class ConfluentCloudClient {
       .build()
       .toString();
 
-    return this.httpClient.doGET(path, new TypeReference<DataResponseDto<RoleBindingDto>>() {}).getData();
+    return this.httpClient.doGET(path, new TypeToken<DataResponseDto<RoleBindingDto>>() {}).getData();
   }
 
   public List<RoleBindingDto> listRoleBindings(String crnPattern, Predicate<IdentityPoolDto> identityPoolPredicate) {
@@ -104,11 +104,11 @@ public class ConfluentCloudClient {
       .build(apiKeyId)
       .toString();
 
-    return this.httpClient.doGET(path, new TypeReference<ApiKeyDto>() {});
+    return this.httpClient.doGET(path, new TypeToken<ApiKeyDto>() {});
   }
 
   public List<ApiKeyDto> listApiKeys() {
-    return this.listAll("/iam/v2/api-keys", new TypeReference<DataResponseDto<ApiKeyDto>>() {});
+    return this.listAll("/iam/v2/api-keys", new TypeToken<DataResponseDto<ApiKeyDto>>() {});
   }
 
   private IdentityPoolDto readIdentityPool(Predicate<IdentityPoolDto> identityPoolDtoPredicate) {
@@ -127,7 +127,7 @@ public class ConfluentCloudClient {
       .build(identityProvider.getId())
       .toString();
 
-    return this.listAll(path, new TypeReference<DataResponseDto<IdentityPoolDto>>() {});
+    return this.listAll(path, new TypeToken<DataResponseDto<IdentityPoolDto>>() {});
   }
 
   private IdentityProviderDto readIdentityProvider(String identityProviderName) {
@@ -142,7 +142,7 @@ public class ConfluentCloudClient {
   }
 
   private List<IdentityProviderDto> listIdentityProviders() {
-    DataResponseDto<IdentityProviderDto> data = this.httpClient.doGET("/iam/v2/identity-providers", new TypeReference<DataResponseDto<IdentityProviderDto>>() {});
+    DataResponseDto<IdentityProviderDto> data = this.httpClient.doGET("/iam/v2/identity-providers", new TypeToken<DataResponseDto<IdentityProviderDto>>() {});
 
     return data.getData();
   }
@@ -156,10 +156,10 @@ public class ConfluentCloudClient {
     parameters.put("requested_token_type", "urn:ietf:params:oauth:token-type:access_token");
     parameters.put("identity_pool_id", identityPoolId);
 
-    return this.httpClient.doPOST("/sts/v1/oauth2/token", parameters, new TypeReference<OAuthTokenDto>() {});
+    return this.httpClient.doPOST("/sts/v1/oauth2/token", parameters, new TypeToken<OAuthTokenDto>() {});
   }
 
-  private <T> List<T> listAll(String initialPath, TypeReference<DataResponseDto<T>> typeReference) {
+  private <T> List<T> listAll(String initialPath, TypeToken<DataResponseDto<T>> typeReference) {
     DataResponseDto<T> initialDataResponse = this.httpClient.doGET(initialPath + "?page_size=100", typeReference);
 
     List<T> results = new ArrayList<>(initialDataResponse.getData());

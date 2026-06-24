@@ -10,13 +10,12 @@ import com.github.mredjem.kafka.connect.oidc.OidcPort;
 import com.github.mredjem.kafka.connect.oidc.ccloud.ConfluentCloudRepository;
 import com.github.mredjem.kafka.connect.utils.ConfigUtils;
 import com.github.mredjem.kafka.connect.utils.TestUtils;
+import jakarta.ws.rs.HttpMethod;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import javax.ws.rs.HttpMethod;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
 
 import java.io.IOException;
 import java.util.HashMap;

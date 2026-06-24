@@ -1,16 +1,14 @@
 package com.github.mredjem.kafka.connect;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
-import java.io.UncheckedIOException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
 public final class Credentials {
 
-  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+  private static final Gson GSON = new Gson();
 
   private Credentials() {}
 
@@ -33,36 +31,26 @@ public final class Credentials {
   }
 
   public static String servicePrincipal() {
-    try {
-      Map<String, Object> claims = new HashMap<>();
+    Map<String, Object> claims = new HashMap<>();
 
-      claims.put("iss", "https://login.microsoftonline.com/9bb441c4-edef-46ac-8a41-c49e44a3fd9a/v2.0");
-      claims.put("aud", "confluent");
-      claims.put("azp", "service_principal");
+    claims.put("iss", "https://login.microsoftonline.com/9bb441c4-edef-46ac-8a41-c49e44a3fd9a/v2.0");
+    claims.put("aud", "confluent");
+    claims.put("azp", "service_principal");
 
-      String payload = OBJECT_MAPPER.writeValueAsString(claims);
+    String payload = GSON.toJson(claims);
 
-      return "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." + Base64.getEncoder().encodeToString(payload.getBytes()) + ".y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM";
-
-    } catch (final JsonProcessingException e) {
-      throw new UncheckedIOException(e);
-    }
+    return "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." + Base64.getEncoder().encodeToString(payload.getBytes()) + ".y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM";
   }
 
   public static String organizationAdmin() {
-    try {
-      Map<String, Object> claims = new HashMap<>();
+    Map<String, Object> claims = new HashMap<>();
 
-      claims.put("iss", "https://login.microsoftonline.com/9bb441c4-edef-46ac-8a41-c49e44a3fd9a/v2.0");
-      claims.put("aud", "confluent");
-      claims.put("azp", "admin");
+    claims.put("iss", "https://login.microsoftonline.com/9bb441c4-edef-46ac-8a41-c49e44a3fd9a/v2.0");
+    claims.put("aud", "confluent");
+    claims.put("azp", "admin");
 
-      String payload = OBJECT_MAPPER.writeValueAsString(claims);
+    String payload = GSON.toJson(claims);
 
-      return "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." + Base64.getEncoder().encodeToString(payload.getBytes()) + ".y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM";
-
-    } catch (final JsonProcessingException e) {
-      throw new UncheckedIOException(e);
-    }
+    return "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." + Base64.getEncoder().encodeToString(payload.getBytes()) + ".y51fvVEpA109Nafbkild4Erhoxb_P-2HGO4SW7KkbDM";
   }
 }

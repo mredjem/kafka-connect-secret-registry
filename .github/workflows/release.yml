@@ -19,7 +19,7 @@ jobs:
       - name: Setup Maven
         uses: s4u/setup-maven-action@v1.19.0
         with:
-          java-version: 8
+          java-version: 17
           maven-version: 3.9.0
 
       - name: Setup Node.js
@@ -48,7 +48,7 @@ jobs:
       - name: Setup Maven
         uses: s4u/setup-maven-action@v1.19.0
         with:
-          java-version: 11
+          java-version: 17
           maven-version: 3.9.0
 
       - name: Run Sonar Analysis
