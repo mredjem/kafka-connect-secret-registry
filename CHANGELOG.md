@@ -1,3 +1,10 @@
+## [3.1.2](https://github.com/mredjem/kafka-connect-secret-registry/compare/3.1.1...3.1.2) (2026-06-26)
+
+
+### Bug Fixes
+
+* better management of mounted secrets files ([b97c0fc](https://github.com/mredjem/kafka-connect-secret-registry/commit/b97c0fcc4b51b49c3c602a292f1710829184a4e2))
+
 ## [3.1.1](https://github.com/mredjem/kafka-connect-secret-registry/compare/3.1.0...3.1.1) (2026-06-24)
 
 
