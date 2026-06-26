@@ -3,10 +3,10 @@ package com.github.mredjem.kafka.connect.extensions.rbac;
 import com.github.mredjem.kafka.connect.Operation;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import jakarta.ws.rs.HttpMethod;
-import jakarta.ws.rs.container.ContainerRequestContext;
 import lombok.experimental.UtilityClass;
 
+import javax.ws.rs.HttpMethod;
+import javax.ws.rs.container.ContainerRequestContext;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

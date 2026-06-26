@@ -1,7 +1,7 @@
 package com.github.mredjem.kafka.connect.mocks;
 
-import jakarta.ws.rs.core.Configurable;
-import jakarta.ws.rs.core.Configuration;
+import javax.ws.rs.core.Configurable;
+import javax.ws.rs.core.Configuration;
 
 import java.util.Map;
 import java.util.function.Consumer;

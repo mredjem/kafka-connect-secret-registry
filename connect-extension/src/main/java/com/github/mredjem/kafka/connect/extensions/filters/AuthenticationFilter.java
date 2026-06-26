@@ -3,13 +3,13 @@ package com.github.mredjem.kafka.connect.extensions.filters;
 import com.github.mredjem.kafka.connect.AuthenticationCredentials;
 import com.github.mredjem.kafka.connect.AuthenticationKind;
 import com.github.mredjem.kafka.connect.extensions.rbac.RbacRules;
-import jakarta.ws.rs.NotAuthorizedException;
-import jakarta.ws.rs.container.ContainerRequestContext;
-import jakarta.ws.rs.container.ContainerRequestFilter;
-import jakarta.ws.rs.core.HttpHeaders;
-import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 
+import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 
 import static com.github.mredjem.kafka.connect.extensions.api.ApiExceptionHandler.toErrorResponse;

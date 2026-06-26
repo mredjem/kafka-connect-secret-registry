@@ -4,7 +4,7 @@ import com.github.mredjem.kafka.connect.extensions.RbacAuthorizerExtension;
 import com.github.mredjem.kafka.connect.extensions.filters.AuthenticationFilter;
 import com.github.mredjem.kafka.connect.mocks.MockConfigurable;
 import com.github.mredjem.kafka.connect.utils.TestUtils;
-import jakarta.ws.rs.core.Configurable;
+import javax.ws.rs.core.Configurable;
 import org.apache.kafka.connect.health.ConnectClusterState;
 import org.apache.kafka.connect.rest.ConnectRestExtensionContext;
 import org.junit.jupiter.api.Assertions;

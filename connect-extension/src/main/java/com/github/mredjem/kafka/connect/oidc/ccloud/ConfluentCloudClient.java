@@ -13,8 +13,8 @@ import com.github.mredjem.kafka.connect.oidc.ccloud.dtos.RoleBindingDto;
 import com.github.mredjem.kafka.connect.oidc.exceptions.ResourceNotFoundException;
 import com.github.mredjem.kafka.connect.utils.ConfigUtils;
 import com.google.gson.reflect.TypeToken;
-import jakarta.ws.rs.core.UriBuilder;
 
+import javax.ws.rs.core.UriBuilder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

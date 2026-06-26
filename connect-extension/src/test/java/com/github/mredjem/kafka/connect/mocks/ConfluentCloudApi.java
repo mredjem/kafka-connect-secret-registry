@@ -1,7 +1,7 @@
 package com.github.mredjem.kafka.connect.mocks;
 
 import com.github.mredjem.kafka.connect.Credentials;
-import jakarta.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.HttpHeaders;
 import org.apache.commons.io.IOUtils;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.model.MediaType;

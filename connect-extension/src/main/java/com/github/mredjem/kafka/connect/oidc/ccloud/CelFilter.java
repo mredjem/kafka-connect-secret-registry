@@ -1,8 +1,8 @@
 package com.github.mredjem.kafka.connect.oidc.ccloud;
 
 import com.github.mredjem.kafka.connect.cel.Evaluator;
-import com.github.mredjem.kafka.connect.cel.expressions.Expr;
 import com.github.mredjem.kafka.connect.cel.Parser;
+import com.github.mredjem.kafka.connect.cel.expressions.Expr;
 
 import java.util.Map;
 
