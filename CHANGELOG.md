@@ -1,3 +1,10 @@
+## [3.1.3](https://github.com/mredjem/kafka-connect-secret-registry/compare/3.1.2...3.1.3) (2026-06-26)
+
+
+### Bug Fixes
+
+* downgrade jarkata-rs to javax-rs ([f363ef7](https://github.com/mredjem/kafka-connect-secret-registry/commit/f363ef7e9709705b9deb988b414e3065bdb7e6c6))
+
 ## [3.1.2](https://github.com/mredjem/kafka-connect-secret-registry/compare/3.1.1...3.1.2) (2026-06-26)
 
 
