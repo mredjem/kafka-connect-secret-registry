@@ -12,19 +12,27 @@ import java.util.regex.Pattern;
 @UtilityClass
 public class FileConfigResolver {
 
+  private static final String OS_NAME = System.getProperty("os.name").toLowerCase();
+
   private final Pattern SECRETS_PATTERN = Pattern.compile("\\$\\{file:(.+?)}");
 
   public String resolve(String value) {
     return SECRETS_PATTERN.matcher(value)
       .replaceAll(matchResult -> {
-        String[] fileAndSecret = matchResult.group(1).split(":");
+        String secretPath = matchResult.group(1);
 
-        if (fileAndSecret.length != 2) {
+        int separatorIdx = secretPath.lastIndexOf(":");
+
+        if (separatorIdx == -1) {
           return matchResult.group();
         }
 
-        return loadSecretsFile(fileAndSecret[0])
-          .getOrDefault(fileAndSecret[1], matchResult.group())
+        String filename = formatFilename(secretPath.substring(0, separatorIdx));
+
+        String secretName = secretPath.substring(separatorIdx + 1);
+
+        return loadSecretsFile(filename)
+          .getOrDefault(secretName, matchResult.group())
           .toString();
       });
   }
@@ -37,5 +45,13 @@ public class FileConfigResolver {
     properties.load(new StringReader(content));
 
     return properties;
+  }
+
+  private String formatFilename(String filename) {
+    return isWindows() ? filename.substring(1) : filename;
+  }
+
+  private boolean isWindows() {
+    return OS_NAME.startsWith("windows");
   }
 }

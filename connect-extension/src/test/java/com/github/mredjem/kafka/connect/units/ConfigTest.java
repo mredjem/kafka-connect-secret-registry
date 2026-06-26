@@ -18,7 +18,7 @@ class ConfigTest {
 
     Map<String, ?> configs = Map.of(
       "sasl.jaas.config",
-      "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"${file:" + filename + ":username}\" password=\"${file:" + filename + ":password}\";"
+      "${file:" + filename + ":config.providers.secret.param.kafkastore.sasl.jaas.config}"
     );
 
     Map<String, ?> resolved = ConfigUtils.resolveSecrets(configs);
