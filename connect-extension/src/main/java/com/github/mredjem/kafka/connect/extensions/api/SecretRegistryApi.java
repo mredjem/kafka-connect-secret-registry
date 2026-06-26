@@ -27,7 +27,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-@Path("secret")
+@Path("secret-registry")
 @RequiredArgsConstructor(staticName = "create")
 public class SecretRegistryApi {
 

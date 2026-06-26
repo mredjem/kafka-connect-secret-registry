@@ -56,13 +56,13 @@ public class RbacRules {
     ));
 
     REQUEST_MATCHERS.put(Operation.READ_SECRET, Arrays.asList(
-      RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret/paths/?")),
-      RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret/paths/([^/]+)/?")),
-      RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret/paths/([^/]+)/keys/?")),
-      RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret/paths/([^/]+)/keys/[^/]+/?")),
-      RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret/paths/([^/]+)/keys/[^/]+/versions/?")),
-      RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret/paths/([^/]+)/keys/[^/]+/versions/\\d+/?")),
-      RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret/paths/([^/]+)/keys/[^/]+/versions/latest/?"))
+      RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret-registry/paths/?")),
+      RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret-registry/paths/([^/]+)/?")),
+      RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret-registry/paths/([^/]+)/keys/?")),
+      RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret-registry/paths/([^/]+)/keys/[^/]+/?")),
+      RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret-registry/paths/([^/]+)/keys/[^/]+/versions/?")),
+      RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret-registry/paths/([^/]+)/keys/[^/]+/versions/\\d+/?")),
+      RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?secret-registry/paths/([^/]+)/keys/[^/]+/versions/latest/?"))
     ));
 
     REQUEST_MATCHERS.put(Operation.PAUSE_RESUME_RESTART, Arrays.asList(
@@ -81,7 +81,7 @@ public class RbacRules {
     ));
 
     REQUEST_MATCHERS.put(Operation.CONFIGURE_SECRET, Collections.singletonList(
-      RequestMatcher.of(HttpMethod.POST, Pattern.compile("/?secret/paths/([^/]+)/keys/[^/]+/versions/?"))
+      RequestMatcher.of(HttpMethod.POST, Pattern.compile("/?secret-registry/paths/([^/]+)/keys/[^/]+/versions/?"))
     ));
 
     REQUEST_MATCHERS.put(Operation.DELETE, Collections.singletonList(
@@ -89,9 +89,9 @@ public class RbacRules {
     ));
 
     REQUEST_MATCHERS.put(Operation.DELETE_SECRET, Arrays.asList(
-      RequestMatcher.of(HttpMethod.DELETE, Pattern.compile("/?secret/paths/([^/]+)/keys/[^/]+/versions/\\d+/?")),
-      RequestMatcher.of(HttpMethod.DELETE, Pattern.compile("/?secret/paths/([^/]+)/keys/[^/]+/?")),
-      RequestMatcher.of(HttpMethod.DELETE, Pattern.compile("/?secret/paths/([^/]+)/?"))
+      RequestMatcher.of(HttpMethod.DELETE, Pattern.compile("/?secret-registry/paths/([^/]+)/keys/[^/]+/versions/\\d+/?")),
+      RequestMatcher.of(HttpMethod.DELETE, Pattern.compile("/?secret-registry/paths/([^/]+)/keys/[^/]+/?")),
+      RequestMatcher.of(HttpMethod.DELETE, Pattern.compile("/?secret-registry/paths/([^/]+)/?"))
     ));
   }
 
