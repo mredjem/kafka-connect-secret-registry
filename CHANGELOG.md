@@ -1,3 +1,11 @@
+## [3.2.1](https://github.com/mredjem/kafka-connect-secret-registry/compare/3.2.0...3.2.1) (2026-06-27)
+
+
+### Reverts
+
+* Revert "chore(release): 3.2.0 [skip ci]" ([71c4f9d](https://github.com/mredjem/kafka-connect-secret-registry/commit/71c4f9dd2519e6585191a10b20057e6f4d937db9))
+* Revert "Merge pull request [#100](https://github.com/mredjem/kafka-connect-secret-registry/issues/100) from mredjem/feat/rename-config-provider-to-avoid-conflict" ([cf9de80](https://github.com/mredjem/kafka-connect-secret-registry/commit/cf9de80d0254ec0036b4dedf622b22179022a234))
+
 ## [3.1.3](https://github.com/mredjem/kafka-connect-secret-registry/compare/3.1.2...3.1.3) (2026-06-26)
 
 
