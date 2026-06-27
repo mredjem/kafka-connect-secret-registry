@@ -1,10 +1,3 @@
-# [3.2.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/3.1.3...3.2.0) (2026-06-27)
-
-
-### Features
-
-* rename config provider to avoid conflict with confluent one ([82d18b3](https://github.com/mredjem/kafka-connect-secret-registry/commit/82d18b3f28f69d72aacb380dd74cbad224d92f0b))
-
 ## [3.1.3](https://github.com/mredjem/kafka-connect-secret-registry/compare/3.1.2...3.1.3) (2026-06-26)
 
 
