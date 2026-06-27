@@ -247,7 +247,7 @@ class AuthenticationFilterIT extends AbstractIT {
 
     MockContainerRequestContext secretRequest = MockContainerRequestContext.of(
       HttpMethod.GET,
-      "/secret-registry/paths",
+      "/secret/paths",
       headers
     );
 

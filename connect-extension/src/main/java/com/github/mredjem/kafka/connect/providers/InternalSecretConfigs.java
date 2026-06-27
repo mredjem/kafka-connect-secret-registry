@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class InternalSecretConfigs {
 
-  public static final String PROVIDER_PREFIX = "config.providers.secretregistry.param.";
+  public static final String PROVIDER_PREFIX = "config.providers.secret.param.";
   public static final String KAFKASTORE_PREFIX = "kafkastore.";
   public static final String KAFKASTORE_TOPIC_CONFIG = KAFKASTORE_PREFIX + "topic";
   public static final String KAFKASTORE_TOPIC_REPLICATION_FACTOR_CONFIG = KAFKASTORE_PREFIX + "topic.replication.factor";

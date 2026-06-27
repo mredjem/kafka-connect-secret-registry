@@ -39,7 +39,7 @@ class SecretRegistryApiIT extends AbstractIT {
     Map<String, String> configuration = TestUtils.load();
 
     Map<String, String> extensionConfiguration = ConfigUtils.addEntry(
-      ConfigUtils.configsForPrefix("config.providers.secretregistry.param.", configuration),
+      ConfigUtils.configsForPrefix("config.providers.secret.param.", configuration),
       "kafkastore.bootstrap.servers",
       "localhost:" + KAFKA.getMappedPort(9092)
     );
@@ -64,7 +64,7 @@ class SecretRegistryApiIT extends AbstractIT {
     CreateSecretDto createPgUserSecret = CreateSecretDto.of("admin");
 
     Response createdResponse = secretRegistryApi.createSecret(
-      MockUriInfo.of("/secret-registry/paths/" + path + "/keys/" + key + "/versions"),
+      MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions"),
       path,
       key,
       createPgUserSecret
@@ -75,7 +75,7 @@ class SecretRegistryApiIT extends AbstractIT {
     String location = createdResponse.getHeaderString(HttpHeaders.LOCATION);
 
     Assertions.assertNotNull(location);
-    Assertions.assertEquals("http://localhost:8080/secret-registry/paths/" + path + "/keys/" + key + "/versions/1", location);
+    Assertions.assertEquals("http://localhost:8080/secret/paths/" + path + "/keys/" + key + "/versions/1", location);
 
     Assertions.assertInstanceOf(SecretDto.class, createdResponse.getEntity());
 
@@ -100,7 +100,7 @@ class SecretRegistryApiIT extends AbstractIT {
       CreateSecretDto createOracleUser = CreateSecretDto.of("admin" + i);
 
       Response createdResponse = secretRegistryApi.createSecret(
-        MockUriInfo.of("/secret-registry/paths/" + path + "/keys/" + key + "/versions"),
+        MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions"),
         path,
         key,
         createOracleUser
@@ -112,7 +112,7 @@ class SecretRegistryApiIT extends AbstractIT {
     }
 
     Response versionsResponse = secretRegistryApi.listVersionsForKey(
-      MockUriInfo.of("/secret-registry/paths/" + path + "/keys/" + key + "/versions"),
+      MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions"),
       path,
       key
     );
@@ -130,7 +130,7 @@ class SecretRegistryApiIT extends AbstractIT {
     versionsResponse.close();
 
     Response latestResponse = secretRegistryApi.getSecret(
-      MockUriInfo.of("/secret-registry/paths/" + path + "/keys/" + key + "/versions/latest"),
+      MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions/latest"),
       path,
       key,
       "latest"
@@ -161,7 +161,7 @@ class SecretRegistryApiIT extends AbstractIT {
       CreateSecretDto createStorageAccountSecret = CreateSecretDto.of("app" + i);
 
       Response createdResponse = secretRegistryApi.createSecret(
-        MockUriInfo.of("/secret-registry/paths/" + path + "/keys/" + key + "/versions"),
+        MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions"),
         path,
         key,
         createStorageAccountSecret
@@ -173,7 +173,7 @@ class SecretRegistryApiIT extends AbstractIT {
     }
 
     // check available paths
-    Response pathsResponse = secretRegistryApi.listAllPaths(MockUriInfo.of("/secret-registry/paths"));
+    Response pathsResponse = secretRegistryApi.listAllPaths(MockUriInfo.of("/secret/paths"));
 
     Assertions.assertEquals(Response.Status.OK.getStatusCode(), pathsResponse.getStatus());
     Assertions.assertInstanceOf(List.class, pathsResponse.getEntity());
@@ -186,7 +186,7 @@ class SecretRegistryApiIT extends AbstractIT {
 
     // check available keys under path
     Response keysResponse = secretRegistryApi.listAllKeysForPath(
-      MockUriInfo.of("/secret-registry/paths/" + path + "/keys"),
+      MockUriInfo.of("/secret/paths/" + path + "/keys"),
       path
     );
 
@@ -201,7 +201,7 @@ class SecretRegistryApiIT extends AbstractIT {
 
     // check available secrets under path
     Response pathSecretsResponse = secretRegistryApi.getAllLatestVersionsForKeysInPath(
-      MockUriInfo.of("/secret-registry/paths/" + path),
+      MockUriInfo.of("/secret/paths/" + path),
       path
     );
 
@@ -224,7 +224,7 @@ class SecretRegistryApiIT extends AbstractIT {
 
     // check available secrets under key
     Response keySecretsResponse = secretRegistryApi.getAllVersionsForKey(
-      MockUriInfo.of("/secret-registry/paths/" + path + "/keys/" + key),
+      MockUriInfo.of("/secret/paths/" + path + "/keys/" + key),
       path,
       key
     );
@@ -259,7 +259,7 @@ class SecretRegistryApiIT extends AbstractIT {
       CreateSecretDto createSqlServerUserSecret = CreateSecretDto.of("admin" + i);
 
       Response createdResponse = secretRegistryApi.createSecret(
-        MockUriInfo.of("/secret-registry/paths/" + path + "/keys/" + key + "/versions"),
+        MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions"),
         path,
         key,
         createSqlServerUserSecret
@@ -272,7 +272,7 @@ class SecretRegistryApiIT extends AbstractIT {
 
     // delete version 1
     Response deletedResponse = secretRegistryApi.deleteSpecificVersionForKey(
-      MockUriInfo.of("/secret-registry/paths/" + path + "/keys/" + key + "/versions/1"),
+      MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions/1"),
       path,
       key,
       "1"
@@ -284,7 +284,7 @@ class SecretRegistryApiIT extends AbstractIT {
 
     Awaitility.await().atMost(10L, TimeUnit.SECONDS).until(() -> {
       Response version1Response = secretRegistryApi.getSecret(
-        MockUriInfo.of("/secret-registry/paths/" + path + "/keys/" + key + "/versions/1"),
+        MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions/1"),
         path,
         key,
         "1"
@@ -295,7 +295,7 @@ class SecretRegistryApiIT extends AbstractIT {
 
     // list available versions under key
     Response versionsResponse = secretRegistryApi.listVersionsForKey(
-      MockUriInfo.of("/secret-registry/paths/" + path + "/keys/" + key + "/versions"),
+      MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions"),
       path,
       key
     );
@@ -313,7 +313,7 @@ class SecretRegistryApiIT extends AbstractIT {
 
     // delete all secrets under key
     Response keysRemovalResponse = secretRegistryApi.deleteAllVersionsForKey(
-      MockUriInfo.of("/secret-registry/paths/" + path + "/keys/" + key),
+      MockUriInfo.of("/secret/paths/" + path + "/keys/" + key),
       path,
       key
     );
@@ -324,7 +324,7 @@ class SecretRegistryApiIT extends AbstractIT {
 
     // delete path
     Response pathRemovalResponse = secretRegistryApi.deletePath(
-      MockUriInfo.of("/secret-registry/paths/" + path),
+      MockUriInfo.of("/secret/paths/" + path),
       path
     );
 
@@ -342,7 +342,7 @@ class SecretRegistryApiIT extends AbstractIT {
     CreateSecretDto createTestConnectorSecret = CreateSecretDto.of("-1");
 
     Response createdResponse = secretRegistryApi.createSecret(
-      MockUriInfo.of("/secret-registry/paths/" + path + "/keys/" + key + "/versions"),
+      MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions"),
       path,
       key,
       createTestConnectorSecret

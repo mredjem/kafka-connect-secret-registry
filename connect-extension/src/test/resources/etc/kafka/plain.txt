@@ -1,1 +1,1 @@
-config.providers.secretregistry.param.kafkastore.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="ABCDEFGHIJKLMNOP" password="R15hoiDIq8Nxu/lY4mPO3DwAVIfU5W7OI+efsB607mLgHTnVW5XJGVqX2ysDx987";
+config.providers.secret.param.kafkastore.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="ABCDEFGHIJKLMNOP" password="R15hoiDIq8Nxu/lY4mPO3DwAVIfU5W7OI+efsB607mLgHTnVW5XJGVqX2ysDx987";

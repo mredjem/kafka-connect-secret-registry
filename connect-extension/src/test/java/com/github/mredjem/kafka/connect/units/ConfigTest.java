@@ -18,7 +18,7 @@ class ConfigTest {
 
     Map<String, ?> configs = Map.of(
       "sasl.jaas.config",
-      "${file:" + filename + ":config.providers.secretregistry.param.kafkastore.sasl.jaas.config}"
+      "${file:" + filename + ":config.providers.secret.param.kafkastore.sasl.jaas.config}"
     );
 
     Map<String, ?> resolved = ConfigUtils.resolveSecrets(configs);

@@ -22,7 +22,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
     given()
       .header(HttpHeaders.ACCEPT, "application/json")
     .when()
-      .get("/secret-registry/paths")
+      .get("/secret/paths")
     .then()
       .statusCode(401);
 
@@ -39,7 +39,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
     given()
       .header(HttpHeaders.AUTHORIZATION, Credentials.notFound())
     .when()
-      .get("/secret-registry/paths")
+      .get("/secret/paths")
     .then()
       .statusCode(403);
   }
@@ -78,7 +78,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
     given()
       .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
     .when()
-      .get("/secret-registry/paths")
+      .get("/secret/paths")
     .then()
       .statusCode(200);
 
@@ -153,7 +153,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
     given()
       .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
     .when()
-      .get("/secret-registry/paths")
+      .get("/secret/paths")
     .then()
       .statusCode(200);
 
@@ -218,7 +218,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
     given()
       .header(HttpHeaders.AUTHORIZATION, Credentials.ci())
     .when()
-      .get("/secret-registry/paths")
+      .get("/secret/paths")
     .then()
       .statusCode(200);
 
@@ -313,7 +313,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
       .pathParam("key", "pg.user")
       .body(createPgUserSecret)
     .when()
-      .post("/secret-registry/paths/{path}/keys/{key}/versions")
+      .post("/secret/paths/{path}/keys/{key}/versions")
     .then()
       .statusCode(201)
       .contentType(ContentType.JSON)
@@ -331,7 +331,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
       .pathParam("key", "pg.password")
       .body(createPgPasswordSecret)
     .when()
-      .post("/secret-registry/paths/{path}/keys/{key}/versions")
+      .post("/secret/paths/{path}/keys/{key}/versions")
     .then()
       .statusCode(201)
       .contentType(ContentType.JSON)
@@ -343,7 +343,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
     given()
       .header(HttpHeaders.AUTHORIZATION, Credentials.organizationAdmin())
     .when()
-      .get("/secret-registry/paths")
+      .get("/secret/paths")
     .then()
       .statusCode(200)
       .contentType(ContentType.JSON)
@@ -353,7 +353,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
       .header(HttpHeaders.AUTHORIZATION, Credentials.organizationAdmin())
       .pathParam("path", "dev.users.postgres.jdbc-sink-connector")
     .when()
-      .get("/secret-registry/paths/{path}/keys")
+      .get("/secret/paths/{path}/keys")
     .then()
       .statusCode(200)
       .contentType(ContentType.JSON)
@@ -372,7 +372,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
       .pathParam("key", "oracle.user")
       .body(createOracleUserV1)
     .when()
-      .post("/secret-registry/paths/{path}/keys/{key}/versions")
+      .post("/secret/paths/{path}/keys/{key}/versions")
     .then()
       .statusCode(201)
       .contentType(ContentType.JSON)
@@ -390,7 +390,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
       .pathParam("key", "oracle.user")
       .body(createOracleUserV2)
     .when()
-      .post("/secret-registry/paths/{path}/keys/{key}/versions")
+      .post("/secret/paths/{path}/keys/{key}/versions")
     .then()
       .statusCode(201)
       .contentType(ContentType.JSON)
@@ -404,7 +404,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
       .pathParam("path", "dev.users.oracle.jdbc-sink-connector")
       .pathParam("key", "oracle.user")
     .when()
-      .get("/secret-registry/paths/{path}/keys/{key}/versions")
+      .get("/secret/paths/{path}/keys/{key}/versions")
     .then()
       .statusCode(200)
       .contentType(ContentType.JSON)
@@ -417,7 +417,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
       .pathParam("key", "oracle.user")
       .pathParam("version", "latest")
     .when()
-      .get("/secret-registry/paths/{path}/keys/{key}/versions/{version}")
+      .get("/secret/paths/{path}/keys/{key}/versions/{version}")
     .then()
       .statusCode(200)
       .contentType(ContentType.JSON)
@@ -438,7 +438,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
       .pathParam("key", "mssql.user")
       .body(createSqlServerUserSecret)
     .when()
-      .post("/secret-registry/paths/{path}/keys/{key}/versions")
+      .post("/secret/paths/{path}/keys/{key}/versions")
     .then()
       .statusCode(201)
       .contentType(ContentType.JSON)
@@ -453,7 +453,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
       .pathParam("key", "mssql.user")
       .pathParam("version", "1")
     .when()
-      .delete("/secret-registry/paths/{path}/keys/{key}/versions/{version}")
+      .delete("/secret/paths/{path}/keys/{key}/versions/{version}")
     .then()
       .statusCode(204);
 
@@ -462,7 +462,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
       .pathParam("path", "prd.users.mssql.jdbc-sink-connector")
       .pathParam("key", "mssql.user")
     .when()
-      .get("/secret-registry/paths/{path}/keys/{key}/versions")
+      .get("/secret/paths/{path}/keys/{key}/versions")
     .then()
       .statusCode(200)
       .contentType(ContentType.JSON)
@@ -480,7 +480,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
       .pathParam("key", "tasks.max")
       .body(createTestConnectorSecret)
     .when()
-      .post("/secret-registry/paths/{path}/keys/{key}/versions")
+      .post("/secret/paths/{path}/keys/{key}/versions")
     .then()
       .statusCode(201)
       .contentType(ContentType.JSON);
@@ -492,7 +492,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
         "name", "prd-connector",
         "config", Map.of(
           "connector.class", "org.apache.kafka.connect.mirror.MirrorSourceConnector",
-          "tasks.max", "${secretregistry:prd-connector:tasks.max}",
+          "tasks.max", "${secret:prd-connector:tasks.max}",
           "topics", "_connect-secrets",
           "source.cluster.alias", "source",
           "source.cluster.bootstrap.servers", "kafka:29092",
