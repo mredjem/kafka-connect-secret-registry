@@ -21,7 +21,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
   @Override
   public void filter(ContainerRequestContext containerRequestContext) throws IOException {
-    if (RbacRules.isInternalRequest(containerRequestContext) || RbacRules.isAllowedAnonymously(containerRequestContext)) {
+    if (RbacRules.isInternalRequest(containerRequestContext) || RbacRules.isAllowedAnonymously(containerRequestContext) || RbacRules.isHealthCheck(containerRequestContext)) {
       return;
     }
 

@@ -36,6 +36,11 @@ public class RbacRules {
     RequestMatcher.of(HttpMethod.PUT, Pattern.compile("/?connector-plugins/[^/]+/config/validate/?"))
   );
 
+  private final List<RequestMatcher> HEALTH_REQUEST_MATCHERS = Arrays.asList(
+    RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?health/?")),
+    RequestMatcher.of(HttpMethod.GET, Pattern.compile("/?v1/metadata/id/?"))
+  );
+
   private final Map<Operation, List<RequestMatcher>> REQUEST_MATCHERS = new EnumMap<>(Operation.class);
 
   static {
@@ -101,6 +106,10 @@ public class RbacRules {
 
   public boolean isAllowedAnonymously(ContainerRequestContext containerRequestContext) {
     return ANONYMOUS_REQUEST_MATCHERS.stream().anyMatch(matcher -> matcher.test(containerRequestContext));
+  }
+
+  public boolean isHealthCheck(ContainerRequestContext containerRequestContext) {
+    return HEALTH_REQUEST_MATCHERS.stream().anyMatch(matcher -> matcher.test(containerRequestContext));
   }
 
   public RequestedAction getActionForRequest(ContainerRequestContext containerRequestContext) {

@@ -65,6 +65,23 @@ class SecretRegistryExtensionIT extends AbstractIT {
   }
 
   @Test
+  void shouldAllowCallingHealthCheckWhenUnauthenticated() {
+    given()
+      .header(HttpHeaders.ACCEPT, "application/json")
+    .when()
+      .get("/health")
+    .then()
+      .statusCode(200);
+
+    given()
+      .header(HttpHeaders.ACCEPT, "application/json")
+    .when()
+      .get("/v1/metadata/id")
+    .then()
+      .statusCode(404);
+  }
+
+  @Test
   void shouldAllowReadingConfigurationAndStatusWhenDeveloperWrite() {
     given()
       .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
