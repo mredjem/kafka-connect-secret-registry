@@ -1,3 +1,10 @@
+# [3.3.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/3.2.1...3.3.0) (2026-06-27)
+
+
+### Features
+
+* allow cfk health checks anonymously ([b38140d](https://github.com/mredjem/kafka-connect-secret-registry/commit/b38140d0084cb31f728512728693ff13ed6e4022))
+
 ## [3.2.1](https://github.com/mredjem/kafka-connect-secret-registry/compare/3.2.0...3.2.1) (2026-06-27)
 
 
