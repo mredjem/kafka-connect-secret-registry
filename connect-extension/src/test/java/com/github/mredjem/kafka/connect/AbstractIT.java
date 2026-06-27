@@ -43,7 +43,7 @@ abstract class AbstractIT {
     .withEnv("KAFKA_AUTO_CREATE_TOPICS_ENABLE", "false")
     .withEnv("CONFLUENT_METRICS_ENABLE", "false");
 
-  protected static final ConfluentKafkaConnectContainer CONNECT = new ConfluentKafkaConnectContainer("confluentinc/cp-kafka-connect-base:8.0.4")
+  protected static final ConfluentKafkaConnectContainer CONNECT = new ConfluentKafkaConnectContainer("confluentinc/cp-kafka-connect-base:7.9.8")
     .withNetwork(NETWORK)
     .withNetworkAliases("connect")
     .withExposedPorts(8083)
@@ -66,14 +66,14 @@ abstract class AbstractIT {
     .withEnv("CONNECT_CONFLUENT_CLOUD_API_KEY", "ABCDEFGHIJKLMNOP")
     .withEnv("CONNECT_CONFLUENT_CLOUD_API_SECRET", "R15hoiDIq8Nxu/lY4mPO3DwAVIfU5W7OI+efsB607mLgHTnVW5XJGVqX2ysDx987")
     .withEnv("CONNECT_CONFLUENT_CLOUD_IDENTITY_PROVIDER_NAME", "azure")
-    .withEnv("CONNECT_CONFIG_PROVIDERS", "secret")
-    .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_CLASS", InternalSecretConfigProvider.class.getName())
-    .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_KAFKASTORE_BOOTSTRAP_SERVERS", "kafka:29092")
-    .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_KAFKASTORE_SECURITY_PROTOCOL", "PLAINTEXT")
-    .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_KAFKASTORE_TOPIC", "_connect-secrets")
-    .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_KAFKASTORE_TOPIC_REPLICATION_FACTOR", "1")
-    .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_MASTER_ENCRYPTION_KEY", "juby895fmddr5hw58839d3myz27zw206ffxiv68m")
-    .withEnv("CONNECT_CONFIG_PROVIDERS_SECRET_PARAM_SECRET_REGISTRY_GROUP_ID", "secret-registry")
+    .withEnv("CONNECT_CONFIG_PROVIDERS", "secretregistry")
+    .withEnv("CONNECT_CONFIG_PROVIDERS_SECRETREGISTRY_CLASS", InternalSecretConfigProvider.class.getName())
+    .withEnv("CONNECT_CONFIG_PROVIDERS_SECRETREGISTRY_PARAM_KAFKASTORE_BOOTSTRAP_SERVERS", "kafka:29092")
+    .withEnv("CONNECT_CONFIG_PROVIDERS_SECRETREGISTRY_PARAM_KAFKASTORE_SECURITY_PROTOCOL", "PLAINTEXT")
+    .withEnv("CONNECT_CONFIG_PROVIDERS_SECRETREGISTRY_PARAM_KAFKASTORE_TOPIC", "_connect-secrets")
+    .withEnv("CONNECT_CONFIG_PROVIDERS_SECRETREGISTRY_PARAM_KAFKASTORE_TOPIC_REPLICATION_FACTOR", "1")
+    .withEnv("CONNECT_CONFIG_PROVIDERS_SECRETREGISTRY_PARAM_MASTER_ENCRYPTION_KEY", "juby895fmddr5hw58839d3myz27zw206ffxiv68m")
+    .withEnv("CONNECT_CONFIG_PROVIDERS_SECRETREGISTRY_PARAM_SECRET_REGISTRY_GROUP_ID", "secret-registry")
     .withLogConsumer(outputFrame -> new Slf4jLogConsumer(LoggerFactory.getLogger("connect")).accept(outputFrame))
     .dependsOn(KAFKA);
 
