@@ -44,17 +44,21 @@ public class Lexer {
         this.pos++;
         yield Token.of(TokenType.DOT, ".");
       }
+      case ',' -> {
+        this.pos++;
+        yield Token.of(TokenType.COMMA, ",");
+      }
       case '&' -> {
         if (peek('&')) {
           this.pos += 2;
-          yield Token.of(TokenType.AND, "&");
+          yield Token.of(TokenType.AND, "&&");
         }
         throw new ParseException("Unexpected character '" + c + "' at position " + this.pos);
       }
       case '|' -> {
         if (peek('|')) {
           this.pos += 2;
-          yield Token.of(TokenType.OR, "|");
+          yield Token.of(TokenType.OR, "||");
         }
         throw new ParseException("Unexpected character '" + c + "' at position " + this.pos);
       }
@@ -98,6 +102,14 @@ public class Lexer {
         this.pos++;
         yield Token.of(TokenType.RPAREN, ")");
       }
+      case '[' -> {
+        this.pos++;
+        yield Token.of(TokenType.LBRACKET, "[");
+      }
+      case ']' -> {
+        this.pos++;
+        yield Token.of(TokenType.RBRACKET, "]");
+      }
       default -> throw new ParseException("Unexpected character '" + c + "' at position " + this.pos);
     };
   }
@@ -113,6 +125,10 @@ public class Lexer {
 
     if ("true".equalsIgnoreCase(text) || "false".equalsIgnoreCase(text)) {
       return Token.of(TokenType.BOOLEAN, text.toLowerCase());
+    }
+
+    if ("in".equalsIgnoreCase(text)) {
+      return Token.of(TokenType.IN, text.toLowerCase());
     }
 
     return Token.of(TokenType.IDENTIFIER, text);

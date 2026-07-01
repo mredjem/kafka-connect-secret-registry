@@ -4,9 +4,11 @@ import com.github.mredjem.kafka.connect.cel.exceptions.ParseException;
 import com.github.mredjem.kafka.connect.cel.expressions.BinaryExpr;
 import com.github.mredjem.kafka.connect.cel.expressions.Expr;
 import com.github.mredjem.kafka.connect.cel.expressions.FieldAccessExpr;
+import com.github.mredjem.kafka.connect.cel.expressions.ListExpr;
 import com.github.mredjem.kafka.connect.cel.expressions.LiteralExpr;
 import com.github.mredjem.kafka.connect.cel.expressions.VariableExpr;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Parser {
@@ -59,6 +61,8 @@ public class Parser {
         left = new BinaryExpr(left, ">=", parsePrimary());
       } else if (match(TokenType.LTE)) {
         left = new BinaryExpr(left, "<=", parsePrimary());
+      } else if (match(TokenType.IN)) {
+        left = new BinaryExpr(left, "in", parsePrimary());
       } else {
         break;
       }
@@ -89,6 +93,19 @@ public class Parser {
         Expr expr = parse();
         take(TokenType.RPAREN);
         yield expr;
+      }
+      case LBRACKET -> {
+        List<Expr> exprs = new ArrayList<>();
+
+        do {
+          Expr expr = parsePrimary();
+
+          exprs.add(expr);
+        } while (match(TokenType.COMMA));
+
+        take(TokenType.RBRACKET);
+
+        yield new ListExpr(exprs);
       }
       default -> throw new ParseException("Unexpected token '" + token.value() + "' at position " + this.pos);
     };

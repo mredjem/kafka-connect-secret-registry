@@ -13,7 +13,12 @@ class CelFilterTest {
   @Test
   void simpleOperationsShouldBeSupported() {
     CelFilter celFilter = CelFilter.parse("""
-      claims.iss == 'azure' && (claims.aud == 'confluent' || claims.aud == 'kafka') && claims.active != false && claims.ttl >= 30 && claims.ttl <= 90"""
+      claims.iss == 'azure' &&
+      (claims.aud == 'confluent' || claims.aud == 'kafka') &&
+      claims.aud in ['confluent', 'kafka'] &&
+      claims.active != false &&
+      claims.ttl >= 30 &&
+      claims.ttl <= 90"""
     );
 
     Map<String, Object> confluentAudience = Map.of(

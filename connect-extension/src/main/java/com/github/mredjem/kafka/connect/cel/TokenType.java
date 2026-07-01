@@ -3,6 +3,7 @@ package com.github.mredjem.kafka.connect.cel;
 public enum TokenType {
   IDENTIFIER,
   DOT,
+  COMMA,
 
   STRING,
   NUMBER,
@@ -10,6 +11,7 @@ public enum TokenType {
 
   AND,
   OR,
+  IN,
 
   EQ,
   NE,
@@ -20,4 +22,6 @@ public enum TokenType {
 
   LPAREN,
   RPAREN,
+  LBRACKET,
+  RBRACKET,
 }
