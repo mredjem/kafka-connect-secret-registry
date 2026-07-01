@@ -1,3 +1,10 @@
+# [3.4.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/3.3.0...3.4.0) (2026-07-01)
+
+
+### Features
+
+* manage in operator in cel filters ([32f6184](https://github.com/mredjem/kafka-connect-secret-registry/commit/32f61848eb72d565208e03501fc859b8de58254e))
+
 # [3.3.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/3.2.1...3.3.0) (2026-06-27)
 
 
