@@ -12,6 +12,7 @@ const buildConfluentArchive = () => {
 module.exports = {
   branches: [
     'main',
+    '+([0-9])?(.{+([0-9]),x}).x',
   ],
   repositoryUrl: 'git@github.com:mredjem/kafka-connect-secret-registry.git',
   tagFormat: '${version}',

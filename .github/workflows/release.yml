@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - main
+      - '*.x'
+      - '*.*.x'
 jobs:
   release:
     runs-on: ubuntu-latest
