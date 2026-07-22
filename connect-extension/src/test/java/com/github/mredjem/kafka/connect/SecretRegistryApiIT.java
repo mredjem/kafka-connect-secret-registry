@@ -87,6 +87,22 @@ class SecretRegistryApiIT extends AbstractIT {
     Assertions.assertEquals(createPgUserSecret.getSecret(), secret.getSecret());
 
     createdResponse.close();
+
+    Response notModifiedResponse = secretRegistryApi.createSecret(
+      MockUriInfo.of("/secret/paths/" + path + "/keys/" + key + "/versions"),
+      path,
+      key,
+      createPgUserSecret
+    );
+
+    Assertions.assertEquals(Response.Status.CREATED.getStatusCode(), notModifiedResponse.getStatus());
+
+    String notModifiedLocation = notModifiedResponse.getHeaderString(HttpHeaders.LOCATION);
+
+    Assertions.assertNotNull(notModifiedLocation);
+    Assertions.assertEquals("http://localhost:8080/secret/paths/" + path + "/keys/" + key + "/versions/1", notModifiedLocation);
+
+    notModifiedResponse.close();
   }
 
   @Test
