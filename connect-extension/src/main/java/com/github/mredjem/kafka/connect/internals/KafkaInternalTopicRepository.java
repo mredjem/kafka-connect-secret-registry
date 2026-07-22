@@ -106,7 +106,13 @@ public class KafkaInternalTopicRepository implements SecretRegistryPort {
 
   @Override
   public synchronized Secret createSecret(String path, String key, String secret) {
-    Version nextVersion = this.getSecret(path, key, LATEST)
+    Optional<Secret> currentSecret = this.getSecret(path, key, LATEST);
+
+    if (currentSecret.isPresent() && currentSecret.get().hasSameValue(secret)) {
+      return currentSecret.get();
+    }
+
+    Version nextVersion = currentSecret
       .map(e -> e.getVersion().nextVersion())
       .orElse(Path.of(path).key(key).version(1));
 

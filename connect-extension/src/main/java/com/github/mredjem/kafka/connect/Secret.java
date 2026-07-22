@@ -13,4 +13,8 @@ public class Secret {
 
   private final Version version;
   private final String value;
+
+  public boolean hasSameValue(String secret) {
+    return this.value.equals(secret);
+  }
 }
