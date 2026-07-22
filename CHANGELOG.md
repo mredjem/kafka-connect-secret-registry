@@ -1,3 +1,10 @@
+# [3.5.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/3.4.0...3.5.0) (2026-07-22)
+
+
+### Features
+
+* prevent secret creation if left unchanged ([58a1cc7](https://github.com/mredjem/kafka-connect-secret-registry/commit/58a1cc7e5339a8a746550df4b005e49d6f66689c))
+
 # [3.4.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/3.3.0...3.4.0) (2026-07-01)
 
 
