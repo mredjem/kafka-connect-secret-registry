@@ -82,6 +82,48 @@ class SecretRegistryExtensionIT extends AbstractIT {
   }
 
   @Test
+  void shouldAllowReadingConfigurationAndConfiguringOffsetsWhenDeveloperManage() {
+    given()
+      .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
+      .contentType(ContentType.JSON)
+      .body("{ \"name\": \"my_filesource_connector\" }")
+    .when()
+      .post("/connectors")
+    .then()
+      .statusCode(403);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
+    .when()
+      .get("/connectors/my_filesource_connector/config")
+    .then()
+      .statusCode(404);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
+    .when()
+      .get("/connectors/my_filesource_connector/offset")
+    .then()
+      .statusCode(404);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
+      .contentType(ContentType.JSON)
+      .body("{}")
+    .when()
+      .patch("/connectors/my_filesource_connector/offset")
+    .then()
+      .statusCode(404);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
+    .when()
+      .delete("/connectors/my_filesource_connector/offset")
+    .then()
+      .statusCode(404);
+  }
+
+  @Test
   void shouldAllowReadingConfigurationAndStatusWhenDeveloperWrite() {
     given()
       .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())

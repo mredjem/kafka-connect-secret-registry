@@ -80,7 +80,10 @@ public class RbacRules {
 
     REQUEST_MATCHERS.put(Operation.CONFIGURE, Arrays.asList(
       RequestMatcher.of(HttpMethod.POST, Pattern.compile("/?connectors/?")),
-      RequestMatcher.of(HttpMethod.PUT, Pattern.compile("/?connectors/([^/]+)/config/?")),
+      RequestMatcher.of(HttpMethod.PUT, Pattern.compile("/?connectors/([^/]+)/config/?"))
+    ));
+
+    REQUEST_MATCHERS.put(Operation.CONFIGURE_OFFSET, Arrays.asList(
       RequestMatcher.of(HttpMethod.PATCH, Pattern.compile(connectorOffsetsPath)),
       RequestMatcher.of(HttpMethod.DELETE, Pattern.compile(connectorOffsetsPath))
     ));

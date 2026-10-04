@@ -7,7 +7,7 @@ import com.github.mredjem.kafka.connect.Scope;
 import java.util.EnumSet;
 import java.util.Set;
 
-public class DeveloperWrite implements Role {
+public class DeveloperManage implements Role {
 
   @Override
   public Set<Scope> applicableScopes() {
@@ -16,6 +16,6 @@ public class DeveloperWrite implements Role {
 
   @Override
   public Set<Operation> allowedOperations() {
-    return EnumSet.of(Operation.CONFIGURE, Operation.CONFIGURE_OFFSET, Operation.READ_CONFIGURATION, Operation.READ_STATUS);
+    return EnumSet.of(Operation.READ_CONFIGURATION, Operation.CONFIGURE_OFFSET);
   }
 }
