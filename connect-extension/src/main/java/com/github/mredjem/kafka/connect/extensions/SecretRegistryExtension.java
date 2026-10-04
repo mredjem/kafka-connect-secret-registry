@@ -45,7 +45,7 @@ public class SecretRegistryExtension implements ConnectRestExtension {
     return KafkaInternalTopicRepository.create(ConfigUtils.addEntry(
       extensionConfigs,
       InternalSecretConfigs.SECRET_REGISTRY_GROUP_ID_CONFIG,
-      String.format("%s-rest", registryGroupId)
+      registryGroupId + "-rest"
     ));
   }
 }
