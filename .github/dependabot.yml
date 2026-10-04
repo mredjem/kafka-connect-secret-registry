@@ -4,3 +4,5 @@ updates:
     directory: "/connect-extension"
     schedule:
       interval: "weekly"
+    ignore:
+      - dependency-name: "org.apache.kafka:connect-api"
