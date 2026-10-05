@@ -16,6 +16,6 @@ public class ConnectManager implements Role {
 
   @Override
   public Set<Operation> allowedOperations() {
-    return EnumSet.of(Operation.PAUSE_RESUME_RESTART, Operation.READ_CONFIGURATION, Operation.READ_SECRET, Operation.READ_STATUS);
+    return EnumSet.of(Operation.PAUSE_RESUME_RESTART, Operation.READ_CONFIGURATION, Operation.READ_SECRET, Operation.READ_STATUS, Operation.CONFIGURE_OFFSET);
   }
 }

@@ -3,7 +3,6 @@ package com.github.mredjem.kafka.connect.oidc;
 import com.github.mredjem.kafka.connect.Role;
 import com.github.mredjem.kafka.connect.oidc.roles.CloudClusterAdmin;
 import com.github.mredjem.kafka.connect.oidc.roles.ConnectManager;
-import com.github.mredjem.kafka.connect.oidc.roles.DeveloperManage;
 import com.github.mredjem.kafka.connect.oidc.roles.DeveloperRead;
 import com.github.mredjem.kafka.connect.oidc.roles.DeveloperWrite;
 import com.github.mredjem.kafka.connect.oidc.roles.EnvironmentAdmin;
@@ -27,7 +26,6 @@ public final class Roles {
   static {
     List<Role> roles = new ArrayList<>();
 
-    roles.add(new DeveloperManage());
     roles.add(new DeveloperRead());
     roles.add(new DeveloperWrite());
     roles.add(new Operator());

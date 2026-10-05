@@ -82,48 +82,6 @@ class SecretRegistryExtensionIT extends AbstractIT {
   }
 
   @Test
-  void shouldAllowReadingConfigurationAndConfiguringOffsetsWhenDeveloperManage() {
-    given()
-      .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
-      .contentType(ContentType.JSON)
-      .body("{ \"name\": \"my_filesource_connector\" }")
-    .when()
-      .post("/connectors")
-    .then()
-      .statusCode(403);
-
-    given()
-      .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
-    .when()
-      .get("/connectors/my_filesource_connector/config")
-    .then()
-      .statusCode(404);
-
-    given()
-      .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
-    .when()
-      .get("/connectors/my_filesource_connector/offset")
-    .then()
-      .statusCode(404);
-
-    given()
-      .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
-      .contentType(ContentType.JSON)
-      .body("{}")
-    .when()
-      .patch("/connectors/my_filesource_connector/offset")
-    .then()
-      .statusCode(404);
-
-    given()
-      .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
-    .when()
-      .delete("/connectors/my_filesource_connector/offset")
-    .then()
-      .statusCode(404);
-  }
-
-  @Test
   void shouldAllowReadingConfigurationAndStatusWhenDeveloperWrite() {
     given()
       .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
@@ -199,7 +157,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
   }
 
   @Test
-  void shouldAllowReadingStatusAndSecretAndRestartingConnectorsWhenConnectManager() {
+  void shouldAllowConfiguringOffsetsAndReadingStatusAndSecretAndRestartingConnectorsWhenConnectManager() {
     given()
       .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
       .contentType(ContentType.JSON)
@@ -241,6 +199,22 @@ class SecretRegistryExtensionIT extends AbstractIT {
 
     given()
       .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
+      .contentType(ContentType.JSON)
+      .body("{}")
+    .when()
+      .patch("/connectors/my_mirror_connector/offset")
+    .then()
+      .statusCode(404);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
+    .when()
+      .delete("/connectors/my_mirror_connector/offset")
+    .then()
+      .statusCode(404);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
     .when()
       .get("/connectors/my_datagen_connector/status")
     .then()
@@ -259,12 +233,28 @@ class SecretRegistryExtensionIT extends AbstractIT {
       .contentType(ContentType.JSON)
     .when()
       .delete("/connectors/my_datagen_connector")
+    .then()
+      .statusCode(403);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
+      .contentType(ContentType.JSON)
+      .body("{}")
+    .when()
+      .patch("/connectors/my_datagen_connector/offset")
+    .then()
+      .statusCode(403);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
+    .when()
+      .delete("/connectors/my_datagen_connector/offset")
     .then()
       .statusCode(403);
   }
 
   @Test
-  void shouldAllowReadingStatusAndSecretAndRestartingConnectorsWhenConnectManagerUsingAPIKey() {
+  void shouldAllowConfiguringOffsetsAndReadingStatusAndSecretAndRestartingConnectorsWhenConnectManagerUsingAPIKey() {
     given()
       .header(HttpHeaders.AUTHORIZATION, Credentials.ci())
       .contentType(ContentType.JSON)
@@ -306,6 +296,22 @@ class SecretRegistryExtensionIT extends AbstractIT {
 
     given()
       .header(HttpHeaders.AUTHORIZATION, Credentials.ci())
+      .contentType(ContentType.JSON)
+      .body("{}")
+    .when()
+      .patch("/connectors/my_mirror_connector/offset")
+    .then()
+      .statusCode(404);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, Credentials.ci())
+    .when()
+      .delete("/connectors/my_mirror_connector/offset")
+    .then()
+      .statusCode(404);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, Credentials.ci())
     .when()
       .get("/connectors/my_datagen_connector/status")
     .then()
@@ -324,6 +330,22 @@ class SecretRegistryExtensionIT extends AbstractIT {
       .contentType(ContentType.JSON)
     .when()
       .delete("/connectors/my_datagen_connector")
+    .then()
+      .statusCode(403);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, Credentials.ci())
+      .contentType(ContentType.JSON)
+      .body("{}")
+    .when()
+      .patch("/connectors/my_datagen_connector/offset")
+    .then()
+      .statusCode(403);
+
+    given()
+      .header(HttpHeaders.AUTHORIZATION, Credentials.ci())
+    .when()
+      .delete("/connectors/my_datagen_connector/offset")
     .then()
       .statusCode(403);
   }
