@@ -1,3 +1,11 @@
+# [3.6.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/3.5.0...3.6.0) (2026-10-05)
+
+
+### Features
+
+* allow ConnectManager to configure offsets ([b362fbf](https://github.com/mredjem/kafka-connect-secret-registry/commit/b362fbf49bb0eaf1762613b76ef06f9db517614a))
+* provide support for DeveloperManage role ([a7b7aa9](https://github.com/mredjem/kafka-connect-secret-registry/commit/a7b7aa979f92e6552212649bc0e35bede82232fe))
+
 # [3.5.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/3.4.0...3.5.0) (2026-07-22)
 
 
