@@ -1,3 +1,10 @@
+# [3.7.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/3.6.0...3.7.0) (2026-10-22)
+
+
+### Features
+
+* reduce archive size ([861bf7b](https://github.com/mredjem/kafka-connect-secret-registry/commit/861bf7b5fac89e2c4b9ced2ba950838ca6ccd767))
+
 # [3.6.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/3.5.0...3.6.0) (2026-10-05)
 
 
