@@ -250,7 +250,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
     .when()
       .delete("/connectors/my_datagen_connector/offset")
     .then()
-      .statusCode(403);
+      .statusCode(404);
   }
 
   @Test
@@ -347,7 +347,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
     .when()
       .delete("/connectors/my_datagen_connector/offset")
     .then()
-      .statusCode(403);
+      .statusCode(404);
   }
 
   @Test
