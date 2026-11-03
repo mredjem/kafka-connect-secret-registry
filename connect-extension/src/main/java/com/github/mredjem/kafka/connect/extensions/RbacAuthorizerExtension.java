@@ -10,7 +10,7 @@ import com.github.mredjem.kafka.connect.utils.ConfigUtils;
 import org.apache.kafka.connect.rest.ConnectRestExtension;
 import org.apache.kafka.connect.rest.ConnectRestExtensionContext;
 
-import javax.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.container.ContainerRequestFilter;
 import java.util.Map;
 
 public class RbacAuthorizerExtension implements ConnectRestExtension {

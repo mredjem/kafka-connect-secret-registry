@@ -2,7 +2,7 @@ package com.github.mredjem.kafka.connect.extensions.rbac;
 
 import lombok.RequiredArgsConstructor;
 
-import javax.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestContext;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
