@@ -1,3 +1,15 @@
+# [4.0.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/3.7.0...4.0.0) (2026-11-03)
+
+
+### Features
+
+* upgrade dependencies to support kafka-connect 8 ([3efd04b](https://github.com/mredjem/kafka-connect-secret-registry/commit/3efd04bdb9a36aac8119700b97027acdf6dda672))
+
+
+### BREAKING CHANGES
+
+* kafka-connect 7.x will no longer be supported (switch from javax rs to jakarta rs)
+
 # [3.7.0](https://github.com/mredjem/kafka-connect-secret-registry/compare/3.6.0...3.7.0) (2026-10-22)
 
 
