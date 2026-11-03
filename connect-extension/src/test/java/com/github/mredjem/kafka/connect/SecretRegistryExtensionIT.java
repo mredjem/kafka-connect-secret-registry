@@ -243,7 +243,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
     .when()
       .patch("/connectors/my_datagen_connector/offset")
     .then()
-      .statusCode(403);
+      .statusCode(404);
 
     given()
       .header(HttpHeaders.AUTHORIZATION, Credentials.servicePrincipal())
@@ -340,7 +340,7 @@ class SecretRegistryExtensionIT extends AbstractIT {
     .when()
       .patch("/connectors/my_datagen_connector/offset")
     .then()
-      .statusCode(403);
+      .statusCode(404);
 
     given()
       .header(HttpHeaders.AUTHORIZATION, Credentials.ci())
