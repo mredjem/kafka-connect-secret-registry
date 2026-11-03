@@ -1,3 +1,10 @@
+## [4.0.3](https://github.com/mredjem/kafka-connect-secret-registry/compare/4.0.2...4.0.3) (2026-11-03)
+
+
+### Bug Fixes
+
+* restore failing integration tests ([638bada](https://github.com/mredjem/kafka-connect-secret-registry/commit/638bada062333ccb86e684aa991639173149d887))
+
 ## [4.0.2](https://github.com/mredjem/kafka-connect-secret-registry/compare/4.0.1...4.0.2) (2026-11-03)
 
 
